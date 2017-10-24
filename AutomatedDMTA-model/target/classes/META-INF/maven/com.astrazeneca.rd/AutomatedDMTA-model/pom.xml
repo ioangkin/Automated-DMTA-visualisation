@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.astrazeneca.rd</groupId>
+		<artifactId>AutomatedDMTA</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>AutomatedDMTA-model</artifactId>
+	<name>AutomatedDMTA-model</name>
+	<packaging>jar</packaging>
+	<scm>
+		<url>${parent.scm.url}/AutomatedDMTA-model</url>
+		<developerConnection>${parent.scm.developerConnection}</developerConnection>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<eclipselink.version>2.5.1</eclipselink.version>
+		<database.driver>org.hsqldb.jdbcDriver</database.driver>
+		<database.url>jdbc:hsqldb:file:unit-testing-jpa</database.url>
+		<database.schema>PUBLIC</database.schema>
+		<database.username>sa</database.username>
+	</properties>
+
+	<build>
+
+		<!-- This plugin ensures the EclipseLink static weaving -->
+
+		<plugins>
+			<plugin>
+		    <artifactId>eclipselink-staticweave-maven-plugin</artifactId>
+		    <groupId>au.com.alderaan</groupId>
+		    <version>1.0.4</version>
+		    <executions>
+        	<execution>
+            <goals>
+                <goal>weave</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+                <logLevel>ALL</logLevel>
+            </configuration>
+        	</execution>
+    		</executions>
+    		<dependencies>
+	        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>${eclipselink.version}</version>
+        	</dependency>
+    		</dependencies>
+			</plugin>	
+		</plugins>
+		
+		<!--This plugin's configuration is used to store Eclipse m2e settings 
+        only. It has no influence on the Maven build itself. -->
+		<pluginManagement>
+    	<plugins>
+      	<plugin>
+        	<groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+            	<pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>au.com.alderaan</groupId>
+                    <artifactId>eclipselink-staticweave-maven-plugin</artifactId>
+										<versionRange>[1.0.4,)</versionRange>
+										<goals>
+                      <goal>weave</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                	<action>
+                    <execute>
+                      <runOnIncremental>true</runOnIncremental>
+                    </execute>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+	</build>
+
+	<dependencies>
+		<!-- Bean Validation Dependencies -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.0.0.GA</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- JPA Persistence Dependencies --> 
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>${eclipselink.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commonj.sdo</artifactId>
+					<groupId>commonj.sdo</groupId>
+				</exclusion>
+			</exclusions>			
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<version>1.0.1.Final</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.0.1.Final</version>
+ 		</dependency>
+ 
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.2.9</version>
+		</dependency>
+		
+		<dependency>
+  			<groupId>com.oracle</groupId>
+  			<artifactId>ojdbc14</artifactId>
+  			<version>10.2.0.4.0</version>
+		</dependency>	
+	</dependencies>
+</project>

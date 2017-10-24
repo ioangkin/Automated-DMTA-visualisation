@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete 4 resources" deleteContents="false" description="Delete 4 resources" element1="/AutomatedDMTA-model" element2="/AutomatedDMTA-services" element3="/AutomatedDMTA-web" element4="/Servers" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="4" stamp="1506586073186"/>
+</session>

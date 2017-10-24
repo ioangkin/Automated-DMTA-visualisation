@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/AutomatedDMTA-web" privileged="true" >
+<!--
+
+This valve enables SSO if the relevant jars are installed in the Tomcat/lib folder - test with resources/people/whoami?devmode=Y
+
+		<Valve className="com.astrazeneca.rd.security.pingsdksso.PingSdkSsoValve" debug="true"/>
+		
+The DataSource can be defined here
+		
+		<Resource name="jdbc/ApplicationDB"
+          auth="Container"
+          type="javax.sql.DataSource"
+          factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+          testWhileIdle="true"
+          testOnBorrow="true"
+          testOnReturn="false"
+          validationQuery="SELECT 1"
+          validationInterval="30000"
+          timeBetweenEvictionRunsMillis="30000"
+          maxActive="100"
+          minIdle="10"
+          maxWait="10000"
+          initialSize="10"
+          removeAbandonedTimeout="60"
+          removeAbandoned="true"
+          logAbandoned="true"
+          minEvictableIdleTimeMillis="30000"
+          jmxEnabled="true"
+          jdbcInterceptors="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer"
+          username="USERNAME"
+          password="PASSWORD"
+          driverClassName="oracle.jdbc.driver.OracleDriver"
+          url="jdbc:oracle:thin:@HOST:PORT/SID"/>
+-->
+</Context>

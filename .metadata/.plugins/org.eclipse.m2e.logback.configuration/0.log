@@ -1,0 +1,40 @@
+2017-09-28 08:27:31,758 [Worker-3] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.astrazeneca.rd:AutomatedDMTA-model:0.0.1-SNAPSHOT @ C:\Users\klfl423\Documents\AutomatedDMTA\AutomatedDMTA-model\pom.xml.
+2017-09-28 08:27:34,519 [Worker-3] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.astrazeneca.rd:AutomatedDMTA-services:0.0.1-SNAPSHOT @ C:\Users\klfl423\Documents\AutomatedDMTA\AutomatedDMTA-services\pom.xml.
+2017-09-28 08:27:35,611 [Worker-3] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: com.astrazeneca.rd:AutomatedDMTA-web:0.0.1-SNAPSHOT @ C:\Users\klfl423\Documents\AutomatedDMTA\AutomatedDMTA-web\pom.xml.
+2017-09-28 08:27:52,172 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AutomatedDMTA-model/src/main/java
+2017-09-28 08:27:52,173 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AutomatedDMTA-model/src/main/resources
+2017-09-28 08:27:52,174 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AutomatedDMTA-model/src/test/java
+2017-09-28 08:27:52,175 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AutomatedDMTA-model/src/test/resources
+2017-09-28 08:27:52,887 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AutomatedDMTA-services/src/main/java
+2017-09-28 08:27:52,889 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AutomatedDMTA-services/src/main/resources
+2017-09-28 08:27:52,890 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AutomatedDMTA-services/src/test/java
+2017-09-28 08:27:52,891 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AutomatedDMTA-services/src/test/resources
+2017-09-28 08:27:53,394 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AutomatedDMTA-web/src/main/java
+2017-09-28 08:27:53,395 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AutomatedDMTA-web/src/main/resources
+2017-09-28 08:27:53,396 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /AutomatedDMTA-web/src/test/java
+2017-09-28 08:27:53,396 [Worker-3] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /AutomatedDMTA-web/src/test/resources
+2017-09-28 08:28:03,423 [Worker-3] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Imported and configured 3 project(s) in 38 sec
+2017-09-28 08:28:11,407 [Worker-15] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 08:28:11,423 [Worker-15] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 3 resources
+2017-09-28 08:28:12,883 [Worker-15] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 08:28:12,884 [Worker-15] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 2 resources
+2017-09-28 08:28:22,096 [Worker-15] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 08:28:22,097 [Worker-15] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 2 resources
+2017-09-28 08:28:22,120 [Worker-15] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 08:28:22,121 [Worker-15] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 3 resources
+2017-09-28 08:28:30,276 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 08:28:30,276 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 2 resources
+2017-09-28 08:28:30,300 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 08:28:30,301 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2017-09-28 09:07:25,072 [Worker-6] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 09:07:25,089 [Worker-6] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 3 resources
+2017-09-28 09:07:26,927 [Worker-6] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 09:07:26,928 [Worker-6] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 2 resources
+2017-09-28 09:07:32,115 [Worker-5] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 09:07:32,117 [Worker-5] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 2 resources
+2017-09-28 09:07:32,125 [Worker-5] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 09:07:32,126 [Worker-5] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 3 resources
+2017-09-28 09:07:38,106 [Worker-6] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 09:07:38,107 [Worker-6] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 2 resources
+2017-09-28 09:07:38,114 [Worker-6] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2017-09-28 09:07:38,115 [Worker-6] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource

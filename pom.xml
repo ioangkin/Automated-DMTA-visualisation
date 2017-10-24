@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.astrazeneca.rd</groupId>
+		<artifactId>base-spring-webapp</artifactId>
+		<version>0.0.3</version>
+	</parent>
+	
+	<artifactId>AutomatedDMTA</artifactId>
+	
+	<groupId>com.astrazeneca.rd</groupId>
+	<packaging>pom</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<scm>
+		<url>scm:git:http://sd.rd.astrazeneca.net/fisheye/browse/?</url>
+		<developerConnection>scm:git:http://sd.rd.astrazeneca.net/fisheye/git/?.git</developerConnection>
+	</scm>
+
+	<name>AutomatedDMTA</name>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<junit.version>4.11</junit.version>
+		<jersey.version>2.4.1</jersey.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<!--  Ensures we are compiling at 1.7 level -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+  <modules>
+    <module>AutomatedDMTA-model</module>
+    <module>AutomatedDMTA-services</module>
+    <module>AutomatedDMTA-web</module>
+  </modules>
+</project>
