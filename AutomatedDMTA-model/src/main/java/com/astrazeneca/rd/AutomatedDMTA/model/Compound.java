@@ -10,34 +10,51 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * @author Andy Gibson
+ * @author Ioannis Gkinalas
  * 
- * Simple model class that is used to test JPA
+ * Compound model class
  *
  */
 @Entity
 @Table
 public class Compound {
 
+	//Automatically generated ID for the DB (different from compound_ID)
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(length = 24)
-	@Size(min = 1, max = 24)
+/*	ToDo: Customer would prefer if there there were no size restrictions (same for smile), can this be removed, like this:
 	@NotNull
-	private String firstName;
-
+	private String compoundId;*/
 	@Column(length = 24)
-	@Size(min = 1, max = 24)
+	@Size(min = 3, max = 24)
 	@NotNull
-	private String lastName;
+	private String compoundId;
 
+	@Column(length = 10000000)
+	@Size(min = 100000, max = 10000000)
+	@NotNull
+	private String smile;
+
+	@Column()
+	@BLob
+	private byte[] ic50Graph;
+/*  for set/get methods see: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types */
+	
+	@Column()
+	@BLob
+	private byte[] structureGraph;
+	
+	@Column()
+	private boolean completed;
+	
 	public Compound() {}
 	
-	public Compound(String firstName, String lastName) {
-		this.firstName = firstName;
-		this.lastName = lastName;
+	//TODO: confirm smile is needed in this constructor
+	public Compound(String compoundId, String smile) {
+		this.compoundId = compoundId;
+		this.smile = smile;
 	}
 	
 	public Long getId() {
@@ -48,26 +65,27 @@ public class Compound {
 		this.id = id;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getCompoundId() {
+		return compoundId;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setCompoundId(String compoundId) {
+		this.compoundId = compoundId;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public String getSmile() {
+		return smile;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setSmile(String smile) {
+		this.smile = smile;
 	}
 
+	//TODO: Manu, what is the purpose?
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("Person [");
-		sb.append("ID : ").append(id).append(", First Name : ").append(firstName).append(", Last Name : ").append(lastName).
+		StringBuilder sb = new StringBuilder("Compound [");
+		sb.append("ID : ").append(id).append(", Compound Id : ").append(compoundId).append(", Smile : ").append(smile).
 			append("]");
 		return sb.toString();
 	}
