@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.persistence.Lob;
 
 /**
  * @author Ioannis Gkinalas
@@ -24,7 +25,7 @@ public class Compound {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-/*	ToDo: Customer would prefer if there there were no size restrictions (same for smile), can this be removed, like this:
+/*	TODO: Customer would prefer if there were no size restrictions (ie: for compound id and smile), can this be removed, like this:
 	@NotNull
 	private String compoundId;*/
 	@Column(length = 24)
@@ -37,21 +38,26 @@ public class Compound {
 	@NotNull
 	private String smile;
 
+	//Could not use @Blob [error: Blob cannot resolved to a type], I had to import javax.persistence.Lob
 	@Column()
-	@BLob
-	private byte[] ic50Graph;
+	@Lob
+	private byte[] lineGraph;
 /*  for set/get methods see: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types */
 	
 	@Column()
-	@BLob
+	@Lob
 	private byte[] structureGraph;
 	
+	/*
+	* TODO: Note: A compound is completed either when passed the test stage and has a lineGraph or failed in some other stage.
+	* Requirements are not set yet on how to monitor failure
+	*/
 	@Column()
-	private boolean completed;
+	private boolean completed = false;
 	
 	public Compound() {}
 	
-	//TODO: confirm smile is needed in this constructor
+	//TODO: confirm smile is needed in this constructor, if so structure graph could also be added?
 	public Compound(String compoundId, String smile) {
 		this.compoundId = compoundId;
 		this.smile = smile;
@@ -80,8 +86,35 @@ public class Compound {
 	public void setSmile(String smile) {
 		this.smile = smile;
 	}
+	
+	public byte[] getlineGraph() {
+		return lineGraph;
+	}
 
-	//TODO: Manu, what is the purpose?
+	public void setlineGraphe(byte[] lineGraph) {
+		this.lineGraph = lineGraph;
+	}
+
+	public byte[] getStructureGraph() {
+		return structureGraph;
+	}
+
+	public void setstructureGraph(byte[] structureGraph) {
+		this.structureGraph = structureGraph;
+	}
+	
+	public boolean getCompleted() {
+		return completed;
+	}
+
+	/*
+	 * TODO: Could I add a check like: if stageType >= 5 {completed;}
+	*/
+	public void setCompleted(Boolean completed) {
+		this.completed = completed;
+	}
+	
+	//TODO: What is the purpose?
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Compound [");
