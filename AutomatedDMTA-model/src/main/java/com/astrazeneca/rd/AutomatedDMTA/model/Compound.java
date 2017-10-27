@@ -7,8 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Size; //TODO: remove as it is not used
 import javax.persistence.Lob;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 
 /**
  * @author Ioannis Gkinalas
@@ -20,47 +22,51 @@ import javax.persistence.Lob;
 @Table
 public class Compound {
 
-	//Automatically generated ID for the DB (different from compound_ID)
+	//Note: Automatically generated ID for JPA's internal DB (different from compound_ID)
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-/*	TODO: Customer would prefer if there were no size restrictions (ie: for compound id and smile), can this be removed, like this:
+	/*TODO: Manu: I should be able to compare stages, like: "if (c.getStage.compareTo(StageType.Synthesis >= 0) {Compound.getStructureGraph; //compound has past synthesis}"*/
+	@Column()
 	@NotNull
-	private String compoundId;*/
-	@Column(length = 24)
-	@Size(min = 3, max = 24)
+	@Enumerated(EnumType.STRING)
+	private StageType stage;
+	
+	@Column()
 	@NotNull
 	private String compoundId;
 
-	@Column(length = 10000000)
-	@Size(min = 100000, max = 10000000)
+	@Column()
 	@NotNull
 	private String smile;
 
-	//Could not use @Blob [error: Blob cannot resolved to a type], I had to import javax.persistence.Lob
+	//TODO: Manu: Could not use @Blob [error: Blob cannot resolved to a type], I had to import javax.persistence.Lob
 	@Column()
 	@Lob
 	private byte[] lineGraph;
-/*  for set/get methods see: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types */
+/*  for set&get methods see: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types */
 	
+	//TODO: Manu: Is this @NotNull?
 	@Column()
 	@Lob
 	private byte[] structureGraph;
 	
 	/*
-	* TODO: Note: A compound is completed either when passed the test stage and has a lineGraph or failed in some other stage.
-	* Requirements are not set yet on how to monitor failure
+	* Note: A compound is completed either when passed the test stage and has a lineGraph or failed in some other stage.
+	* Requirements are not set yet on how failure is defined (and can be monitored)
 	*/
 	@Column()
 	private boolean completed = false;
 	
+	
 	public Compound() {}
 	
-	//TODO: confirm smile is needed in this constructor, if so structure graph could also be added?
-	public Compound(String compoundId, String smile) {
+	//TODO: confirm what parameters and attributes should be in here? ie: should structure graph be added?
+	public Compound(String compoundId, String smile, StageType stage) {
 		this.compoundId = compoundId;
 		this.smile = smile;
+		this.stage = stage;
 	}
 	
 	public Long getId() {
@@ -107,12 +113,18 @@ public class Compound {
 		return completed;
 	}
 
-	/*
-	 * TODO: Could I add a check like: if stageType >= 5 {completed;}
-	*/
+//	TODO: Could I add a check like: if (c.getStage.compareTo(StageType.Testing >= 0)) {completed;}
 	public void setCompleted(Boolean completed) {
 		this.completed = completed;
 	}
+	
+    public StageType getStage() {
+        return stage;
+    }
+
+    public void setRating(StageType stage) {
+        this.stage = stage;
+    }
 	
 	//TODO: What is the purpose?
 	@Override
