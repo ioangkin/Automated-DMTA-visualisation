@@ -9,18 +9,27 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
-import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
+
+/**
+ * @author klfl423
+ * 
+ * Compound model class
+ *
+ */
 
 //TODO: Manu: Do we need more attributes?, ie: SMILE?
 public interface CompoundRepository extends JpaRepository<Compound, Long> {
 	
-	//TODO: Manu: confirm stage datatype is correct (ie: no String)
-	public List<Compound> findByCompoundIdAndStage(String compoundId, StageType stage);
+	@Query("select c from Compound c where c.compoundId = :compoundId")
+	public List<Compound> findByCompoundId(
+	@Param("compoundId") String compoundId
+	);
 	
-	@Query("select c from Compound c where c.compoundId = :compoundId or c.stage = :stage")
-	public List<Compound> findByCompoundIdOrStage(
+/*	In case you need more than one attribs
+  @Query("select c from Compound c where c.compoundId = :compoundId or c.smile = :smile")
+	public List<Compound> findByCompoundIdOrSmile(
 			@Param("compoundId") String compoundId,
-			@Param("stage") StageType stage);
+			@Param("smile") String smile);*/
 	
 	public Page<Compound> findAll(Pageable pageable);
 }

@@ -13,9 +13,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
 
 /**
- * @author Ioannis Gkinalas
+ * @author klfl423
  * 
- * Compound model class
+ * Compound model Object class
  *
  */
 @Entity
@@ -28,6 +28,7 @@ public class Compound {
 	private Long id;
 
 	/*TODO: Manu: I should be able to compare stages, like: "if (c.getStage.compareTo(StageType.Synthesis >= 0) {Compound.getStructureGraph; //compound has past synthesis}"*/
+	//Lookup: enum key vaue pair
 	@Column()
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -41,13 +42,12 @@ public class Compound {
 	@NotNull
 	private String smile;
 
-	//TODO: Manu: Could not use @Blob [error: Blob cannot resolved to a type], I had to import javax.persistence.Lob
 	@Column()
 	@Lob
 	private byte[] lineGraph;
 /*  for set&get methods see: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types */
 	
-	//TODO: Manu: Is this @NotNull?
+	//TODO: Nick: Is this @NotNull?
 	@Column()
 	@Lob
 	private byte[] structureGraph;
@@ -59,15 +59,13 @@ public class Compound {
 	@Column()
 	private boolean completed = false;
 	
-	
+/*	Can live without a constructor
 	public Compound() {}
 	
 	//TODO: confirm what parameters and attributes should be in here? ie: should structure graph be added?
-	public Compound(String compoundId, String smile, StageType stage) {
+	public Compound(String compoundId, String smile) {
 		this.compoundId = compoundId;
-		this.smile = smile;
-		this.stage = stage;
-	}
+	}*/
 	
 	public Long getId() {
 		return id;
@@ -97,6 +95,8 @@ public class Compound {
 		return lineGraph;
 	}
 
+//	Lookup setter for Blob
+	//for the folder lookup retrieve files form window share
 	public void setlineGraphe(byte[] lineGraph) {
 		this.lineGraph = lineGraph;
 	}
@@ -113,7 +113,6 @@ public class Compound {
 		return completed;
 	}
 
-//	TODO: Could I add a check like: if (c.getStage.compareTo(StageType.Testing >= 0)) {completed;}
 	public void setCompleted(Boolean completed) {
 		this.completed = completed;
 	}
@@ -122,11 +121,12 @@ public class Compound {
         return stage;
     }
 
-    public void setRating(StageType stage) {
+    public void setStage(StageType stage) {
         this.stage = stage;
     }
 	
-	//TODO: What is the purpose?
+	//TODO: What is the purpose? For debuging mainly, may need to refine later
+    //Don't add Blobs
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Compound [");
