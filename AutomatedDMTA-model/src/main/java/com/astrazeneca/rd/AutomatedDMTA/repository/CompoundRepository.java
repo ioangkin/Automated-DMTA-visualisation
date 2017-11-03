@@ -17,19 +17,16 @@ import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
  *
  */
 
-//TODO: Manu: Do we need more attributes?, ie: SMILE?
+//TODO: May need to refuctor if SMILE is a default attribute
 public interface CompoundRepository extends JpaRepository<Compound, Long> {
 	
 	@Query("select c from Compound c where c.compoundId = :compoundId")
-	public List<Compound> findByCompoundId(
-	@Param("compoundId") String compoundId
-	);
+	public List<Compound> findByCompoundId(@Param("compoundId") String compoundId);
 	
-/*	In case you need more than one attribs
+/*	In case you need more than one attribs (ie: also SMILE)
   @Query("select c from Compound c where c.compoundId = :compoundId or c.smile = :smile")
-	public List<Compound> findByCompoundIdOrSmile(
-			@Param("compoundId") String compoundId,
-			@Param("smile") String smile);*/
+	public List<Compound> findByCompoundIdOrSmile(@Param("compoundId") String compoundId, @Param("smile") String smile);
+*/
 	
 	public Page<Compound> findAll(Pageable pageable);
 }

@@ -40,7 +40,7 @@ public class CompoundService {
 		return compoundRepository.findAll();
 	}
 
-	public Page<Compound> getAllPersons(Pageable pageable) {
+	public Page<Compound> getAllCompounds(Pageable pageable) {
 		return compoundRepository.findAll(pageable);
 	}
 	
@@ -49,7 +49,7 @@ public class CompoundService {
 	}
 
 /* Not needed for now as Smile is not used
- * 	public List<Compound> getCompoundsByAnyIds(String firstName, String lastName) {
+ * 	public List<Compound> getCompoundByAnyAttrib(String compoundId, String smile) {
 		return compoundRepository.findByCompoundIdOrSmile(compoundId, Smile);
 	}*/
 }

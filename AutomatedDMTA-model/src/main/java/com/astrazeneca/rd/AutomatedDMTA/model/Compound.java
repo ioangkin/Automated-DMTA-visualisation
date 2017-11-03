@@ -27,8 +27,7 @@ public class Compound {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	/*TODO: Manu: I should be able to compare stages, like: "if (c.getStage.compareTo(StageType.Synthesis >= 0) {Compound.getStructureGraph; //compound has past synthesis}"*/
-	//Lookup: enum key vaue pair
+	//Note: Stages are comparable, see enum methods: stage.ordinal() and compareTo(). Also see STageTypeTest.java
 	@Column()
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -39,7 +38,7 @@ public class Compound {
 	private String compoundId;
 
 	@Column()
-	@NotNull
+	//TODO: Is this @NotNull? confirm with Nick when a compound gets a SMILE (ie: at Backlog or at SYNTHESIS stage)
 	private String smile;
 
 	@Column()
@@ -47,7 +46,7 @@ public class Compound {
 	private byte[] lineGraph;
 /*  for set&get methods see: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types */
 	
-	//TODO: Nick: Is this @NotNull?
+	//TODO: Is this @NotNull? confirm with Nick when a compound gets a SMILE (ie: at Backlog or at SYNTHESIS stage)
 	@Column()
 	@Lob
 	private byte[] structureGraph;
@@ -59,18 +58,18 @@ public class Compound {
 	@Column()
 	private boolean completed = false;
 	
-/*	Can live without a constructor
+	//Note: Can live without a constructor, but its a good practice to have at least basic ones.
+
 	public Compound() {}
 	
-	//TODO: confirm what parameters and attributes should be in here? ie: should structure graph be added?
-	public Compound(String compoundId, String smile) {
+	//TODO: confirm what parameters are bound to object at all times, ie: smile and strutureGraph and Consider adding more constructors with these attributes
+	public Compound(String compoundId) {
 		this.compoundId = compoundId;
-	}*/
+	}
 	
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -78,7 +77,6 @@ public class Compound {
 	public String getCompoundId() {
 		return compoundId;
 	}
-
 	public void setCompoundId(String compoundId) {
 		this.compoundId = compoundId;
 	}
@@ -86,7 +84,6 @@ public class Compound {
 	public String getSmile() {
 		return smile;
 	}
-
 	public void setSmile(String smile) {
 		this.smile = smile;
 	}
@@ -97,7 +94,7 @@ public class Compound {
 
 //	Lookup setter for Blob
 	//for the folder lookup retrieve files form window share
-	public void setlineGraphe(byte[] lineGraph) {
+	public void setLineGraph(byte[] lineGraph) {
 		this.lineGraph = lineGraph;
 	}
 
@@ -105,7 +102,7 @@ public class Compound {
 		return structureGraph;
 	}
 
-	public void setstructureGraph(byte[] structureGraph) {
+	public void setStructureGraph(byte[] structureGraph) {
 		this.structureGraph = structureGraph;
 	}
 	
