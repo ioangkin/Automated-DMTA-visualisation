@@ -88,7 +88,7 @@ public class Compound {
 		this.smile = smile;
 	}
 	
-	public byte[] getlineGraph() {
+	public byte[] getLineGraph() {
 		return lineGraph;
 	}
 

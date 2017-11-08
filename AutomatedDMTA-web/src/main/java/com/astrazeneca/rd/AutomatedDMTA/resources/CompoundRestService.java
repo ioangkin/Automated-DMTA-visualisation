@@ -36,7 +36,7 @@ import com.astrazeneca.rd.AutomatedDMTA.service.CompoundService;
  * @author mp4777q
  *
  */
-@Path("/people")
+@Path("/compound")
 @Produces({"application/json"})
 public class CompoundRestService {
 	private static Logger logger = LoggerFactory.getLogger(CompoundRestService.class);

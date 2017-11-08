@@ -1,0 +1,114 @@
+<section ng-controller="CompoundsCtrl">
+	<h2>
+		Compounds <small>CRUD example</small>
+	</h2>
+
+  <div class="table-responsive">
+	<table class="table table-striped table-condensed table-hover">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Compound Id</th>
+<!-- 				<th>SMILE</th> //TODO: Not sure is needed-->
+				<th style="width: 150px;">
+					<div class="btn-toolbar">
+						<button type="button" class="btn btn-sm btn-primary" ng-click="toggleAddMode()">Add</button>
+					</div>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-show="addMode">
+				<td></td>
+				<td><input ng-model="object.compoundId" id="addCompoundId" /></td>
+				<td><input ng-model="object.Smile" /></td><!-- TODO: Needed? and if so, no  id="addCompoundId"? -->
+				<td>
+					<div class="btn-toolbar">
+						<div class="btn-group btn-group-sm">
+							<button type="button" class="btn btn-success" ng-click="addObject()">Save</button>
+							<button type="button" class="btn btn-info" ng-click="toggleAddMode()">Cancel</button>
+						</div>
+					</div> 
+				</td>
+			</tr>
+
+			<tr ng-repeat="object in objects | orderBy:'id':false">
+				<td>{{object.id}}</td>
+				<td><span ng-show="object.editMode == null || object.editMode == false">{{object.firstName}}</span>
+					<input ng-model="object.firstName" ng-show="object.editMode == true" /></td>
+				<td><span ng-show="object.editMode == null || object.editMode == false">{{object.lastName}}</span>
+					<input ng-model="object.lastName" ng-show="object.editMode == true" />
+				</td>
+				<td>
+					<div class="btn-toolbar" ng-show="object.editMode == null || object.editMode == false">
+						<div class="btn-group btn-group-sm">
+							<button type="button" class="btn btn-info" ng-click="toggleEditMode(object)">Edit</button>
+							<button type="button" class="btn btn-danger" ng-click="deleteObject(object)">Delete</button>
+						</div>
+					</div>
+					<div class="btn-toolbar" ng-show="object.editMode == true">
+						<div class="btn-group btn-group-sm">
+							<button type="button" class="btn btn-success" ng-click="updateObject(object)">Save</button>
+							<button type="button" class="btn btn-info" ng-click="cancel();toggleEditMode(object)">Cancel</button>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+  </div>
+  
+	<h3>Compound finder</h3>
+	
+	<form class="form-horizontal" role="form">
+	<fieldset>
+		<legend>Find by ID</legend>
+ 		<div class="form-group">
+      <label class="col-md-2 control-label" for="id">Select id</label>
+	    <div class="col-md-1">
+	      <select id="id" name="id" class="form-control" ng-model="id" ng-change="findCompoundById(id)" ng-options="object.id as object.id for object in objects">
+		      <option value="">id</option>
+		    </select>
+	    </div>
+      <div class="col-md-3 inline-result" ng-show="found.id != null">Compound {{id}} is {{found.firstName}} {{found.lastName}}</div>
+	  </div>
+	
+  </fieldset>
+  <fieldset>
+		<legend>Find by Compound ID</legend>
+		<p>Enter either name or both</p>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+				  <label class="col-md-4 control-label" for="firstName">First name</label>
+				  <div class="col-md-4">
+				    <input id="firstName" name="firstName" ng-model="firstName" type="text" placeholder="first name" class="form-control input-md">
+				  </div>
+				</div>
+				
+				<div class="form-group">
+				  <label class="col-md-4 control-label" for="lastName">Last name</label>
+				  <div class="col-md-4">
+				    <input id="lastName" ng-model="lastName" type="text" placeholder="last name" class="form-control input-md">
+				  </div>
+				</div>
+				
+				<div class="form-group">
+				  <div class="col-md-4 col-md-offset-4">
+				    <button id="search" name="search" type="button" class="btn btn-primary" ng-click="findCompoundByCompoundId()">Search</button>
+				  </div>
+				</div>
+			</div>
+      <div class="col-md-6">
+        <span ng-hide="foundNames.length">No results found</span>
+        <div ng-repeat="name in foundNames">
+        {{name.id}}: {{name.firstName}} {{name.lastName}}
+        </div>
+      </div>
+		</div>
+	</fieldset>
+	</form>
+	
+	<h3>Other tests</h3>
+	<button type="button" class="btn btn-danger" ng-click="testError()">Test error</button>
+</section>

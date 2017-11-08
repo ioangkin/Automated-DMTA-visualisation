@@ -12,14 +12,18 @@ import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
 public class BlobSetTest {
 
 	public static void main(String[] args) {
-		
-		
-		Compound c = new Compound();
-		c.setCompoundId("MyCompound");
-        c.setLineGraph(writtingImage("\\pipeline04.rd.astrazeneca.net\SharedData\autodmta\input_bioassay\output_10.png"));// - \\pipeline04.rd.astrazeneca.net\SharedData\autodmta\input_bioassay\output_10.png
 
-        sessionEJB.persistPerson(p);
+		//This code reads the image from a file and persist to Compound table in DB
+		Compound c = new Compound();
+		c.setCompoundId("aCompound");
+        c.setLineGraph(writtingImage("C:\dev\output_11.png"));// - \\pipeline04.rd.astrazeneca.net\SharedData\autodmta\input_bioassay\output_10.png
+
+        sessionEJB.persistCompound(c);
         
 		}
-
+	
+/*	public byte[] getlineGraph() {
+		return lineGraph;
+	}
+*/
 }
