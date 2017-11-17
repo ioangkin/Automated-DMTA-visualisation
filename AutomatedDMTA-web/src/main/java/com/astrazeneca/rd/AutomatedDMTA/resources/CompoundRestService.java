@@ -78,8 +78,14 @@ public class CompoundRestService {
 		return compoundService.getAllCompounds();
 	}
 	
-//	ToDo: Manu: Don't we need some check? ie: File doesn't exist or a SMILE has not been given so structure graph cannot be found
-//	ToDo: Manu: why a metod redirecting to two others, and not just having two individual methods
+/*    ToDo: Don't we need some checks? ie:
+    	LineGraph file cannot be found
+    	File containing SMILES or the SMILES string inside doesn't exist (so StructureGraph cannot be looked up)
+    	Site doesn't return what is expected (png file)
+    	more?
+*/    			
+//	ToDo: Manu: Shouldn't this method be called getGraph or smth?
+	
 	@GET
 	@Produces ("image/png")
     @Path("/getGraphForId")
@@ -91,8 +97,8 @@ public class CompoundRestService {
 		}
 		logger.debug("GET: list all compounds");
 		
+		//The graphType hasn't been recognised
 		return null;
-		
 	}
 
 	@GET
@@ -130,10 +136,12 @@ public class CompoundRestService {
 			+ ", Page Amount: " + page.getTotalPages());
 
 		ResponseBuilder resp = Response.ok();
-		if (page.hasPreviousPage()) {
+		if (page.hasPreviousPage())
+		{
 			resp.link(uriInfo.getAbsolutePathBuilder().queryParam("pageNumber", page.getNumber() - 1).queryParam("pageSize", pageSize).build(), "previous");
 		}
-		if (page.hasNextPage()) {
+		if (page.hasNextPage())
+		{
 			resp.link(uriInfo.getAbsolutePathBuilder().queryParam("pageNumber", page.getNumber() + 1).queryParam("pageSize", pageSize).build(), "next");
 		}
 		resp.link(uriInfo.getAbsolutePathBuilder().queryParam("pageNumber", 0).queryParam("pageSize", pageSize).build(), "first");
@@ -151,16 +159,17 @@ public class CompoundRestService {
 		return r;
 	}
 
-	//Get image form DB
+	//ToDo: Manu: Why do we need this when we hvae the getLineGraphForId()
+	//Get image from DB
 	@GET
 	@Path("getStructureGraphForCompound")
 	@Produces("image/png")
-	public BufferedImage getStructureGraph(@QueryParam("id") Long id){
-		compoundService.showLineGraph(id);
-		return 
+	public BufferedImage getStructureGraph(@QueryParam("id") Long id)
+	{
+		return compoundService.showLineGraph(id);
 	}
 
-/* Operators are not needed for now as there are no multiple attribs
+/* Operators for multiple attribs are not needed for now 
 	@GET
 	@Path("/search")
 	@Consumes(MediaType.APPLICATION_JSON)

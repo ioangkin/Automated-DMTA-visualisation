@@ -63,8 +63,9 @@ public class CompoundService {
 		return image;
 	}
 
-/* Not needed for now as Smile is not used
- * 	public List<Compound> getCompoundByAnyAttrib(String serialNumber, String smile) {
-		return compoundRepository.findBySerialNumberOrSmile(serialNumber, Smile);
-	}*/
+/* Not needed for now as smiles is not used
+  	public List<Compound> getCompoundByAnyAttrib(String serialNumber, String smiles) {
+		return compoundRepository.findBySerialNumberOrSmiles(serialNumber, Smiles);
+	}
+*/
 }

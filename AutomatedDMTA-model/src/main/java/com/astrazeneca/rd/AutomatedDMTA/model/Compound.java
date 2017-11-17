@@ -22,7 +22,7 @@ import javax.persistence.EnumType;
 @Table
 public class Compound {
 
-	//Note: Automatically generated ID for JPA's internal DB (different from compound_ID)
+	//Note: Automatically generated ID for JPA's
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -37,23 +37,24 @@ public class Compound {
 	@NotNull
 	private String serialNumber;
 
-	//TODO: Is this @NotNull? confirm with Nick when a compound gets a SMILE (ie: at Backlog or at SYNTHESIS stage)
 	@Column()
-	private String smile;
+	@NotNull
+	private String smiles;
 
 	@Column()
 	@Lob
 	private byte[] lineGraph;
-/*  for set&get methods see: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types */
+/*  for set & get methods see: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types */
 	
-	//TODO: Is this @NotNull? confirm with Nick when a compound gets a SMILE (ie: at Backlog or at SYNTHESIS stage)
+	//this is fetched from http://compounds.rd.astrazeneca.net/resources/structure/toimage/YOUR_SMILES_HERE?inputFormat=SMILES&appid=pipelinepilot using SMILES
 	@Column()
 	@Lob
+	@NotNull
 	private byte[] structureGraph;
 	
 	/*
 	* Note: A compound is completed either when passed the test stage and has a lineGraph or failed somewhere during the DMTA cycle.
-	* customer is not set yet on how failure is defined (and can be monitored)
+	* requirements are not set yet on what is causing failure and this can't be monitored
 	*/
 	@Column()
 	private boolean completed = false;
@@ -61,9 +62,19 @@ public class Compound {
 	//Note: Can live without a constructor, but its a good practice to have at least basic ones, depending on the default attributes
 	public Compound() {}
 	
-	//TODO: confirm what parameters are bound to object at all times, ie: SMILE and strutureGraph and if so consider adding more constructors with these attributes
 	public Compound(String serialNumber) {
 		this.serialNumber = serialNumber;
+	}
+	
+	public Compound(String serialNumber, String smiles) {
+		this.serialNumber = serialNumber;
+		this.smiles = smiles;
+	}
+	
+	public Compound(String serialNumber, String smiles, byte[] structureGraph) {
+		this.serialNumber = serialNumber;
+		this.smiles = smiles;
+		this.structureGraph = structureGraph;
 	}
 	
 	public Long getId() {
@@ -82,19 +93,19 @@ public class Compound {
 		this.serialNumber = serialNumber;
 	}
 
-	public String getSmile() {
-		return smile;
+	public String getSmiles() {
+		return smiles;
 	}
 	
-	public void setSmile(String smile) {
-		this.smile = smile;
+	public void setSmiles(String smiles) {
+		this.smiles = smiles;
 	}
 	
 	public byte[] getLineGraph() {
 		return lineGraph;
 	}
 
-	//Lookup setter for Blob
+	//Todo: Lookup setter for Blob
 	//for the folder lookup: retrieve files from window share
 	public void setLineGraph(byte[] lineGraph) {
 		this.lineGraph = lineGraph;
@@ -124,12 +135,11 @@ public class Compound {
         this.stage = stage;
     }
 	
-	//TODO: What is the purpose? For debuging mainly, may need to refine later
-    //Don't add Blobs
+    //Note: Don't add Blobs
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Compound [");
-		sb.append("ID : ").append(id).append(", Compound Id : ").append(serialNumber).append(", Smile : ").append(smile).
+		sb.append("ID : ").append(id).append(", Compound Id : ").append(serialNumber).append(", Smiles : ").append(smiles).
 			append("]");
 		return sb.toString();
 	}
