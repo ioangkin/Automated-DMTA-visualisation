@@ -79,6 +79,7 @@ public class CompoundRestService {
 	}
 	
 //	ToDo: Manu: Don't we need some check? ie: File doesn't exist or a SMILE has not been given so structure graph cannot be found
+//	ToDo: Manu: why a metod redirecting to two others, and not just having two individual methods
 	@GET
 	@Produces ("image/png")
     @Path("/getGraphForId")
@@ -151,11 +152,12 @@ public class CompoundRestService {
 	}
 
 	//Get image form DB
-	@Get
+	@GET
 	@Path("getStructureGraphForCompound")
 	@Produces("image/png")
 	public BufferedImage getStructureGraph(@QueryParam("id") Long id){
 		compoundService.showLineGraph(id);
+		return 
 	}
 
 /* Operators are not needed for now as there are no multiple attribs
