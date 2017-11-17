@@ -21,6 +21,7 @@ public class RestApplication extends ResourceConfig {
 	public RestApplication() {
 		HashSet<Class<?>> c = new HashSet<Class<?>>();
 		c.add(PersonsRestService.class);
+		c.add(CompoundRestService.class);
         Set<Class<?>> classes = Collections.unmodifiableSet(c);
 		registerClasses(classes);
 		

@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.astrazeneca.rd.AutomatedDMTA.model.Person;
-import com.astrazeneca.rd.AutomatedDMTA.repository.PersonRepository;
+import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
+import com.astrazeneca.rd.AutomatedDMTA.repository.CompoundRepository;
 
 /**
  * @author kzhd491
@@ -19,22 +19,22 @@ public class AppInitializer {
 
 	
 	@Autowired 
-	private PersonRepository personRepository;
+	private CompoundRepository compoundRepository;
 	
 	public void init() {
 		//Create test persons...
-		personRepository.deleteAll();		//Comment this out to keep old data
+		compoundRepository.deleteAll();		//Comment this out to keep old data
 		
-		Person p1 = new Person();
-		p1.setFirstName("John");
-		p1.setLastName("Deer");
-		personRepository.save(p1);
+		Compound c1 = new Compound();
+		c1.setSerialNumber("001");
+//		c1.setSMILES("SMILE001");
+		compoundRepository.save(c1);
 		
-		Person p2 = new Person();
-		p2.setFirstName("Jane");
-		p2.setLastName("Doe");
-		personRepository.save(p2);
+		Compound c2 = new Compound();
+		c2.setSerialNumber("002");
+//		p2.setLastName("SMILE002");
+		compoundRepository.save(c2);
 		
-		logger.debug("Added 2 TEST users...");
+		logger.debug("Added 2 TEST compounds...");
 	}
 }

@@ -11,8 +11,7 @@ import org.springframework.data.repository.query.Param;
 import com.astrazeneca.rd.AutomatedDMTA.model.Person;
 
 public interface PersonRepository extends JpaRepository<Person, Long> {
-	public List<Person> findByFirstNameAndLastName(String firstName,
-			String lastName);
+	public List<Person> findByFirstNameAndLastName(String firstName, String lastName);
 
 	@Query("select p from Person p where p.firstName = :firstName or p.lastName = :lastName")
 	public List<Person> findByFirstNameOrLastName(

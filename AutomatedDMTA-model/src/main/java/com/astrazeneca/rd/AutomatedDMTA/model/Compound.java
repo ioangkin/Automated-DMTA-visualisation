@@ -27,7 +27,7 @@ public class Compound {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	//Note: Stages are comparable, see enum methods: stage.ordinal() and compareTo(). Also see STageTypeTest.java
+	//Note: Stages are comparable, see STageTypeTest.java and enum methods: stage.ordinal() and compareTo()
 	@Column()
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -35,10 +35,10 @@ public class Compound {
 	
 	@Column()
 	@NotNull
-	private String compoundId;
+	private String serialNumber;
 
-	@Column()
 	//TODO: Is this @NotNull? confirm with Nick when a compound gets a SMILE (ie: at Backlog or at SYNTHESIS stage)
+	@Column()
 	private String smile;
 
 	@Column()
@@ -52,38 +52,40 @@ public class Compound {
 	private byte[] structureGraph;
 	
 	/*
-	* Note: A compound is completed either when passed the test stage and has a lineGraph or failed in some other stage.
-	* Requirements are not set yet on how failure is defined (and can be monitored)
+	* Note: A compound is completed either when passed the test stage and has a lineGraph or failed somewhere during the DMTA cycle.
+	* customer is not set yet on how failure is defined (and can be monitored)
 	*/
 	@Column()
 	private boolean completed = false;
 	
-	//Note: Can live without a constructor, but its a good practice to have at least basic ones.
-
+	//Note: Can live without a constructor, but its a good practice to have at least basic ones, depending on the default attributes
 	public Compound() {}
 	
-	//TODO: confirm what parameters are bound to object at all times, ie: smile and strutureGraph and Consider adding more constructors with these attributes
-	public Compound(String compoundId) {
-		this.compoundId = compoundId;
+	//TODO: confirm what parameters are bound to object at all times, ie: SMILE and strutureGraph and if so consider adding more constructors with these attributes
+	public Compound(String serialNumber) {
+		this.serialNumber = serialNumber;
 	}
 	
 	public Long getId() {
 		return id;
 	}
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public String getCompoundId() {
-		return compoundId;
+	public String getSerialNumber() {
+		return serialNumber;
 	}
-	public void setCompoundId(String compoundId) {
-		this.compoundId = compoundId;
+	
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
 	}
 
 	public String getSmile() {
 		return smile;
 	}
+	
 	public void setSmile(String smile) {
 		this.smile = smile;
 	}
@@ -92,8 +94,8 @@ public class Compound {
 		return lineGraph;
 	}
 
-//	Lookup setter for Blob
-	//for the folder lookup retrieve files form window share
+	//Lookup setter for Blob
+	//for the folder lookup: retrieve files from window share
 	public void setLineGraph(byte[] lineGraph) {
 		this.lineGraph = lineGraph;
 	}
@@ -127,7 +129,7 @@ public class Compound {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Compound [");
-		sb.append("ID : ").append(id).append(", Compound Id : ").append(compoundId).append(", Smile : ").append(smile).
+		sb.append("ID : ").append(id).append(", Compound Id : ").append(serialNumber).append(", Smile : ").append(smile).
 			append("]");
 		return sb.toString();
 	}

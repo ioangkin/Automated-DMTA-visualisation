@@ -1,5 +1,6 @@
 package com.astrazeneca.rd.AutomatedDMTA.service;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -28,12 +29,12 @@ public class CompoundService {
 		return compoundRepository.save(compound);
 	}
 	
-	public void deleteCompound(Long compoundId) {
-		compoundRepository.delete(compoundId);
+	public void deleteCompound(Long id) {
+		compoundRepository.delete(id);
 	}
 	
-	public Compound getCompoundById(Long compoundId) {
-		return compoundRepository.findOne(compoundId);
+	public Compound getCompoundById(Long id) {
+		return compoundRepository.findOne(id);
 	}
 
 	public List<Compound> getAllCompounds() {
@@ -44,12 +45,26 @@ public class CompoundService {
 		return compoundRepository.findAll(pageable);
 	}
 	
-	public List<Compound> getCompoundsByIds(String compoundId) {
-		return compoundRepository.findByCompoundId(compoundId);
+	public List<Compound> getCompoundsBySerialNumber(String serialNumber) {
+		return compoundRepository.findBySerialNumber(serialNumber);
+	}
+	
+	public BufferedImage showLineGraph(Long id){
+		Compound compound = this.getCompoundById(id);
+		byte[] array = compound.getLineGraph();
+		BufferedImage image = new BufferedImage();// Google convert a byte[] to buffer image
+		return image;
+	}
+	
+	public BufferedImage showStructureGraph(Long id){
+		Compound compound = this.getCompoundById(id);
+		byte[] array = compound.getStructureGraph();
+		BufferedImage image = new BufferedImage();
+		return image;
 	}
 
 /* Not needed for now as Smile is not used
- * 	public List<Compound> getCompoundByAnyAttrib(String compoundId, String smile) {
-		return compoundRepository.findByCompoundIdOrSmile(compoundId, Smile);
+ * 	public List<Compound> getCompoundByAnyAttrib(String serialNumber, String smile) {
+		return compoundRepository.findBySerialNumberOrSmile(serialNumber, Smile);
 	}*/
 }

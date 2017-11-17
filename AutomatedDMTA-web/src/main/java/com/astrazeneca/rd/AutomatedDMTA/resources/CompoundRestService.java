@@ -1,5 +1,8 @@
 package com.astrazeneca.rd.AutomatedDMTA.resources;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.security.Principal;
 import java.util.List;
 
@@ -74,6 +77,22 @@ public class CompoundRestService {
 		logger.debug("GET: list all compounds");
 		return compoundService.getAllCompounds();
 	}
+	
+//	ToDo: Manu: Don't we need some check? ie: File doesn't exist or a SMILE has not been given so structure graph cannot be found
+	@GET
+	@Produces ("image/png")
+    @Path("/getGraphForId")
+	public Image getLineGraphForId(@QueryParam("id") Long id, @QueryParam("graphType") String graphType) {
+		if (graphType.equals("Line")){
+			return compoundService.showLineGraph(id);
+		} else if (graphType.equals("Structure")){
+			return compoundService.showStructureGraph(id);
+		}
+		logger.debug("GET: list all compounds");
+		
+		return null;
+		
+	}
 
 	@GET
 	@Path("/compounds/{compoundId}")
@@ -131,23 +150,39 @@ public class CompoundRestService {
 		return r;
 	}
 
-	/*
-	TODO: Manu, not sure how to handle this method as it is a search using operations (AND/OR) but I only have one attrib.
-	*/
+	//Get image form DB
+	@Get
+	@Path("getStructureGraphForCompound")
+	@Produces("image/png")
+	public BufferedImage getStructureGraph(@QueryParam("id") Long id){
+		compoundService.showLineGraph(id);
+	}
+
+/* Operators are not needed for now as there are no multiple attribs
 	@GET
 	@Path("/search")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public List<Compound> search(@DefaultValue("and") @QueryParam("op") String op, @QueryParam("compoundId") String compoundId, @QueryParam("smile") String smile) throws Exception {
 		logger.debug("GET: search for compounds: compoundiD="+compoundId+" "+op+" smile="+smile);
 		if ("and".equalsIgnoreCase(op)) {
-			return compoundService.getCompoundById(compoundId, smile);
-		} else if ("or".equalsIgnoreCase(op)) {
+			return compoundService.getCompoundsBySerialNumber(sn)
 			return compoundService.getCompoundByAnyAttrib(compoundId, smile);
 		} else {
 			throw new Exception("Unknown operator");
 		}
 	}
-	
+*/
+
+	//ToDo: Manu: The customer has abandoned the Search field, do we still need all the search queries methods?
+	//In case of a search with multiple attribs, use above method instead
+	@GET
+	@Path("/search")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public List<Compound> search(@QueryParam("serialNumber") String serialNumber) throws Exception {
+		logger.debug("GET: search for compounds: serialNumber="+serialNumber);
+		return compoundService.getCompoundsBySerialNumber(serialNumber);
+	}
+
 	@PUT
     @Path("/compounds/{compoundId}")	
 	@Consumes(MediaType.APPLICATION_JSON)
