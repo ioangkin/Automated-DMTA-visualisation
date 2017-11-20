@@ -22,7 +22,7 @@ import javax.persistence.EnumType;
 @Table
 public class Compound {
 
-	//Note: Automatically generated ID for JPA's
+	//Automatically generated ID for JPA's
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -59,6 +59,10 @@ public class Compound {
 	@Column()
 	private boolean completed = false;
 	
+	//When stage == StageType.TESTING
+	@Column()
+	private String result;
+		
 	//Note: Can live without a constructor, but its a good practice to have at least basic ones, depending on the default attributes
 	public Compound() {}
 	
@@ -125,6 +129,14 @@ public class Compound {
 
 	public void setCompleted(Boolean completed) {
 		this.completed = completed;
+	}
+	
+	public String getResult() {
+		return result;
+	}
+	
+	public void setResult(String result) {
+		this.result = result;
 	}
 	
     public StageType getStage() {

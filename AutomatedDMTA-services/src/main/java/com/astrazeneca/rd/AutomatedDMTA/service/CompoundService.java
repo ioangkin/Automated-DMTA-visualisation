@@ -49,18 +49,18 @@ public class CompoundService {
 		return compoundRepository.findBySerialNumber(serialNumber);
 	}
 	
+	
 	public BufferedImage showLineGraph(Long id){
 		Compound compound = this.getCompoundById(id);
 		byte[] array = compound.getLineGraph();
-		BufferedImage image = new BufferedImage();// Google convert a byte[] to buffer image
-		return image;
+		return new BufferedImage(640,480,BufferedImage.TYPE_INT_RGB);
+		//Manu: Above code puts lineGraph in array but does not return it. Only returns an empty bufferedImage eventually
 	}
 	
 	public BufferedImage showStructureGraph(Long id){
 		Compound compound = this.getCompoundById(id);
 		byte[] array = compound.getStructureGraph();
-		BufferedImage image = new BufferedImage();
-		return image;
+		return new BufferedImage(256,256,BufferedImage.TYPE_INT_RGB);
 	}
 
 /* Not needed for now as smiles is not used
