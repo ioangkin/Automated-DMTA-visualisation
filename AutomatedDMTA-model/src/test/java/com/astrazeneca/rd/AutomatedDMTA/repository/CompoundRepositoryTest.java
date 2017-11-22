@@ -43,7 +43,7 @@ public class CompoundRepositoryTest extends AbstractTransactionalJUnit4SpringCon
 	private Compound createCompound(String sn) {
 		Compound c = new Compound();
 		
-		c.setSerialNumber(sn);
+		c.setSampleNumber(sn);
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("NEW COMPOUND : " + c);
@@ -106,31 +106,31 @@ public class CompoundRepositoryTest extends AbstractTransactionalJUnit4SpringCon
 /*  Not searching for multiple attribs
 
   	@Test
-	public void findBySerialNumberAndsmiles() {
+	public void findBySampleNumberAndsmiles() {
 		Compound saved = createCompound("CompoundA", "SmilesA");		
 		
-		List<Compound> fromDB = compoundRepository.findBySerialNumberAndSmiles("CompoundA", "SmilesA");
+		List<Compound> fromDB = compoundRepository.findBySampleNumberAndSmiles("CompoundA", "SmilesA");
 		assertTrue(fromDB.size() == 1);
 		
 		Compound c = fromDB.get(0);
-		assertTrue(c.getSerialNumber() == "CompoundA");
+		assertTrue(c.getSampleNumber() == "CompoundA");
 		assertTrue(c.getSmiles() == "SmilesA");
 		compoundRepository.deleteAll();
 	}*/
 	
 /*	@Test
-	public void findBySerialNumberOrSmiles() {
+	public void findBySampleNumberOrSmiles() {
 		Compound saved1 = createCompound("CompoundA", "SmilesA");		
 		Compound saved2 = createCompound("CompoundB", "SmilesB");		
 		Compound saved3 = createCompound("CompoundC", "SmilesC");		
 		
-		List<Compound> fromDB = compoundRepository.findBySerialNumberOrSmiles("CompoundA", "SmilesA");
+		List<Compound> fromDB = compoundRepository.findBySampleNumberOrSmiles("CompoundA", "SmilesA");
 		assertTrue(fromDB.size() == 3);
 		
-		fromDB = compoundRepository.findBySerialNumberOrSmiles("CompoundD", "SmilesD");
+		fromDB = compoundRepository.findBySampleNumberOrSmiles("CompoundD", "SmilesD");
 		assertTrue(fromDB.size() == 1);
 		
-		fromDB = compoundRepository.findBySerialNumberOrSmiles("CompoundA", null);
+		fromDB = compoundRepository.findBySampleNumberOrSmiles("CompoundA", null);
 		assertTrue(fromDB.size() == 2);
 		
 		compoundRepository.deleteAll();
@@ -140,14 +140,14 @@ public class CompoundRepositoryTest extends AbstractTransactionalJUnit4SpringCon
 	public void findOne() {
 		Compound saved = createCompound("CompoundA");		
 		
-		List<Compound> fromDB = compoundRepository.findBySerialNumber("CompoundA");
+		List<Compound> fromDB = compoundRepository.findBySampleNumber("CompoundA");
 		assertTrue(fromDB.size() == 1);
 		
 		Compound c = fromDB.get(0);
 		
 		Compound pFromDB = compoundRepository.findOne(c.getId());
 		assertNotNull(pFromDB);
-		assertTrue(c.getSerialNumber() == pFromDB.getSerialNumber());
+		assertTrue(c.getSampleNumber() == pFromDB.getSampleNumber());
 /*		assertTrue(c.getSmiles() == pFromDB.getSmiles());*/
 		compoundRepository.deleteAll();
 	}
@@ -166,7 +166,7 @@ public class CompoundRepositoryTest extends AbstractTransactionalJUnit4SpringCon
 		assertEquals(page.getTotalElements(), 20);
 		assertEquals(page.getTotalPages(), 4);
 
-		assertEquals(page.getContent().get(0).getSerialNumber(), "First6");
+		assertEquals(page.getContent().get(0).getSampleNumber(), "First6");
 		assertEquals(page.getContent().get(0).getSmiles(), "Last6");
 		compoundRepository.deleteAll();
 	}

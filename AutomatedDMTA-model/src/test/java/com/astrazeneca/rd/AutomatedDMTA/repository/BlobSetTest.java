@@ -19,7 +19,7 @@ public class BlobSetTest {
 
 		//This code reads the image from a file and persist to Compound table in DB
 		Compound c = new Compound();
-		c.setSerialNumber("mySN");
+		c.setSampleNumber("mySN");
         c.setGraph(writtingGraph("C:/dev/tempImage.png"));// - \\pipeline04.rd.astrazeneca.net\SharedData\autodmta\input_bioassay\output_10.png
 
         sessionEJB.persistCompound(c);
@@ -32,7 +32,7 @@ public class BlobSetTest {
     retrieveImage(compound.getGraph());   //get picture retrieved from Table 
     
 	//create byte[] from image file 
-	private static byte[] writtingStructureGraph(String fileLocation) {
+	private static byte[] writtingGraph(String fileLocation) {
 		System.out.println("file lication is"+fileLocation);
 	     IOManager manager=new IOManager();
 	     try {
@@ -53,8 +53,8 @@ public class BlobSetTest {
 	
 	}
 
-/*	public byte[] getlineGraph() {
-		return lineGraph;
+/*	public byte[] getGraph() {
+		return Graph;
 	}
 */
 	

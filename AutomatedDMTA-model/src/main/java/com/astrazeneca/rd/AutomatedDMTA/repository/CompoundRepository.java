@@ -20,12 +20,12 @@ import com.astrazeneca.rd.AutomatedDMTA.model.Person;
 
 public interface CompoundRepository extends JpaRepository<Compound, Long> {
 	
-	@Query("select c from Compound c where c.serialNumber = :serialNumber")
-	public List<Compound> findBySerialNumber(@Param("serialNumber") String serialNumber);
+	@Query("select c from Compound c where c.sampleNumber = :sampleNumber")
+	public List<Compound> findBySampleNumber(@Param("sampleNumber") String sampleNumber);
 /*	
 	// Not searching by multiple attributes atm
-	@Query("select c from Compound c where c.serialNumber = :serialNumber or c.smiles = :smiles")
-	public List<Compound> findBySerialNumberAndSmiles(String serialNumber, String smiles);
+	@Query("select c from Compound c where c.sampleNumber = :sampleNumber or c.smiles = :smiles")
+	public List<Compound> findBySampleNumberAndSmiles(String sampleNumber, String smiles);
 */
 
 		

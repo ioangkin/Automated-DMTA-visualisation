@@ -45,8 +45,8 @@ public class CompoundService {
 		return compoundRepository.findAll(pageable);
 	}
 	
-	public List<Compound> getCompoundsBySerialNumber(String serialNumber) {
-		return compoundRepository.findBySerialNumber(serialNumber);
+	public List<Compound> getCompoundsBySampleNumber(String sampleNumber) {
+		return compoundRepository.findBySampleNumber(sampleNumber);
 	}
 	
 	
@@ -64,8 +64,8 @@ public class CompoundService {
 	}
 
 /* Not needed for now as smiles is not used
-  	public List<Compound> getCompoundByAnyAttrib(String serialNumber, String smiles) {
-		return compoundRepository.findBySerialNumberOrSmiles(serialNumber, Smiles);
+  	public List<Compound> getCompoundByAnyAttrib(String sampleNumber, String smiles) {
+		return compoundRepository.findBySampleNumberOrSmiles(sampleNumber, Smiles);
 	}
 */
 }

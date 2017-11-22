@@ -176,7 +176,7 @@ public class CompoundRestService {
 	public List<Compound> search(@DefaultValue("and") @QueryParam("op") String op, @QueryParam("compoundId") String compoundId, @QueryParam("smile") String smile) throws Exception {
 		logger.debug("GET: search for compounds: compoundiD="+compoundId+" "+op+" smile="+smile);
 		if ("and".equalsIgnoreCase(op)) {
-			return compoundService.getCompoundsBySerialNumber(sn)
+			return compoundService.getCompoundsBySampleNumber(sn)
 			return compoundService.getCompoundByAnyAttrib(compoundId, smile);
 		} else {
 			throw new Exception("Unknown operator");
@@ -189,9 +189,9 @@ public class CompoundRestService {
 	@GET
 	@Path("/search")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public List<Compound> search(@QueryParam("serialNumber") String serialNumber) throws Exception {
-		logger.debug("GET: search for compounds: serialNumber="+serialNumber);
-		return compoundService.getCompoundsBySerialNumber(serialNumber);
+	public List<Compound> search(@QueryParam("sampleNumber") String sampleNumber) throws Exception {
+		logger.debug("GET: search for compounds: sampleNumber="+sampleNumber);
+		return compoundService.getCompoundsBySampleNumber(sampleNumber);
 	}
 
 	@PUT

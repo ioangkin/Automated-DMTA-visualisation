@@ -26,12 +26,12 @@ public class AppInitializer {
 		compoundRepository.deleteAll();		//Comment this out to keep old data
 		
 		Compound c1 = new Compound();
-		c1.setSerialNumber("001");
+		c1.setSampleNumber("001");
 //		c1.setSMILES("SMILEA001");
 		compoundRepository.save(c1);
 		
 		Compound c2 = new Compound();
-		c2.setSerialNumber("002");
+		c2.setSampleNumber("002");
 //		p2.setLastName("SMILEA002");
 		compoundRepository.save(c2);
 		

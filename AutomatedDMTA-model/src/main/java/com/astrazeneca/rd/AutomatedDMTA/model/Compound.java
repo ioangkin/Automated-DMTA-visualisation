@@ -35,7 +35,7 @@ public class Compound {
 	
 	@Column()
 	@NotNull
-	private String serialNumber;
+	private String sampleNumber;
 
 	@Column()
 	@NotNull
@@ -66,17 +66,17 @@ public class Compound {
 	//Note: Can live without a constructor, but its a good practice to have at least basic ones, depending on the default attributes
 	public Compound() {}
 	
-	public Compound(String serialNumber) {
-		this.serialNumber = serialNumber;
+	public Compound(String sampleNumber) {
+		this.sampleNumber = sampleNumber;
 	}
 	
-	public Compound(String serialNumber, String smiles) {
-		this.serialNumber = serialNumber;
+	public Compound(String sampleNumber, String smiles) {
+		this.sampleNumber = sampleNumber;
 		this.smiles = smiles;
 	}
 	
-	public Compound(String serialNumber, String smiles, byte[] structureGraph) {
-		this.serialNumber = serialNumber;
+	public Compound(String sampleNumber, String smiles, byte[] structureGraph) {
+		this.sampleNumber = sampleNumber;
 		this.smiles = smiles;
 		this.structureGraph = structureGraph;
 	}
@@ -89,12 +89,12 @@ public class Compound {
 		this.id = id;
 	}
 
-	public String getSerialNumber() {
-		return serialNumber;
+	public String getSampleNumber() {
+		return sampleNumber;
 	}
 	
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
+	public void setSampleNumber(String sampleNumber) {
+		this.sampleNumber = sampleNumber;
 	}
 
 	public String getSmiles() {
@@ -151,7 +151,7 @@ public class Compound {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Compound [");
-		sb.append("ID : ").append(id).append(", Compound Id : ").append(serialNumber).append(", Smiles : ").append(smiles).
+		sb.append("ID : ").append(id).append(", Compound Id : ").append(sampleNumber).append(", Smiles : ").append(smiles).
 			append("]");
 		return sb.toString();
 	}

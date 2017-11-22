@@ -33,7 +33,7 @@ public class CompoundsServiceTest extends AbstractTransactionalJUnit4SpringConte
 		
 		Compound c = new Compound();
 		
-		c.setSerialNumber(sn);
+		c.setSampleNumber(sn);
 		service.saveCompound(c);
 		
 		int newCount = service.getAllCompounds().size();
@@ -57,7 +57,7 @@ public class CompoundsServiceTest extends AbstractTransactionalJUnit4SpringConte
 		assertTrue(compounds.size() == 1);
 		
 		Compound c = compounds.get(0);
-		assertTrue("Test".equals(c.getSerialNumber()));
+		assertTrue("Test".equals(c.getSampleNumber()));
 		Compound c1 = service.getCompoundById(c.getId());
 		assertNotNull(c1);
 		
@@ -75,12 +75,12 @@ public class CompoundsServiceTest extends AbstractTransactionalJUnit4SpringConte
 		assertTrue(compounds.size() == 1);
 
 		Compound c = compounds.get(0);
-		c.setSerialNumber("TestUpdated");
+		c.setSampleNumber("TestUpdated");
 		service.saveCompound(c);
 		
 		compounds = service.getAllCompounds();
 		c = compounds.get(0);
-		assertTrue("TestUpdated".equals(c.getSerialNumber()));
+		assertTrue("TestUpdated".equals(c.getSampleNumber()));
 		compoundRepository.deleteAll();
 	}
 	

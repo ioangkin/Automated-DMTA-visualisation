@@ -9,15 +9,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.log4j.chainsaw.Main;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 
-//@PropertySource("classpath:mailAuth.properties") //Check it out for file location properties
-//file properties in: src/main/resources/mailAuth.properties
+@PropertySource("classpath:variable.properties") //Useful for file location properties. File in: AutomatedDMTA.servicesrc/main/resources/variable.properties
 
 public class Scheduler {
+	
+	// Values picked up from 'AutomatedDMTA.servicesrc/main/resources/variable.properties' file
+	final private String backlog_File_location;
+	final private String design_File_location;
+	final private String synthesis_File_location;
+	final private String purification_File_location;
+	final private String testing_File_location;
+	final private String LineGraph_File_location;
+	
+	
+	final private String sampleNumber;      // Value Needed for the smile
+	final private String smile;             // Value Needed for the smile_Web_Link
+	final private String smile_Web_Link;    // Value Needed for the StructureGraph_file_Web_location
+	final private String StructureGraph_file_Web_location;
 	
 	
 	/**
@@ -26,7 +40,14 @@ public class Scheduler {
 	 * 'SchedulerShutDown.java' to shut down any quartz threads when quit. 
 	 * 
 	 */
-	@Scheduled(cron = "0 30 12 * * ?") //Change the time to rn every 5' instead of at 12:30
+	/*
+	 * Cron sub-expressions: Seconds, Minutes, Hours, Day-of-Month, Month, Day-of-Week, Year (optional field).
+	 * The ‘/’ character can be used to specify increments to values. For example, if you put ‘0/15’ in the Minutes field,
+	 * it means ‘every 15th minute of the hour, starting at minute zero’. If you used ‘3/20’ in the Minutes field,
+	 * it would mean ‘every 20th minute of the hour, starting at minute three’ - or in other words it is the same as
+	 * specifying ‘3,23,43’ in the Minutes field.
+	 */
+	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
 	public void scheduleJob() {
 		
 		//call wrttingImage and readFiles methods, ie: setGraph(writtingImage(filelocation))
@@ -37,7 +58,7 @@ public class Scheduler {
 	 * Read files from the provided location and extract info from these as 'keyfiles'.
 	 */
 	
-	//get metadata or compound.serialNumber from files
+	//get metadata or compound.sampleNumber from files
 	public void readFiles(String location) {
 		File folder = new File(location);
 		for (final File fileEntry : folder.listFiles()) {
