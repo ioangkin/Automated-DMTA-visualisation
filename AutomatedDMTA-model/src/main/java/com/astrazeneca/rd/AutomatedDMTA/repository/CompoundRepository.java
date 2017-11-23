@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
-import com.astrazeneca.rd.AutomatedDMTA.model.Person;
 
 /**
  * @author klfl423
