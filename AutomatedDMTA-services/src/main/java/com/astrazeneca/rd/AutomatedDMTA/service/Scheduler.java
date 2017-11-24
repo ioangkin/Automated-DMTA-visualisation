@@ -1,9 +1,12 @@
 package com.astrazeneca.rd.AutomatedDMTA.service;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,24 +71,48 @@ public class Scheduler {
 	 * 
 	 */
 	
-
-	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
+	//This is the "cycling engine", going through folders looking for new or changes in compounds
+	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5' //TODO: Manu: can I set this with a variable in the external file?
 	public void scheduleJob() {
+				
+		//Monitor systme's health (whether is still operating)
+		boolean crashed = true;  
 		
-		//The tasks that need to be performed
+		//Scan backlog folder for any new compounds
+		//Call readBacklog(backlog_File_Path) to fill any new compounds to the DB
 		
-		//Helps monitoring systme's health (whether its crashed)
-		private boolean crashed = true;  
+		//create compounds in DB
+		//Add sampleNumber and SMILES strings to respective compound
+		//Set compounds' Stage to backlog
+		//Build SMILES URL encoded string
+		//Retrieve structureGraph from web using URL ecnoded SMILES
+		//Add structureGraph to DB
 		
-		//Read file in Backlog_File_Path
-		//TODO: Ask customer, do we read this file more than once during a run?
+		//Read file in Backlog folder
 		public void readBacklog(String filePath) {
+			String backlog_Expected_FileName = FilenameUtils.getName(filePath);
 			File backlog = new File(filePath);
 			for (final File fileEntry : backlog.listFiles()) {
-				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
+				if (FilenameUtils.getName(fileEntry.getName()) == backlog_Expected_FileName ) //We have the right file
 				{	
-					//TODO: Extract *possibly* multiple compound sampleNumbers and other data, such as SMILES
-					//Expecting customer's details on what data is to be extracted
+					//Go through each line of the txt file and store them as individual entries in a list
+					BufferedReader in = new BufferedReader(new FileReader(backlog_Expected_FileName));
+					String entryLine; //Each individual compound's data is laid in a single line.
+					List<String> compoundsList = new ArrayList<String>();
+					//readLine reads a line of text, where a line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'), or a carriage return followed immediately by a linefeed.
+					//TODO: Confirm with customer that lines have line-termination characters and that there will not be empty lines (I think BufferedReader considers epty lines as end of file?)
+					while((entryLine = in.readLine()) != null){
+					    compoundsList.add(entryLine);
+					}
+					//Convert the list to a fixed size array
+					String[] compoundArr = compoundsList.toArray(new String[0]);
+					
+					//Go through each row, extracting individual data, such as sampleNumber and SMILES
+					for (final String compounLine : compoundArr) {
+						//Expecting customer's details on how data is arranged in the txt file
+						String extracted_smiles = compounLine.substring(0, compounLine.indexOf(" ")); //create a substring with the first word in compounLine
+						String extracted_sn = "sn" + compounLine.substring(compounLine.indexOf(" sn")); //create a substring starting with "sn" followed with anything starting at " sn" in compounLine
+					}
 					
 					//TODO: iterate through found compounds
 						//TODO: compound i = new Compound;
@@ -123,7 +150,7 @@ public class Scheduler {
 					//TODO: Decide, if should wait for 5' after this 
 					}
 				}
-			}	
+
 		
 		//Read file in synthesis_File_Path
 		public void readSyntheis(String filePath) {
@@ -258,7 +285,6 @@ public class Scheduler {
 						 
 				 }
 			 }
-	}
 	
 	
 /*	//Reads image form file and converts to byte[] that can be stored into DB
