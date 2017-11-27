@@ -1,15 +1,22 @@
 package com.astrazeneca.rd.AutomatedDMTA.service;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 import org.apache.log4j.chainsaw.Main;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,64 +28,61 @@ import org.springframework.stereotype.Component;
 import org.apache.commons.io.FilenameUtils; //How top import it? Maven dependences?
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
+import com.astrazeneca.rd.AutomatedDMTA.repository.CompoundRepository;
 import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
-import com.astrazeneca.rd.AutomatedDMTA.service.Scan;
+//import com.astrazeneca.rd.AutomatedDMTA.service.Scheduler;
 
-
-@Component("Scheduler")
-@PropertySource("classpath:variable.properties") //Useful for file location properties. File in: AutomatedDMTA.servicesrc/main/resources/variable.properties
-
-public class Scheduler {
+	public class Scan {
 	
-	// Values picked up from 'AutomatedDMTA.servicesrc/main/resources/variable.properties' file
-	@Value("${backlog_File_Path}")
-	final private String backlog_File_Path;
-	@Value("${design_File_Path}")
-	final private String design_File_Path;
-	@Value("${synthesis_File_Path}")
-	final private String synthesis_File_Path;
-	@Value("${purification_File_Path}")
-	final private String purification_File_Path;
-	@Value("${testing_File_Path}")
-	final private String testing_File_Path;
-	@Value("${LineGraph_File_Path}")
-	final private String LineGraph_File_Path;
-	
-	// Ensures only one job is running concurrently
-	private static boolean locked=false;
-	
-	//Is system still running?
-	private static boolean crashed = true;  
-	
-	public void setcrashed(boolean set) {
-		crashed = set;
-	}
-	
-	//Return state of systme
-	public boolean getcrashed() {
-		return crashed;
-	}
-	
-	/*
-	 * A Cron Expressions:Seconds, Minutes, Hours, Day-of-Month, Month, Day-of-Week, Year (optional field).
-	 * The ‘/’ character can be used to specify increments to values. For example, if you put ‘0/15’ in the Minutes field,
-	 * it means ‘every 15th minute of the hour, starting at minute zero’. If you used ‘3/20’ in the Minutes field,
-	 * it would mean ‘every 20th minute of the hour, starting at minute three’ - or in other words it is the same as
-	 * specifying ‘3,23,43’ in the Minutes field.
-	 * 
-	 * source: http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html
-	 * additional: https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
-	 * 
-	 */
-	
-	//This is the "cycling engine", going through folders looking for new or changes in compounds
-	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5' //TODO: Manu: it would be cool if we can set this with a variable in the external file?
-	public void scheduleJob() {		
-
-		
 		//Read file in Backlog folder
-		Scan.readBacklog(backlog_File_Path);
-		
+		public void readBacklog(String filePath) {
+			String backlog_Expected_FileName = FilenameUtils.getName(filePath);
+			File backlog = new File(filePath);
+			for (final File fileEntry : backlog.listFiles()) {
+				if (FilenameUtils.getName(fileEntry.getName()) == backlog_Expected_FileName ) //We have the right file
+				{	
+					//Go through each line of the txt file and store them as individual entries in a list
+					BufferedReader in = new BufferedReader(new FileReader(backlog_Expected_FileName));
+					String compoundLine; //Each individual compound's data is laid in a single line.
+					List<String> compoundsList = new ArrayList<String>();
+					//add all compound lines in a list. readLine reads a line of text, where a line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'), or a carriage return followed immediately by a linefeed.
+					//TODO: Confirm with customer that lines have line-termination characters
+					//TODO: Manu: Not sure how buffereader reacts with empty line, ie: returns something or null? if null, then an empty line will stop the reading
+					while((compoundLine = in.readLine()) != null){
+					    compoundsList.add(compoundLine);
+					}
+					//Convert the list of compounds into a fixed size array
+					String[] compoundArr = compoundsList.toArray(new String[compoundsList.size()]);
+					
+					//Iterate through array, extracting individual data such as sampleNumber and SMILES
+					//TODO: Expecting customer's details on how data is arranged in the txt file
+					for (String compounLine : compoundArr) {
+						String extracted_smiles = compounLine.substring(0, compounLine.indexOf(" ")); //create a substring with the first word in compounLine
+						String extracted_sn = compounLine.substring(compounLine.indexOf(" sn") + 1); //create a substring with the first word starting with " sn" (just remove the front space)
+						
+					Compound c = new Compound();
+					c.setSampleNumber(extracted_sn);
+					c.setStage(StageType.BACKLOG);
+					c.setSmiles(extracted_smiles);
+					
+					/*  For the Structure graph the SMILES string must first be encoded into URL format, see:
+					Class URLEncoder: https://docs.oracle.com/javase/7/docs/api/java/net/URLEncoder.html,
+					And for details:  https://stackoverflow.com/questions/14357970/java-library-for-url-encoding-if-necessary-like-a-browser
+					then, embed it here: http://compounds.rd.astrazeneca.net/resources/structure/toimage/[SMILES_IN_URL_ENCODING_FORMAT]?inputFormat=SMILES&appid=pipelinepilot
+				`	*/
+					//A URL object containing concatenated the pipelinepilot AZ's URL for building a graphic representaton of compound structure and the ocmpound's smiles
+					String structureGraph_file_with_smiles_Web_Path = "http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(extracted_smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot";
+					//TODO: Manu: Is it a good idea to save the URL in the db as a property for each compound
+					URL structureGraphUrl = new URL(structureGraph_file_with_smiles_Web_Path);
+					//TODO: Solve conflict with byte[] vs Image variable
+					//Manu: Can we use image and ImageIO methods instead of byte[] and not re-invent the wheel? ;)
+					Image structureGraph = ImageIO.read(structureGraphUrl);
+					c.setStructureGraph(structureGraph);
+						}
+					}
+				}
+			}
+
 		//Read file in design_File_Path
 		public void readDesign(String filePath) {
 			File design = new File(filePath);
