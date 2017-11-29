@@ -1,4 +1,4 @@
-package com.astrazeneca.rd.AutomatedDMTA.service;
+/*package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 //https://commons.apache.org/proper/commons-io/javadocs/api-release/index.html?org/apache/commons/io/FilenameUtils.html
-import org.apache.commons.io.FilenameUtils; //How top import it? Maven dependences?
+import org.apache.commons.io.FilenameUtils; //How to import it? Maven dependences?
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
 import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
@@ -59,7 +59,7 @@ public class Scheduler {
 		return crashed;
 	}
 	
-	/*
+	
 	 * A Cron Expressions:Seconds, Minutes, Hours, Day-of-Month, Month, Day-of-Week, Year (optional field).
 	 * The ‘/’ character can be used to specify increments to values. For example, if you put ‘0/15’ in the Minutes field,
 	 * it means ‘every 15th minute of the hour, starting at minute zero’. If you used ‘3/20’ in the Minutes field,
@@ -69,7 +69,7 @@ public class Scheduler {
 	 * source: http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html
 	 * additional: https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
 	 * 
-	 */
+	 
 	
 	//This is the "cycling engine", going through folders looking for new or changes in compounds
 	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5' //TODO: Manu: it would be cool if we can set this with a variable in the external file?
@@ -171,12 +171,12 @@ public class Scheduler {
 	  long length = file.length();	  // Get the size of the file
 	  // You cannot create an array using a long type. It needs to be an int type.
 	  
-      /* Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
+       Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
 	  if (length > Integer.MAX_VALUE)
 	  {
 	    // File is too large
 	  }
-	  */
+	  
 	  
 	  // Create the byte array to hold the data
 	  byte[] imageBytes = new byte[(int) length];
@@ -236,7 +236,7 @@ public class Scheduler {
 			 }
 	
 	
-/*	//Reads image form file and converts to byte[] that can be stored into DB
+	//Reads image form file and converts to byte[] that can be stored into DB
 	private static byte[] writtingImage(String fileLocation) {
 	      System.out.println("file lcation is"+fileLocation);
 	     IOManager manager=new IOManager();
@@ -246,5 +246,6 @@ public class Scheduler {
 	        } catch (IOException e) {
 	        }
 	        return null;
-	    }*/
+	    }
 }
+*/

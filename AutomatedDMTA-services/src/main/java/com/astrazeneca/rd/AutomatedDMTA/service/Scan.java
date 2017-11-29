@@ -1,4 +1,4 @@
-package com.astrazeneca.rd.AutomatedDMTA.service;
+/*package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -35,7 +35,7 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 	public class Scan {
 	
 		//Read file in Backlog folder
-		public void readBacklog(String filePath) {
+		public String readBacklog(String filePath) {
 			String backlog_Expected_FileName = FilenameUtils.getName(filePath);
 			File backlog = new File(filePath);
 			for (final File fileEntry : backlog.listFiles()) {
@@ -65,11 +65,11 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 					c.setStage(StageType.BACKLOG);
 					c.setSmiles(extracted_smiles);
 					
-					/*  For the Structure graph the SMILES string must first be encoded into URL format, see:
+					  For the Structure graph the SMILES string must first be encoded into URL format, see:
 					Class URLEncoder: https://docs.oracle.com/javase/7/docs/api/java/net/URLEncoder.html,
 					And for details:  https://stackoverflow.com/questions/14357970/java-library-for-url-encoding-if-necessary-like-a-browser
 					then, embed it here: http://compounds.rd.astrazeneca.net/resources/structure/toimage/[SMILES_IN_URL_ENCODING_FORMAT]?inputFormat=SMILES&appid=pipelinepilot
-				`	*/
+				`	
 					//A URL object containing concatenated the pipelinepilot AZ's URL for building a graphic representaton of compound structure and the ocmpound's smiles
 					String structureGraph_file_with_smiles_Web_Path = "http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(extracted_smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot";
 					//TODO: Manu: Is it a good idea to save the URL in the db as a property for each compound
@@ -175,12 +175,12 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 	  long length = file.length();	  // Get the size of the file
 	  // You cannot create an array using a long type. It needs to be an int type.
 	  
-      /* Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
+       Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
 	  if (length > Integer.MAX_VALUE)
 	  {
 	    // File is too large
 	  }
-	  */
+	  
 	  
 	  // Create the byte array to hold the data
 	  byte[] imageBytes = new byte[(int) length];
@@ -240,7 +240,7 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 			 }
 	
 	
-/*	//Reads image form file and converts to byte[] that can be stored into DB
+	//Reads image form file and converts to byte[] that can be stored into DB
 	private static byte[] writtingImage(String fileLocation) {
 	      System.out.println("file lcation is"+fileLocation);
 	     IOManager manager=new IOManager();
@@ -250,5 +250,6 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 	        } catch (IOException e) {
 	        }
 	        return null;
-	    }*/
+	    }
 }
+*/

@@ -6,14 +6,14 @@ angular.module('myApp', ['myApp.who', 'myApp.people', 'myApp.services'])
 
 	.config(function($routeProvider, $locationProvider) {
 		$locationProvider.html5Mode(true);
-		$routeProvider.when('/home', {templateUrl: 'parts/home.html'});
+		$routeProvider.when('/home', {templateUrl: 'parts/home_compound.html'});
 		$routeProvider.when('/who', {templateUrl: 'parts/who.html'});
 		$routeProvider.when('/people', {templateUrl: 'parts/people.html'});
 		$routeProvider.otherwise({redirectTo: '/home'});
 	})
 
 	.controller('IndexCtrl', function($rootScope, $scope, $location, alertService) {
-		$scope.title = 'RDI Web Application';
+		$scope.title = 'Automated DMTA visulaisation (vADMTA) Dashboard';
 		$scope.version = '0.1';
 
 		$scope.isRoute = function(route) {
