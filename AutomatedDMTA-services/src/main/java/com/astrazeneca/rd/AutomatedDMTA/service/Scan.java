@@ -1,4 +1,4 @@
-/*package com.astrazeneca.rd.AutomatedDMTA.service;
+package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -25,7 +25,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 //https://commons.apache.org/proper/commons-io/javadocs/api-release/index.html?org/apache/commons/io/FilenameUtils.html
-import org.apache.commons.io.FilenameUtils; //How top import it? Maven dependences?
+import org.apache.commons.io.FilenameUtils;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
 import com.astrazeneca.rd.AutomatedDMTA.repository.CompoundRepository;
@@ -35,7 +35,7 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 	public class Scan {
 	
 		//Read file in Backlog folder
-		public String readBacklog(String filePath) {
+		public static String readBacklog(String filePath) {
 			String backlog_Expected_FileName = FilenameUtils.getName(filePath);
 			File backlog = new File(filePath);
 			for (final File fileEntry : backlog.listFiles()) {
@@ -47,8 +47,9 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 					List<String> compoundsList = new ArrayList<String>();
 					//add all compound lines in a list. readLine reads a line of text, where a line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'), or a carriage return followed immediately by a linefeed.
 					//TODO: Confirm with customer that lines have line-termination characters
-					//TODO: Manu: Not sure how buffereader reacts with empty line, ie: returns something or null? if null, then an empty line will stop the reading
-					while((compoundLine = in.readLine()) != null){
+					
+					//Populate 
+					while((compoundLine = in.readLine()) != null | !(compoundLine.trim()).isEmpty()){
 					    compoundsList.add(compoundLine);
 					}
 					//Convert the list of compounds into a fixed size array
@@ -60,20 +61,20 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 						String extracted_smiles = compounLine.substring(0, compounLine.indexOf(" ")); //create a substring with the first word in compounLine
 						String extracted_sn = compounLine.substring(compounLine.indexOf(" sn") + 1); //create a substring with the first word starting with " sn" (just remove the front space)
 						
+					//Create a new compound with basic properties
 					Compound c = new Compound();
 					c.setSampleNumber(extracted_sn);
 					c.setStage(StageType.BACKLOG);
 					c.setSmiles(extracted_smiles);
 					
-					  For the Structure graph the SMILES string must first be encoded into URL format, see:
-					Class URLEncoder: https://docs.oracle.com/javase/7/docs/api/java/net/URLEncoder.html,
-					And for details:  https://stackoverflow.com/questions/14357970/java-library-for-url-encoding-if-necessary-like-a-browser
-					then, embed it here: http://compounds.rd.astrazeneca.net/resources/structure/toimage/[SMILES_IN_URL_ENCODING_FORMAT]?inputFormat=SMILES&appid=pipelinepilot
-				`	
-					//A URL object containing concatenated the pipelinepilot AZ's URL for building a graphic representaton of compound structure and the ocmpound's smiles
-					String structureGraph_file_with_smiles_Web_Path = "http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(extracted_smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot";
-					//TODO: Manu: Is it a good idea to save the URL in the db as a property for each compound
-					URL structureGraphUrl = new URL(structureGraph_file_with_smiles_Web_Path);
+					/* Get the structure graph image from the web. Steps:
+					* 1. Encode the SMILES string into URL format, see: Java URLEncode
+					* 2. embed it in: http://compounds.rd.astrazeneca.net/resources/structure/toimage/[SMILES_IN_URL_ENCODING_FORMAT]?inputFormat=SMILES&appid=pipelinepilot
+					*/
+					//A URL object containing the complete URL for building the compound's structure
+					String structureGraph_Web_Path = "http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(extracted_smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot";
+					//TODO: consider saving the URL as a compound's property
+					URL structureGraphUrl = new URL(structureGraph_Web_Path);
 					//TODO: Solve conflict with byte[] vs Image variable
 					//Manu: Can we use image and ImageIO methods instead of byte[] and not re-invent the wheel? ;)
 					Image structureGraph = ImageIO.read(structureGraphUrl);
@@ -84,7 +85,7 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 			}
 
 		//Read file in design_File_Path
-		public void readDesign(String filePath) {
+		public static void readDesign(String filePath) {
 			File design = new File(filePath);
 			for (final File fileEntry : design.listFiles()) {
 				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
@@ -106,7 +107,7 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 
 		
 		//Read file in synthesis_File_Path
-		public void readSyntheis(String filePath) {
+		public static void readSynthesis(String filePath) {
 			File synthesis = new File(filePath);
 			for (final File fileEntry : synthesis.listFiles()) {
 				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
@@ -125,7 +126,7 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 			}
 		
 		//Read file in purification_File_Path
-		public void readPurification(String filePath) {
+		public static void readPurification(String filePath) {
 			File purification = new File(filePath);
 			for (final File fileEntry : purification.listFiles()) {
 				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
@@ -144,7 +145,7 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 			}
 		
 		//Read file in testing_File_Path
-		public void readTesting(String filePath) {
+		public static void readTesting(String filePath) {
 			File testing = new File(filePath);
 			for (final File fileEntry : testing.listFiles()) {
 				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
@@ -252,4 +253,3 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 	        return null;
 	    }
 }
-*/

@@ -1,4 +1,4 @@
-/*package com.astrazeneca.rd.AutomatedDMTA.service;
+package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,8 +17,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-//https://commons.apache.org/proper/commons-io/javadocs/api-release/index.html?org/apache/commons/io/FilenameUtils.html
-import org.apache.commons.io.FilenameUtils; //How to import it? Maven dependences?
+import org.apache.commons.io.FilenameUtils;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
 import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
@@ -59,7 +58,7 @@ public class Scheduler {
 		return crashed;
 	}
 	
-	
+	/**
 	 * A Cron Expressions:Seconds, Minutes, Hours, Day-of-Month, Month, Day-of-Week, Year (optional field).
 	 * The ‘/’ character can be used to specify increments to values. For example, if you put ‘0/15’ in the Minutes field,
 	 * it means ‘every 15th minute of the hour, starting at minute zero’. If you used ‘3/20’ in the Minutes field,
@@ -69,99 +68,25 @@ public class Scheduler {
 	 * source: http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html
 	 * additional: https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
 	 * 
-	 
-	
+	 **/
+
 	//This is the "cycling engine", going through folders looking for new or changes in compounds
-	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5' //TODO: Manu: it would be cool if we can set this with a variable in the external file?
+	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
 	public void scheduleJob() {		
 
 		
-		//Read file in Backlog folder
+		//Scan through the folders, check for files and changes.
+		//TODO: Consider returning something form each call, ie: the crashed boolean or a confirmation
 		Scan.readBacklog(backlog_File_Path);
-		
-		//Read file in design_File_Path
-		public void readDesign(String filePath) {
-			File design = new File(filePath);
-			for (final File fileEntry : design.listFiles()) {
-				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
-				{	
-					crashed = false; //The back-end system is working
-					
-					//TODO: Extract compound name and possibly other data: Expecting customer's details on what data is to be extracted
-					
-					//TODO: if (compound exists in database) {
-					//	Compound.setStage = StageType.DESIGN;
-				Else	
-				}
-					
-					//TODO: Return data
-					
-					//TODO: Decide, if should wait for 5' after this 
-					}
-				}
-
-		
-		//Read file in synthesis_File_Path
-		public void readSyntheis(String filePath) {
-			File synthesis = new File(filePath);
-			for (final File fileEntry : synthesis.listFiles()) {
-				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
-				{	
-					crashed = false; //The back-end system is working
-					
-					//TODO: Extract compound name and possibly other data: Expecting customer's details on what data is to be extracted
-					
-					//TODO: thisCompound.setStage = StageType.SYNTHESIS;
-					
-					//TODO: Return data
-					
-					//TODO: Decide, if should wait for 5' after this 
-					}
-				}
-			}
-		
-		//Read file in purification_File_Path
-		public void readPurification(String filePath) {
-			File purification = new File(filePath);
-			for (final File fileEntry : purification.listFiles()) {
-				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
-				{
-					crashed = false; //The back-end system is working
-					
-					//TODO: Extract compound name and possibly other data: Expecting customer's details on what data is to be extracted
-					
-					//TODO: thisCompound.setStage = StageType.PURIFICATION;
-					
-					//TODO: Return data
-					
-					//TODO: Decide, if should wait for 5' after this 
-					}
-				}
-			}
-		
-		//Read file in testing_File_Path
-		public void readTesting(String filePath) {
-			File testing = new File(filePath);
-			for (final File fileEntry : testing.listFiles()) {
-				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
-				{
-					crashed = false; //The back-end system is working
-					
-					//TODO: Extract compound sampleNumbers and possibly other data: Expecting customer's details on what data is to be extracted
-					
-					//TODO: iterate through found compounds
-						//TODO: thisCompound.setStage = StageType.TESTING;
-
-					//TODO: Return data
-					
-					//TODO: Decide, if should wait for 5' after this 
-					}
-				}
-			}
-		
+		Scan.readDesign(design_File_Path);
+		Scan.readSynthesis(synthesis_File_Path);
+		Scan.readPurification(purification_File_Path);
+		Scan.readTesting(testing_File_Path);
+				
 		//call wrttingImage and readFiles methods, ie: setGraph(writtingImage(filelocation))
-
+	}
 	
+	//TODO: Manu, as per Q in Scan, why not using image and ImageIO methods instead of building new methods from scratch?
 	//Read image from file
 	public byte[] readImage(File file) throws IOException
 	{
@@ -171,7 +96,7 @@ public class Scheduler {
 	  long length = file.length();	  // Get the size of the file
 	  // You cannot create an array using a long type. It needs to be an int type.
 	  
-       Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
+      // Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
 	  if (length > Integer.MAX_VALUE)
 	  {
 	    // File is too large
@@ -248,4 +173,3 @@ public class Scheduler {
 	        return null;
 	    }
 }
-*/
