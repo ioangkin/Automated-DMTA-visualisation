@@ -2,7 +2,7 @@
   <a href="#">
     <img class="pull-left" src="img/logo-96.png" alt="Logo">
   </a>
-  <h1><span ng-bind="title">...</span><br/><small>POC stage</small></h1>
+  <h1><span ng-bind="title">...</span><br/><small>Version: POC</small></h1>
   
 <!--   <div class="jumbotron">
 		<h1></h1>
@@ -11,78 +11,114 @@
 	</div> -->
 
 	<div class="container">
-	
-		<!--1st row of 3 columns (images)  -->
-		<div class="row">
-			<div class="col-md-4">
-				<div class="thumbnail" style="border: 0px solid red;">
-					<img src="img/vadmta/arrow.png" width=70% height=70% class="rotate90" alt="Design Stage">				
+
+		<!-- Left panel -->
+		<div class="left-panel">
+			<!-- Somehow first row's last image is dropped down when container mid-width is more than 900px window-width
+			     As a work around added an additional empty row at the top-->
+<!-- 			<div class="row"></div> -->
+
+			<!-- Repeat 2nd row for troubleshooting purposes  -->
+			<div class="row" style="padding:5%;">
+				<div class="col-md-4">
+					<div class="rotate90" >
+						<img class="img-responsive"src="img/vadmta/arrow.png">
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="media">
+						<img class="img-responsive" src="img/vadmta/design.png"	data-toggle="tooltip" title="Design Stage">
+<!-- 						<div class="caption">
+							<h3>Design</h3>
+						</div> -->
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="rotate180">
+						<img class="img-responsive" src="img/vadmta/arrow.png">
+					</div>
 				</div>
 			</div>
-	
-			<div class="col-md-4">
-				<div class="thumbnail">
-					<img src="img/vadmta/design.png"  width=70% height=70% class="img-responsive" alt="Synthesis Stage">
-<!-- 					<div class="caption">
-						<h3>Design</h3>	
-					</div> -->
+
+			<!-- 2nd row of 3 columns (images)  -->
+			<div class="row">
+				<div class="col-md-4">
+					<div class="media">
+						<img class="img-responsive" src="img/vadmta/testing.png" data-toggle="tooltip" title="Testing Stage">
+<!-- 						<div class="caption">
+							<h3>Testing</h3>
+						</div> -->
+					</div>
+				</div>
+
+				<div class="col-md-4"></div>
+
+				<div class="col-md-4">
+					<div class="media">
+						<img class="img-responsive" src="img/vadmta/synthesis.png" data-toggle="tooltip" title="Synthesis Stage">
+<!--					<div class="caption">
+							<h3>Synthesis</h3>	
+						</div> -->
+					</div>
 				</div>
 			</div>
-			
-			<div class="col-md-4">
-				<div class="thumbnail">
-					<h3><img src="img/vadmta/arrow.png" width=70% height=70%  class="rotate180" alt="Purification Stage"></h3>
+
+			<!--3rd row of 3 columns (images)  -->
+			<div class="row">
+				<div class="col-md-4">
+					<div class="rotate0">
+						<img class="img-responsive"src="img/vadmta/arrow.png">
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="media">
+						<img class="img-responsive" src="img/vadmta/purification.png" data-toggle="tooltip" title="Purification Stage">
+<!--						<div class="caption">
+							<h3>Purification</h3>	
+						</div> -->
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="rotate270">
+						<img class="img-responsive" src="img/vadmta/arrow.png">
+					</div>
 				</div>
 			</div>
 		</div>
-		
-		<!-- 2nd row of 3 columns (images)  -->
-		<div class="row">
-			<div class="col-md-4">
-				<div class="thumbnail">
-					<img src="img/vadmta/testing.png"  width=50% height=50% class="img-responsive" alt="Synthesis Stage">
-<!-- 					<div class="caption">
-						<h3>Testing</h3>
-					</div> -->
-				</div>
-			</div>
-	
-			<div class="col-md-4">
-			</div>
-			
-			<div class="col-md-4">
-				<div class="thumbnail">
-					<img src="img/vadmta/synthesis.png"  width=50% height=50% class="img-responsive">
-<!-- 					<div class="caption">
-						<h3>Synthesis</h3>	
-					</div> -->
-				</div>
-			</div>
-		</div>
-		
-		<!--3rd row of 3 columns (images)  -->
-		<div class="row">
-			<div class="col-md-4">
-				<div class="thumbnail">
-					<img src="img/vadmta/arrow.png" width=70% height=70% class="rotate0" alt="Design Stage">				
-				</div>
-			</div>
-	
-			<div class="col-md-4">
-				<div class="thumbnail">
-					<img src="img/vadmta/purification.png"  width=70% height=70% class="img-responsive" alt="Synthesis Stage">
-<!-- 					<div class="caption">
-						<h3>Purification</h3>	
-					</div> -->
-				</div>
-			</div>
-			
-			<div class="col-md-4">
-				<div class="thumbnail">
-					<h3><img src="img/vadmta/arrow.png" width=70% height=70%  class="rotate270" alt="Purification Stage"></h3>
-				</div>
-			</div>
+
+		<!--Right panel  -->
+		<div class="right-panel">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>Compound</th>
+						<th>Stage</th>
+						<th>Result</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Sn1151431838</td>
+						<td>Design</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Sn1400572741</td>
+						<td>Backlog</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Sn2852429942</td>
+						<td>Finished</td>
+						<td>2.1</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
-		
+
 </section>

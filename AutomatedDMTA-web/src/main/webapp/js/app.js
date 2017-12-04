@@ -13,7 +13,7 @@ angular.module('myApp', ['myApp.who', 'myApp.people', 'myApp.services'])
 	})
 
 	.controller('IndexCtrl', function($rootScope, $scope, $location, alertService) {
-		$scope.title = 'Automated DMTA visulaisation (vADMTA) Dashboard';
+		$scope.title = 'vADMTA Dashboard';
 		$scope.version = '0.1';
 
 		$scope.isRoute = function(route) {

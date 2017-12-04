@@ -5728,6 +5728,10 @@ body.modal-open,
 }
 
 @media screen and (min-width: 768px) {
+.right-panel {
+    width: none;
+    float: none;
+	}
   .modal-dialog {
     right: auto;
     left: 50%;

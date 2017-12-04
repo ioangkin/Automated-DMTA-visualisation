@@ -2,41 +2,65 @@
 body {
   padding-top: 50px;
   padding-bottom: 20px;
-}
+  }
 section {
   margin-top: 5px;
   margin-bottom: 5px;
-}
+  }
 footer {
   margin-top: 0.5em;
   border-top: thin solid #ccc;
   padding: 0.3em 0;
-}
+  }
 
 .inline-result {
 	padding-top:7px;
-}
+	}
 
+/* Rotate the arrow image */
 .rotate90 {
   -webkit-transform:rotate(90deg);
   -moz-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   -o-transform: rotate(90deg);
   transform: rotate(90deg);
-}
-
+  }
 .rotate180 {
   -webkit-transform:rotate(180deg);
   -moz-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
   -o-transform: rotate(180deg);
   transform: rotate(180deg);
-}
-
+  }
 .rotate270 {
   -webkit-transform:rotate(270deg);
   -moz-transform: rotate(270deg);
   -ms-transform: rotate(270deg);
   -o-transform: rotate(270deg);
   transform: rotate(270deg);
+  }
+
+/* For mobile phones: */
+[class*="col-"] {
+    width: 33.33%;
+    float: left;
+}
+.left-panel {
+    padding: 7%;
+}
+
+/* For desktop: */
+@media (min-width: 700px){
+.right-panel {
+	 width: 45%;
+	 float: right;
+	}
+.left-panel {
+	margin: auto;
+	width: 40%;
+	float: left;
+	}
+.container {
+    max-width: none;
+	}
 }

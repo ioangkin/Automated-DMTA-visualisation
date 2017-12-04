@@ -1,4 +1,4 @@
-package com.astrazeneca.rd.AutomatedDMTA.service;
+/*package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -67,10 +67,10 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 					c.setStage(StageType.BACKLOG);
 					c.setSmiles(extracted_smiles);
 					
-					/* Get the structure graph image from the web. Steps:
+					 Get the structure graph image from the web. Steps:
 					* 1. Encode the SMILES string into URL format, see: Java URLEncode
 					* 2. embed it in: http://compounds.rd.astrazeneca.net/resources/structure/toimage/[SMILES_IN_URL_ENCODING_FORMAT]?inputFormat=SMILES&appid=pipelinepilot
-					*/
+					
 					//A URL object containing the complete URL for building the compound's structure
 					String structureGraph_Web_Path = "http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(extracted_smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot";
 					//TODO: consider saving the URL as a compound's property
@@ -79,6 +79,8 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 					//Manu: Can we use image and ImageIO methods instead of byte[] and not re-invent the wheel? ;)
 					Image structureGraph = ImageIO.read(structureGraphUrl);
 					c.setStructureGraph(structureGraph);
+					
+					
 						}
 					}
 				}
@@ -253,3 +255,4 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 	        return null;
 	    }
 }
+*/

@@ -1,4 +1,4 @@
-package com.astrazeneca.rd.AutomatedDMTA.service;
+/*package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -53,12 +53,12 @@ public class Scheduler {
 		crashed = set;
 	}
 	
-	//Return state of systme
+	//Return state of system
 	public boolean getcrashed() {
 		return crashed;
 	}
 	
-	/**
+	*//**
 	 * A Cron Expressions:Seconds, Minutes, Hours, Day-of-Month, Month, Day-of-Week, Year (optional field).
 	 * The ‘/’ character can be used to specify increments to values. For example, if you put ‘0/15’ in the Minutes field,
 	 * it means ‘every 15th minute of the hour, starting at minute zero’. If you used ‘3/20’ in the Minutes field,
@@ -68,7 +68,7 @@ public class Scheduler {
 	 * source: http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html
 	 * additional: https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
 	 * 
-	 **/
+	 **//*
 
 	//This is the "cycling engine", going through folders looking for new or changes in compounds
 	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
@@ -173,3 +173,4 @@ public class Scheduler {
 	        return null;
 	    }
 }
+*/
