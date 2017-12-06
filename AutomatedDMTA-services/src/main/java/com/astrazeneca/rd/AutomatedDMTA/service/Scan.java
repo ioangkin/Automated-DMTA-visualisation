@@ -1,6 +1,7 @@
-/*package com.astrazeneca.rd.AutomatedDMTA.service;
+package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Image;
 import java.io.BufferedReader;
@@ -19,6 +20,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.chainsaw.Main;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,84 +31,116 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
 import com.astrazeneca.rd.AutomatedDMTA.repository.CompoundRepository;
+import com.astrazeneca.rd.AutomatedDMTA.service.CompoundService;
 import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 //import com.astrazeneca.rd.AutomatedDMTA.service.Scheduler;
 
 	public class Scan {
+		
+		//Used for searching for individual compounds in DB
+		@Autowired
+		CompoundRepository compoundRepository;
+		/**
+		 * @return 
+		 * @throws java.lang.Exception
+		 */
 	
-		//Read file in Backlog folder
-		public static String readBacklog(String filePath) {
-			String backlog_Expected_FileName = FilenameUtils.getName(filePath);
-			File backlog = new File(filePath);
-			for (final File fileEntry : backlog.listFiles()) {
-				if (FilenameUtils.getName(fileEntry.getName()) == backlog_Expected_FileName ) //We have the right file
-				{	
-					//Go through each line of the txt file and store them as individual entries in a list
-					BufferedReader in = new BufferedReader(new FileReader(backlog_Expected_FileName));
-					String compoundLine; //Each individual compound's data is laid in a single line.
-					List<String> compoundsList = new ArrayList<String>();
-					//add all compound lines in a list. readLine reads a line of text, where a line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'), or a carriage return followed immediately by a linefeed.
-					//TODO: Confirm with customer that lines have line-termination characters
-					
+		//Extracting compound(s) from files
+		//Method that goes through lines in files and extract them in an array:
+		public String[] extractDataFromFile (String filepath) {
+			String filename = FilenameUtils.getName(filepath);
+			File file = new File(filepath);
+			for (final File fileEntry : file.listFiles()) {
+				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filepath) ) //We have the right file
+				{
+					BufferedReader bufferedReader = new BufferedReader(new FileReader(FilenameUtils.getName(filepath)));
+					String line;
+					List<String> lines = new ArrayList<String>();
 					//Populate 
-					while((compoundLine = in.readLine()) != null | !(compoundLine.trim()).isEmpty()){
-					    compoundsList.add(compoundLine);
+					//For readLine a line is considered to be terminated by any one of a line feed ('\n'), a carriage return ('\r'), or a carriage return followed immediately by a linefeed.
+					while((line = bufferedReader.readLine()) != null){
+					    lines.add(line);
 					}
-					//Convert the list of compounds into a fixed size array
-					String[] compoundArr = compoundsList.toArray(new String[compoundsList.size()]);
-					
-					//Iterate through array, extracting individual data such as sampleNumber and SMILES
-					//TODO: Expecting customer's details on how data is arranged in the txt file
-					for (String compounLine : compoundArr) {
-						String extracted_smiles = compounLine.substring(0, compounLine.indexOf(" ")); //create a substring with the first word in compounLine
-						String extracted_sn = compounLine.substring(compounLine.indexOf(" sn") + 1); //create a substring with the first word starting with " sn" (just remove the front space)
-						
-					//Create a new compound with basic properties
-					Compound c = new Compound();
-					c.setSampleNumber(extracted_sn);
-					c.setStage(StageType.BACKLOG);
-					c.setSmiles(extracted_smiles);
-					
-					 Get the structure graph image from the web. Steps:
-					* 1. Encode the SMILES string into URL format, see: Java URLEncode
-					* 2. embed it in: http://compounds.rd.astrazeneca.net/resources/structure/toimage/[SMILES_IN_URL_ENCODING_FORMAT]?inputFormat=SMILES&appid=pipelinepilot
-					
-					//A URL object containing the complete URL for building the compound's structure
-					String structureGraph_Web_Path = "http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(extracted_smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot";
-					//TODO: consider saving the URL as a compound's property
-					URL structureGraphUrl = new URL(structureGraph_Web_Path);
-					//TODO: Solve conflict with byte[] vs Image variable
-					//Manu: Can we use image and ImageIO methods instead of byte[] and not re-invent the wheel? ;)
-					Image structureGraph = ImageIO.read(structureGraphUrl);
-					c.setStructureGraph(structureGraph);
-					
-					
-						}
-					}
+					bufferedReader.close();
+					return lines.toArray(new String[lines.size()]);
 				}
+			}
+		}
+		
+		//Read file for Backlog stage (this check happens only once, unlike the other stages that are repeated)
+		public String readBacklog(String filePath) {
+			String[] compoundsdArr = extractDataFromFile(filePath);
+						
+			//Iterate through array, extracting individual data such as sampleNumber and SMILES
+			//TODO: Expecting customer's details on how data is arranged in txt file
+			for (String compoundLine : compoundsdArr) {
+				String extracted_smiles = compoundLine.substring(0, compoundLine.indexOf(" ")); //create a substring with the first word in compoundLine
+				String extracted_sn = compoundLine.substring(compoundLine.indexOf(" sn") + 1); //create a substring with the first word starting with " sn" (just remove the front space)
+				
+				//Create a new compound with basic properties
+				Compound c = new Compound();
+				c.setSampleNumber(extracted_sn);
+				c.setSmiles(extracted_smiles);
+				c.setStage(StageType.BACKLOG);
+				
+				/*
+				* Get the structure graph image from the web. Steps:
+				* 1. Encode the SMILES string into URL format, see: Java URLEncode
+				* 2. embed it in: http://compounds.rd.astrazeneca.net/resources/structure/toimage/[SMILES_IN_URL_ENCODING_FORMAT]?inputFormat=SMILES&appid=pipelinepilot
+				*/
+				
+				//A URL object containing the complete URL for building the compound's structure
+				String structureGraph_Web_Path = "http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(extracted_smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot";
+				//TODO: consider saving the URL as a compound's property
+				URL structureGraphUrl = new URL(structureGraph_Web_Path);
+				//TODO: Solve conflict with byte[] vs Image variable
+				//TODO: Manu: Can we use image and ImageIO methods instead of byte[] and not re-invent the wheel? 
+				Image structureGraph = ImageIO.read(structureGraphUrl);
+				c.setStructureGraph(structureGraph);//If above method used, should need to change data type of StructureGraph (and possibly LineGraph) into image rather than array
+				
+				CompoundService s = new CompoundService();
+				s.saveCompound(c);
+				}
+
 			}
 
 		//Read file in design_File_Path
-		public static void readDesign(String filePath) {
+		public static Compound readDesign(String filePath) {
 			File design = new File(filePath);
 			for (final File fileEntry : design.listFiles()) {
 				if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filePath) ) //We have the right file
 				{	
+					//Where can this check be? 
 					crashed = false; //The back-end system is working
 					
 					//TODO: Extract compound name and possibly other data: Expecting customer's details on what data is to be extracted
 					
-					//TODO: if (compound exists in database) {
-					//	Compound.setStage = StageType.DESIGN;
-				Else	
+					//TODO: if (compound exists in database) {Compound.setStage = StageType.DESIGN;}
+					CompoundService s = new CompoundService();
+					s.
+					
+				else	
 				}
 					
 					//TODO: Return data
-					
-					//TODO: Decide, if should wait for 5' after this 
-					}
+										}
 				}
 
+/*		public Compound find(Compound c) {
+
+			List<Compound> DBCompound = compoundRepository.findBySampleNumber(c.getSampleNumber());
+			return c
+			
+			assertTrue(fromDB.size() == 1);
+			
+			Compound k = fromDB.get(0);
+			
+			Compound pFromDB = compoundRepository.findOne(k.getId());
+			assertNotNull(pFromDB);
+			assertTrue(c.getSampleNumber() == pFromDB.getSampleNumber());
+			assertTrue(c.getSmiles() == pFromDB.getSmiles());
+			compoundRepository.deleteAll();
+		}*/
 		
 		//Read file in synthesis_File_Path
 		public static void readSynthesis(String filePath) {
@@ -178,7 +212,7 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 	  long length = file.length();	  // Get the size of the file
 	  // You cannot create an array using a long type. It needs to be an int type.
 	  
-       Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
+      //Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
 	  if (length > Integer.MAX_VALUE)
 	  {
 	    // File is too large
@@ -255,4 +289,5 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 	        return null;
 	    }
 }
-*/
+	}
+	

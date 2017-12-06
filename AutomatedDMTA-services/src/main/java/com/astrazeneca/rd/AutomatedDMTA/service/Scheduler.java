@@ -1,4 +1,4 @@
-/*package com.astrazeneca.rd.AutomatedDMTA.service;
+package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,7 +58,7 @@ public class Scheduler {
 		return crashed;
 	}
 	
-	*//**
+	/**
 	 * A Cron Expressions:Seconds, Minutes, Hours, Day-of-Month, Month, Day-of-Week, Year (optional field).
 	 * The ‘/’ character can be used to specify increments to values. For example, if you put ‘0/15’ in the Minutes field,
 	 * it means ‘every 15th minute of the hour, starting at minute zero’. If you used ‘3/20’ in the Minutes field,
@@ -68,7 +68,7 @@ public class Scheduler {
 	 * source: http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html
 	 * additional: https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
 	 * 
-	 **//*
+	 **/
 
 	//This is the "cycling engine", going through folders looking for new or changes in compounds
 	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
@@ -77,7 +77,9 @@ public class Scheduler {
 		
 		//Scan through the folders, check for files and changes.
 		//TODO: Consider returning something form each call, ie: the crashed boolean or a confirmation
+		//TODO: Consider readBacklog to run only once, not in the cycle
 		Scan.readBacklog(backlog_File_Path);
+		//TODO: If internal tasks are repeated in following methods, consider keeping only one that gets path and stage 
 		Scan.readDesign(design_File_Path);
 		Scan.readSynthesis(synthesis_File_Path);
 		Scan.readPurification(purification_File_Path);
@@ -87,7 +89,7 @@ public class Scheduler {
 	}
 	
 	//TODO: Manu, as per Q in Scan, why not using image and ImageIO methods instead of building new methods from scratch?
-	//Read image from file
+	//Read image from file to an array
 	public byte[] readImage(File file) throws IOException
 	{
 	  Logger.getLogger(Main.class.getName()).log(Level.INFO, "[Open File] " + file.getAbsolutePath());
@@ -173,4 +175,3 @@ public class Scheduler {
 	        return null;
 	    }
 }
-*/

@@ -11,9 +11,6 @@ import org.springframework.data.repository.query.Param;
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
 
 /**
- * @author klfl423
- * 
- * Compound model class
  *
  */
 
