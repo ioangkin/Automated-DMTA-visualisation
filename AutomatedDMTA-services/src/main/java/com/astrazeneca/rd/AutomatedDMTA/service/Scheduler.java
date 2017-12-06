@@ -29,7 +29,7 @@ import com.astrazeneca.rd.AutomatedDMTA.service.Scan;
 
 public class Scheduler {
 	
-	// Values picked up from 'AutomatedDMTA.servicesrc/main/resources/variable.properties' file
+	// Values picked up from 'AutomatedDMTA.services/src/main/resources/variable.properties' file
 	@Value("${backlog_File_Path}")
 	final private String backlog_File_Path;
 	@Value("${design_File_Path}")
