@@ -15,144 +15,173 @@ import javax.persistence.EnumType;
 /**
  * @author klfl423
  * 
- * Compound model Object class
+ *         Compound model Object class
  *
  */
 @Entity
 @Table
-public class Compound {
+public class Compound
+{
 
-	//Automatically generated ID for JPA's
+	// Automatically generated ID for JPA's
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private Long		id;
 
-	//Note: Stages are comparable, see STageTypeTest.java and enum methods: stage.ordinal() and compareTo()
+	// Note: Stages are comparable, see STageTypeTest.java and enum methods:
+	// stage.ordinal() and compareTo()
 	@Column()
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private StageType stage;
-	
-	@Column()
-	@NotNull
-	private String sampleNumber;
+	private StageType	stage;
 
 	@Column()
 	@NotNull
-	private String smiles;
+	private String		sampleNumber;
+
+	@Column()
+	@NotNull
+	private String		smiles;
 
 	@Column()
 	@Lob
-	private byte[] lineGraph;
-/*  for set & get methods see: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types */
-	
-	//this is fetched from http://compounds.rd.astrazeneca.net/resources/structure/toimage/YOUR_SMILES_HERE?inputFormat=SMILES&appid=pipelinepilot using SMILES
-	@Column()
-	@Lob
-	@NotNull
-	private byte[] structureGraph;
-	
+	private byte[]		lineGraph;
 	/*
-	* Note: A compound is completed either when passed the test stage and has a lineGraph or failed somewhere during the DMTA cycle.
-	* requirements are not set yet on what is causing failure and this can't be monitored
-	*/
+	 * for set & get methods see:
+	 * https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types
+	 */
+
+	// this is fetched from
+	// http://compounds.rd.astrazeneca.net/resources/structure/toimage/YOUR_SMILES_HERE?inputFormat=SMILES&appid=pipelinepilot using SMILES
 	@Column()
-	private boolean completed = false;
-	
-	//When stage == StageType.TESTING
+	@Lob
+	@NotNull
+	private byte[]		structureGraph;
+
+	/*
+	 * Note: A compound is completed either when passed the test stage and has a
+	 * lineGraph or failed somewhere during the DMTA cycle. requirements are not
+	 * set yet on what is causing failure and this can't be monitored
+	 */
 	@Column()
-	private String result;
-		
-	//Note: Can live without a constructor, but its a good practice to have at least basic ones, depending on the default attributes
-	public Compound() {}
-	
-	public Compound(String sampleNumber) {
+	private boolean		completed	= false;
+
+	// When stage == StageType.TESTING
+	@Column()
+	private String		result;
+
+	// Note: Can live without a constructor, but its a good practice to have at
+	// least basic ones, depending on the default attributes
+	public Compound()
+	{
+	}
+
+	public Compound(String sampleNumber)
+	{
 		this.sampleNumber = sampleNumber;
 	}
-	
-	public Compound(String sampleNumber, String smiles) {
+
+	public Compound(String sampleNumber, String smiles)
+	{
 		this.sampleNumber = sampleNumber;
 		this.smiles = smiles;
 	}
-	
-	public Compound(String sampleNumber, String smiles, byte[] structureGraph) {
+
+	public Compound(String sampleNumber, String smiles, byte[] structureGraph)
+	{
 		this.sampleNumber = sampleNumber;
 		this.smiles = smiles;
 		this.structureGraph = structureGraph;
 	}
-	
-	public Long getId() {
+
+	public Long getId()
+	{
 		return id;
 	}
-	
-	public void setId(Long id) {
+
+	public void setId(Long id)
+	{
 		this.id = id;
 	}
 
-	public String getSampleNumber() {
+	public String getSampleNumber()
+	{
 		return sampleNumber;
 	}
-	
-	public void setSampleNumber(String sampleNumber) {
+
+	public void setSampleNumber(String sampleNumber)
+	{
 		this.sampleNumber = sampleNumber;
 	}
 
-	public String getSmiles() {
+	public String getSmiles()
+	{
 		return smiles;
 	}
-	
-	public void setSmiles(String smiles) {
+
+	public void setSmiles(String smiles)
+	{
 		this.smiles = smiles;
 	}
-	
-	public byte[] getLineGraph() {
+
+	public byte[] getLineGraph()
+	{
 		return lineGraph;
 	}
 
-	//Todo: Lookup setter for Blob
-	//for the folder lookup: retrieve files from window share
-	public void setLineGraph(byte[] lineGraph) {
+	// Todo: Lookup setter for Blob
+	// for the folder lookup: retrieve files from window share
+	public void setLineGraph(byte[] lineGraph)
+	{
 		this.lineGraph = lineGraph;
 	}
 
-	public byte[] getStructureGraph() {
+	public byte[] getStructureGraph()
+	{
 		return structureGraph;
 	}
 
-	public void setStructureGraph(byte[] structureGraph) {
+	public void setStructureGraph(byte[] structureGraph)
+	{
 		this.structureGraph = structureGraph;
 	}
-	
-	public boolean getCompleted() {
+
+	public boolean getCompleted()
+	{
 		return completed;
 	}
 
-	public void setCompleted(Boolean completed) {
+	public void setCompleted(Boolean completed)
+	{
 		this.completed = completed;
 	}
-	
-	public String getResult() {
+
+	public String getResult()
+	{
 		return result;
 	}
-	
-	public void setResult(String result) {
+
+	public void setResult(String result)
+	{
 		this.result = result;
 	}
-	
-    public StageType getStage() {
-        return stage;
-    }
 
-    public void setStage(StageType stage) {
-        this.stage = stage;
-    }
-	
-    //Note: Don't add Blobs
+	public StageType getStage()
+	{
+		return stage;
+	}
+
+	public void setStage(StageType stage)
+	{
+		this.stage = stage;
+	}
+
+	// Note: Don't add Blobs
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		StringBuilder sb = new StringBuilder("Compound [");
-		sb.append("ID : ").append(id).append(", Compound Id : ").append(sampleNumber).append(", Smiles : ").append(smiles).
-			append("]");
+		sb.append("ID : ").append(id).append(", Compound Id : ").append(sampleNumber).append(", Smiles : ").append(smiles).append("]");
 		return sb.toString();
 	}
 }
