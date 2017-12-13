@@ -58,19 +58,8 @@ public class Scheduler {
 	//This is the "cycling engine", going through folders looking for new or changes in compounds
 	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
 	public void scheduleJob() {		
-
 		
-		//Scan through the folders, check for files and changes.
-		//TODO: Consider returning something form each call, ie: the crashed boolean or a confirmation
-		//TODO: Consider readBacklog to run only once, not in the cycle
-		Scan.readBacklog(backlog_File_Path);
-		//TODO: If internal tasks are repeated in following methods, consider keeping only one that gets path and stage 
-		Scan.readDesign(design_File_Path);
-		Scan.readSynthesis(synthesis_File_Path);
-		Scan.readPurification(purification_File_Path);
-		Scan.readTesting(testing_File_Path);
 				
-		//call wrttingImage and readFiles methods, ie: setGraph(writtingImage(filelocation))
 	}
 	
 }

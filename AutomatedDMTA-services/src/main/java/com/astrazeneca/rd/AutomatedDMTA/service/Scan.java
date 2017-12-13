@@ -498,61 +498,6 @@ public class Scan
 
 		return imageBytes;
 	}
-
-	/**
-	 * Add image into the db
-	 */
-	public byte[] storeImage(byte[] image)
-	{
-		ImageGraph myGraph = new ImageGraph();
-		myGraph.setMimeType("image/png");
-		
-		// Lets open an image file
-		try
-		{
-			Logger.getLogger(Main.class.getName()).log(Level.INFO, "[Call Read]");
-			myGraph.setImageFile(image);
-			Logger.getLogger(Main.class.getName()).log(Level.INFO, "[Property set]");
-		} catch (IOException ex)
-		{
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
-		fatController.create(myGraph);
-		Logger.getLogger(Main.class.getName()).log(Level.INFO, "The number of objects is : " + fatController.getImageExampleCount());
-	}
-	
-	/**
-	 * Read image back from the JPA database
-	 */
-	public byte[] readImage(byte[] image)
-	{
-		// Get the list of images stored in the database.
-		List<ImageGraph> images = fatController.findImageExampleEntities;
-		for (int i = 0; i < images.size(); i++)
-		{
-			File outFile = new File("outGraph" + images.get(i).getId() + ".png");
-			try
-			{
-				mainCourse.writeFile(outFile, images.get(i).getImageFile());
-			} catch (IOException e)
-			{
-				Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
-
-			}
-		}
-	}
-
-	// old method from Manu, Reads image form file and converts to byte[] that
-	// can be stored into DB
-	// Keep temporarely in case existing method (imageToByteArray) isn't working
-	/*
-	 * private static byte[] writtingImage(String fileLocation) {
-	 * System.out.println("file lcation is"+fileLocation); IOManager manager=new
-	 * IOManager(); try { return manager.getBytesFromFile(fileLocation);
-	 * 
-	 * } catch (IOException e) { } return null; }
-	 */
 	
 	/*	Alternative method to convert image file to buyte[].
 	Source: https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types
