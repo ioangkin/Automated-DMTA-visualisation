@@ -58,7 +58,7 @@ public class Scheduler {
 	//This is the "cycling engine", going through folders looking for new or changes in compounds
 	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
 	public void scheduleJob() {		
-		
+		Scan.scanCompounds(StageType.DESIGN);
 				
 	}
 	
