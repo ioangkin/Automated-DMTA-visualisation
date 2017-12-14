@@ -45,7 +45,7 @@ import com.astrazeneca.rd.AutomatedDMTA.service.CompoundService;
 //Useful for file location properties. File in: AutomatedDMTA.servicesrc/main/resources/variable.properties
 @PropertySource("classpath:variable.properties")
 
-public class Scan
+public class ScanBackup
 {
 
 	// non hard-coded constants, may be edited by customer in @PropertySource
@@ -65,23 +65,16 @@ public class Scan
 	// Dictionary for mapping above file paths to corresponding stages
 	private Map<StageType, String> filePath = new HashMap<StageType, String>();
 		
+	// Extracted Compound's attributes
+	private String	extracted_id; //AZ or SN number
+	private String	extracted_smiles; //SMILES
+	private byte[]	structureGraph; //SMILES is needed for this
+	private String	extractedResults; //available from the testing stage
+	private byte[]	lineGraph; //available after results
+
 	@Autowired
-	static CompoundService	service;
+	CompoundService	service;
 
-	/**
-	 * Accept a path sting, ie: "\\pipeline04.rd.astrazeneca.net\SharedData\autodmta\run\dataset_original.smi"
-	 * And convert it into URL, so that it can be collected by ImageIO.read(url) later on
-	 * 
-	 * @param path
-	 * @return
-	 * @throws IOException
-	 */
-	static URL ShareFilePathToURL(String path) throws IOException, FileNotFoundException, MalformedURLException, UnsupportedEncodingException
-	{
-			return new URL(path);
-
-	}
-	
 	/**
 	 * Convert a text file into string array, each line of the text file becomes
 	 * a row of the array
@@ -93,9 +86,18 @@ public class Scan
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	static String[] textToArray(String filepath) throws FileNotFoundException, IOException
+	String[] textToArray(String filepath) throws FileNotFoundException, IOException
 	{
-		File file = new File(filepath);
+		File file = null; // the file as an object
+
+		try
+		{
+			file = new File(filepath);
+
+		} catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
 
 		if (!file.exists())
 		{
@@ -168,20 +170,22 @@ public class Scan
 	 * 
 	 * @return extracted_id string
 	 */
-	static String extractIdentifier(String compoundLine)
+	String extractIdentifier(String compoundLine)
 	{
 
 		String extracted_id = null;
 
 		try
 		{
-			// bblock (AZ) number is a word starting with " AZ", just remove leading space
+			// AZ number is a word starting with " AZ", just remove leading
+			// space
 			extracted_id = compoundLine.substring(compoundLine.indexOf(" AZ") + 1);
 
-			
-			if (extracted_id.equals("")) // AZ number wasn't found, go for sn number instead
+			// AZ number wasn't found, go for sn number instead
+			if (extracted_id.equals(""))
 			{
-				// SN number is a word starting with " SN", just remove leading space
+				// SN number is a word starting with " SN", just remove leading
+				// space
 				extracted_id = compoundLine.substring(compoundLine.indexOf(" sn") + 1);
 			}
 		} catch (Exception e)
@@ -203,7 +207,7 @@ public class Scan
 	 * 
 	 * @return smiles string
 	 */
-	static String extractSmiles(String compoundLine)
+	String extractSmiles(String compoundLine)
 	{
 		String smiles = null;
 
@@ -221,6 +225,52 @@ public class Scan
 	}
 
 	/**
+	 * Retrieve the LineGraph from Pipeline website using a SMILES. The process:
+	 * 1. Encode the SMILES string into URL format, using
+	 * URLEncoder.encode(text, "UTF-8") method
+	 * 
+	 * 2. embed it in:
+	 * http://compounds.rd.astrazeneca.net/resources/structure/toimage/[
+	 * SMILES_IN_A_URL_ENCODING_FORMAT]?inputFormat=SMILES&appid=chemistry connect
+	 * 
+	 * Example URL:
+	 * http://compounds.rd.astrazeneca.net/resources/structure/toimage/CC%23CC[n
+	 * ](c([n]c1N(C(=O)N(C2=O)Cc([n]c(cccc3)c3c3C)[n]3)C)N(Cc(c(C3)[nH]c4)[n]4)
+	 * C3)c12?inputFormat=SMILES&appid=chemistry connect
+	 * 
+	 * @param smiles
+	 * 
+	 * @return image file as a BufferedImage
+	 * 
+	 * @throws IOException
+	 * @throws MalformedURLException
+	 * @throws UnsupportedEncodingException
+	 */
+	//ToDo: this is an absolute method, it has been replaced by BufferedImageFrimURL(Url url) and UrlFromSmiles(String smiles)
+/*	BufferedImage collectStructureGraph(String smiles) throws IOException, MalformedURLException, UnsupportedEncodingException
+	{
+		BufferedImage image = null;
+
+		// A URL object containing the complete URL for building the compound's
+		// structure
+		URL structureGraphUrl = new URL("http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(smiles, "UTF-8") + "?inputFormat=SMILES&appid=chemistry connect");
+		// TODO: consider saving the URL as a compound's property as well
+
+		try
+		{
+			// Read returns a BufferedImage
+			image = ImageIO.read(structureGraphUrl);
+			
+		} catch (IOException e)
+		{
+			System.out.println(e.getMessage());
+		}
+
+		return image;
+	}
+	*/
+
+	/**
 	 * Creates a URL pointing to a compound structure graph in Chemistry connect (compounds.rd.astrazeneca.net)
 	 * using the compound's SMILES
 	 * 
@@ -232,13 +282,66 @@ public class Scan
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
 	 */
-	static URL SmilesToUrl(String smiles) throws IOException, MalformedURLException, UnsupportedEncodingException
+	//TODO: This makes method collectStructureGraph aboslute
+	URL UrlFromSmiles(String smiles) throws IOException, MalformedURLException, UnsupportedEncodingException
 	{
 
 		// A URL for building the compound's structure image graph
 		return new URL("http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(smiles, "UTF-8") + "?inputFormat=SMILES&appid=chemistry connect");
-		
 		// TODO: consider saving the URL as a compound's property as well
+
+	}
+
+	/**
+	 * locate the file using its path as a string and convert it into a
+	 * bufferedImage
+	 * 
+	 * @param path
+	 *            of the file
+	 * 
+	 * @return the BufferedImage
+	 * 
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	// TODO: This method is absolute, use ShareFilePathToURL(String path) and UrlToBufferedImage(URL url) instead
+/*	BufferedImage collectLineGraph(String path) throws IOException, FileNotFoundException
+	{
+		// Try to find the file
+		File file = null;
+		try
+		{
+			file = new File(path);
+			
+		} catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+
+		// Try to convert the file into a bufferedImage
+		BufferedImage bf = null;
+		try
+		{
+			bf = ImageIO.read(file);
+		} catch (IOException e)
+		{
+			System.out.println(e.getMessage());
+		}
+
+		return bf;
+	}*/
+
+	/**
+	 * Accept a path sting, ie: "\\pipeline04.rd.astrazeneca.net\SharedData\autodmta\run\dataset_original.smi"
+	 * And convert it into URL, so that it can be collected by ImageIO.read(url) later on
+	 * 
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	URL ShareFilePathToURL(String path) throws IOException, FileNotFoundException, MalformedURLException, UnsupportedEncodingException
+	{
+			return new URL(path);
 
 	}
 	
@@ -250,7 +353,8 @@ public class Scan
 	 * @return image file as a BufferedImage
 	 * 
 	 */
-	static BufferedImage UrlToBufferedImage(URL path) throws IOException, MalformedURLException, UnsupportedEncodingException
+	//TODO: This makes method collectLineGraph aboslute
+	BufferedImage UrlToBufferedImage(URL path) throws IOException, MalformedURLException, UnsupportedEncodingException
 	{
 		BufferedImage image = null;
 
@@ -268,34 +372,6 @@ public class Scan
 	}
 	
 	/**
-	 * Create, populate, and save a new compound
-	 * 
-	 * @param stage
-	 * @param sn
-	 * @param smiles
-	 * @param structureGraph
-	 * 
-	 * @return Compound
-	 * 
-	 * @throws IOException
-	 */
-	static Compound newCompound(StageType stage, String sn, String smiles, byte[] structureGraph) throws IOException
-	{
-
-		Compound c = new Compound(); 			// Create the new compound
-
-		c.setStage(stage); 						// Store its stage
-		c.setSampleNumber(sn); 					// Store the sample number
-		c.setSmiles(smiles); 					// Store the smiles
-		c.setStructureGraph(structureGraph);	// StructureGraph as a byte array
-
-		// TODO: consider adding checks on whether an actual compound is
-		// returned?
-
-		return service.saveCompound(c);
-	}
-	
-	/**
 	 * Convert a bufferedImage file into a byte[] ready to be stored into the DB
 	 * 
 	 * @param image
@@ -303,19 +379,21 @@ public class Scan
 	 * @return byte[]: The byte array, ready to be stored in a DB
 	 * @return null: No array
 	 */
-	static byte[] BufferedImageToByteArray(BufferedImage image)
+	byte[] BufferedImageToByteArray(BufferedImage image)
 	{
-		
-		byte[] imageInByte = null; //To be returned
 		
 		long length = image.toString().length();
 		// You cannot create an array using a long type. It needs to be an int
+		// type.
 
-		// Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
+		// Before converting to an int type, check that file is not larger than
+		// Integer.MAX_VALUE.
 		if (length > Integer.MAX_VALUE)
 		{
-			System.out.println("file is too large to be stored in a byte array for the database (length > Integer.MAX_VALUE), still will try...");
+			// File is too large
 		}
+		
+		byte[] imageInByte = null;
 
 		try
 		{
@@ -331,6 +409,35 @@ public class Scan
 		}
 
 		return imageInByte;
+	}
+
+	/**
+	 * Create, populate, and save a new compound while in stages: BACKLOG,
+	 * DESIGN, SYNTHESIS, and PURIFICATION
+	 * 
+	 * @param stage
+	 * @param sn
+	 * @param smiles
+	 * @param structureGraph
+	 * 
+	 * @return Compound
+	 * 
+	 * @throws IOException
+	 */
+	Compound newCompound(StageType stage, String sn, String smiles, byte[] structureGraph) throws IOException
+	{
+
+		Compound c = new Compound(); 			// Create the new compound
+
+		c.setStage(stage); 						// Store its stage
+		c.setSampleNumber(sn); 					// Store the sample number
+		c.setSmiles(smiles); 					// Store the smiles
+		c.setStructureGraph(structureGraph);	// StructureGraph as a byte array
+
+		// TODO: consider adding checks on whether an actual compound is
+		// returned?
+
+		return service.saveCompound(c);
 	}
 
 	/**
@@ -396,18 +503,53 @@ public class Scan
 		filePath.put(StageType.PURIFICATION, purification_File_Path);
 		filePath.put(StageType.TESTING, testing_File_Path);
 	}
-
+	
 	/**
-	 * 	update record of compounds with new findings
+	 * for any stage before testing (ie: BACKLOG, DESIGN, SYNTHESIS,
+	 * PURIFICATION), Read file and build or update compound(s)
+	 *
+	 * @param stage,
+	 *            where the file/compound is in
 	 * 
-	 * @param stage where the compound is in
+	 * @return true: At least one compound was found and added to the DB or, for
+	 *         existing compounds, their stage has been updated
+	 * @return false: Path or file was not found or is empty
 	 * 
-	 * @throws MalformedURLException
-	 * @throws UnsupportedEncodingException
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	static Compound updateCompounds(StageType stage) throws MalformedURLException, UnsupportedEncodingException, FileNotFoundException, IOException
+	// TODO: This is the actual scanning method, rename to scan?
+	boolean scanCompounds(StageType stage) throws FileNotFoundException, IOException
+	{
+		//Pair file paths to their corresponding stage  
+		FilePathGenerator(filePath);
+		
+		// Store the file's text lines into an array
+		String[] compoundsArr = textToArray(filePath.get(stage));
+		if (compoundsArr.equals(null) || compoundsArr.length == 0)
+		{ 
+			System.out.println("The cmpnd list from the desing stage returned empty or null");
+		}
+
+		// Iterate through the array, extracting compound's attributes
+		for (String compoundLine : compoundsArr)
+		{
+			// Extract identifier (AZ or SN number)
+			this.extracted_id = extractIdentifier(compoundLine);
+			// Extract SMILES (first word in the line)
+			this.extracted_smiles = extractSmiles(compoundLine);
+			// Retrieve StructureGraph and turn it to byte[] for DB
+			this.structureGraph = BufferedImageToByteArray(UrlToBufferedImage(UrlFromSmiles(extracted_smiles)));
+
+			// Update existing compounds
+			updateCompounds(stage);
+
+		}
+		return true; // data found and at least one compound edited or saved
+	}
+
+	// update record of compounds with new findings
+	void updateCompounds(StageType stage) throws MalformedURLException, UnsupportedEncodingException, FileNotFoundException, IOException
 	{
 
 		// Get the list of stored compounds
@@ -471,7 +613,7 @@ public class Scan
 				// Retrieve LineGraph and convert it to a byte[] ready to be stored in a db
 				try
 				{
-					lineGraph = BufferedImageToByteArray(UrlToBufferedImage(ShareFilePathToURL(LineGraph_File_Path)));
+					this.lineGraph = BufferedImageToByteArray(UrlToBufferedImage(ShareFilePathToURL(LineGraph_File_Path)));
 				} catch (FileNotFoundException e)
 				{
 					System.out.println("failed to retrieve lineGraph, file not found related fault details:");
@@ -488,7 +630,7 @@ public class Scan
 				}
 
 				// finally, update compound
-				return dBCompound = updateBioEssay(dBCompound, stage, extractedResults, lineGraph);
+				dBCompound = updateBioEssay(dBCompound, stage, this.extractedResults, this.lineGraph);
 			}
 		}
 	}
