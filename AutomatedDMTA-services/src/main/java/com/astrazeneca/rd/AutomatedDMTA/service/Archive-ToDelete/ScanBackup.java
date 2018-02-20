@@ -1,4 +1,6 @@
-package com.astrazeneca.rd.AutomatedDMTA.service;
+/* Note: as with original Scan class, this class is not used anymore. It is kept only for reference and can be deleted at any time */
+
+/*package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -75,7 +77,7 @@ public class ScanBackup
 	@Autowired
 	CompoundService	service;
 
-	/**
+	*//**
 	 * Convert a text file into string array, each line of the text file becomes
 	 * a row of the array
 	 * 
@@ -85,7 +87,7 @@ public class ScanBackup
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
-	 */
+	 *//*
 	String[] textToArray(String filepath) throws FileNotFoundException, IOException
 	{
 		File file = null; // the file as an object
@@ -156,7 +158,7 @@ public class ScanBackup
 		return lines.toArray(new String[lines.size()]);
 	}
 
-	/**
+	*//**
 	 * Go through a single line of compound information from the text file found
 	 * in the respective stage folder and try to extract the AZ identification
 	 * number. if AZ isn't found go for SN instead
@@ -169,7 +171,7 @@ public class ScanBackup
 	 *            from the text file found in the respective stage folder
 	 * 
 	 * @return extracted_id string
-	 */
+	 *//*
 	String extractIdentifier(String compoundLine)
 	{
 
@@ -196,7 +198,7 @@ public class ScanBackup
 		return extracted_id;
 	}
 
-	/**
+	*//**
 	 * Go through a single line of compound information from the text file found
 	 * in the respective stage folder and try to extract the compound's smile
 	 * 
@@ -206,7 +208,7 @@ public class ScanBackup
 	 *            from the text file found in the respective stage folder
 	 * 
 	 * @return smiles string
-	 */
+	 *//*
 	String extractSmiles(String compoundLine)
 	{
 		String smiles = null;
@@ -224,7 +226,7 @@ public class ScanBackup
 		return smiles;
 	}
 
-	/**
+	*//**
 	 * Retrieve the LineGraph from Pipeline website using a SMILES. The process:
 	 * 1. Encode the SMILES string into URL format, using
 	 * URLEncoder.encode(text, "UTF-8") method
@@ -245,9 +247,9 @@ public class ScanBackup
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
-	 */
+	 *//*
 	//ToDo: this is an absolute method, it has been replaced by BufferedImageFrimURL(Url url) and UrlFromSmiles(String smiles)
-/*	BufferedImage collectStructureGraph(String smiles) throws IOException, MalformedURLException, UnsupportedEncodingException
+	BufferedImage collectStructureGraph(String smiles) throws IOException, MalformedURLException, UnsupportedEncodingException
 	{
 		BufferedImage image = null;
 
@@ -268,9 +270,9 @@ public class ScanBackup
 
 		return image;
 	}
-	*/
+	
 
-	/**
+	*//**
 	 * Creates a URL pointing to a compound structure graph in Chemistry connect (compounds.rd.astrazeneca.net)
 	 * using the compound's SMILES
 	 * 
@@ -281,7 +283,7 @@ public class ScanBackup
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
-	 */
+	 *//*
 	//TODO: This makes method collectStructureGraph aboslute
 	URL UrlFromSmiles(String smiles) throws IOException, MalformedURLException, UnsupportedEncodingException
 	{
@@ -292,7 +294,7 @@ public class ScanBackup
 
 	}
 
-	/**
+	*//**
 	 * locate the file using its path as a string and convert it into a
 	 * bufferedImage
 	 * 
@@ -303,9 +305,9 @@ public class ScanBackup
 	 * 
 	 * @throws IOException
 	 * @throws FileNotFoundException
-	 */
+	 *//*
 	// TODO: This method is absolute, use ShareFilePathToURL(String path) and UrlToBufferedImage(URL url) instead
-/*	BufferedImage collectLineGraph(String path) throws IOException, FileNotFoundException
+	BufferedImage collectLineGraph(String path) throws IOException, FileNotFoundException
 	{
 		// Try to find the file
 		File file = null;
@@ -329,30 +331,30 @@ public class ScanBackup
 		}
 
 		return bf;
-	}*/
+	}
 
-	/**
+	*//**
 	 * Accept a path sting, ie: "\\pipeline04.rd.astrazeneca.net\SharedData\autodmta\run\dataset_original.smi"
 	 * And convert it into URL, so that it can be collected by ImageIO.read(url) later on
 	 * 
 	 * @param path
 	 * @return
 	 * @throws IOException
-	 */
+	 *//*
 	URL ShareFilePathToURL(String path) throws IOException, FileNotFoundException, MalformedURLException, UnsupportedEncodingException
 	{
 			return new URL(path);
 
 	}
 	
-	/**
+	*//**
 	 * Retrieve image form a given URL
 	 * 
 	 * @param URL link / path
 	 * 
 	 * @return image file as a BufferedImage
 	 * 
-	 */
+	 *//*
 	//TODO: This makes method collectLineGraph aboslute
 	BufferedImage UrlToBufferedImage(URL path) throws IOException, MalformedURLException, UnsupportedEncodingException
 	{
@@ -371,14 +373,14 @@ public class ScanBackup
 		return image;
 	}
 	
-	/**
+	*//**
 	 * Convert a bufferedImage file into a byte[] ready to be stored into the DB
 	 * 
 	 * @param image
 	 * 
 	 * @return byte[]: The byte array, ready to be stored in a DB
 	 * @return null: No array
-	 */
+	 *//*
 	byte[] BufferedImageToByteArray(BufferedImage image)
 	{
 		
@@ -411,7 +413,7 @@ public class ScanBackup
 		return imageInByte;
 	}
 
-	/**
+	*//**
 	 * Create, populate, and save a new compound while in stages: BACKLOG,
 	 * DESIGN, SYNTHESIS, and PURIFICATION
 	 * 
@@ -423,7 +425,7 @@ public class ScanBackup
 	 * @return Compound
 	 * 
 	 * @throws IOException
-	 */
+	 *//*
 	Compound newCompound(StageType stage, String sn, String smiles, byte[] structureGraph) throws IOException
 	{
 
@@ -440,7 +442,7 @@ public class ScanBackup
 		return service.saveCompound(c);
 	}
 
-	/**
+	*//**
 	 * update a compound while in stages TEST and COMPLETED
 	 * 
 	 * @param stage
@@ -453,7 +455,7 @@ public class ScanBackup
 	 * @return Compound
 	 * 
 	 * @throws IOException
-	 */
+	 *//*
 	Compound updateBioEssay(Compound c, StageType stage, String result, byte[] lineGraph)
 	{
 		c.setStage(stage); // Store stage
@@ -463,7 +465,7 @@ public class ScanBackup
 		return service.saveCompound(c);
 	}
 
-	/**
+	*//**
 	 * Writes a file from a bufferedImage so that an image from DB can be used in web or on disk
 	 * 
 	 * @param bi:
@@ -473,7 +475,7 @@ public class ScanBackup
 	 * 
 	 * @return file: the image
 	 * @return null: see console for error
-	 */
+	 *//*
 	File BufferedImageToFile(BufferedImage bi, String fileName)
 	{
 		
@@ -489,12 +491,12 @@ public class ScanBackup
 		return null;
 	}
 
-	/**
+	*//**
 	 * pair stages to file paths in filePath map dictionary
 	 * 
 	 * @param filePath the dictionary holding the pairs
 	 * 
-	 */
+	 *//*
 	private void FilePathGenerator(Map<StageType, String> filePath)
 	{
 		filePath.put(StageType.BACKLOG, backlog_File_Path);
@@ -504,7 +506,7 @@ public class ScanBackup
 		filePath.put(StageType.TESTING, testing_File_Path);
 	}
 	
-	/**
+	*//**
 	 * for any stage before testing (ie: BACKLOG, DESIGN, SYNTHESIS,
 	 * PURIFICATION), Read file and build or update compound(s)
 	 *
@@ -517,7 +519,7 @@ public class ScanBackup
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
-	 */
+	 *//*
 	// TODO: This is the actual scanning method, rename to scan?
 	boolean scanCompounds(StageType stage) throws FileNotFoundException, IOException
 	{
@@ -574,11 +576,11 @@ public class ScanBackup
 			}
 
 			// IT is a known compound but AZ number is missing
-			/*
+			
 			 * Note: Could skip checking and just add AZ number to reduce
 			 * complexity, but better avoid any conflicts in case the
 			 * extracted_id doesn't have the expected value
-			 */
+			 
 			else if (!dBCompoundSN.substring(0, 1).equals("AZ"))
 			{
 				dBCompound.setSampleNumber(this.extracted_id);
@@ -602,13 +604,13 @@ public class ScanBackup
 
 			// Compound was just moved into or after Testing stage
 			if (!dBCompound.getResult().equals(extractedResults))
-			/*
+			
 			 * Note: Alternative comparison:
 			 * (dBCompound.getStage().ordinal()>=StageType.TESTING.ordinal()),
 			 * However avoid as a compound may have already been registered in
 			 * Testing stage but without results and a LineGraph(?)
 			 * 
-			 */
+			 
 			{
 				// Retrieve LineGraph and convert it to a byte[] ready to be stored in a db
 				try
@@ -635,7 +637,7 @@ public class ScanBackup
 		}
 	}
 
-	/**
+	*//**
 	 * Read image from remote location (ie: fileShare) and stream it into a byte
 	 * array call readImage to get graph, ie:
 	 * StoreImage(readImage(filelocation))
@@ -647,10 +649,10 @@ public class ScanBackup
 	 * @return imageBytes byte array
 	 * @return null in case that file is too large to be streamed
 	 * @throws IOException
-	 */
+	 *//*
 	//Note: this is a more advanced method for fetching images, using inputStream. currently I am using other methods
 	//using ImageIO.read. Keeping this in case it is needed in the future.
-/*
+
 	public byte[] readImage(File file) throws IOException
 	{
 		Logger.getLogger(Main.class.getName()).log(Level.INFO, "[Open File] " + file.getAbsolutePath());
@@ -691,24 +693,25 @@ public class ScanBackup
 
 		return imageBytes;
 	}
-*/
 
-	/*
+
+	
 	 * Alternative method to convert image file to buyte[]. Source:
 	 * https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types
 	 * Not working due to the call to IOManager
-	 */
-	/**
+	 
+	*//**
 	 * Reads image from file and converts to byte[] that can be stored into DB
 	 * 
 	 * @param fileLocation
 	 * @return
-	 */
-	/*
+	 *//*
+	
 	 * private static byte[] writtingImage(String fileLocation) {
 	 * System.out.println("file lcation is"+fileLocation); IOManager manager=new
 	 * IOManager(); try { return manager.getBytesFromFile(fileLocation);
 	 * 
 	 * } catch (IOException e) { } return null; }
-	 */
+	 
 }
+*/

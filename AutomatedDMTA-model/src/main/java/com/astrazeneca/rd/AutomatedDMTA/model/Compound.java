@@ -68,7 +68,7 @@ public class Compound
 
 	// When stage == StageType.TESTING
 	@Column()
-	private String		result;
+	private String		results;
 
 	// Note: Can live without a constructor, but its a good practice to have at
 	// least basic ones, depending on the default attributes
@@ -156,14 +156,14 @@ public class Compound
 		this.completed = completed;
 	}
 
-	public String getResult()
+	public String getResults()
 	{
-		return result;
+		return results;
 	}
 
-	public void setResult(String result)
+	public void setResults(String results)
 	{
-		this.result = result;
+		this.results = results;
 	}
 
 	public StageType getStage()

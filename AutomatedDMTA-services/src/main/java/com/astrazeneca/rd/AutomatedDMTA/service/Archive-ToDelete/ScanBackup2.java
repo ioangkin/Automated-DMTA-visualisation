@@ -1,16 +1,22 @@
-package com.astrazeneca.rd.AutomatedDMTA.service;
+/* Note: as with original ScanBackup class, this class is not used anymore. It is kept only for reference and can be deleted at any time */
+
+
+/*package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -26,7 +32,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.chainsaw.Main;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +42,11 @@ import org.springframework.stereotype.Component;
 
 //https://commons.apache.org/proper/commons-io/javadocs/api-release/index.html?org/apache/commons/io/FilenameUtils.html
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.chainsaw.Main;
+import jcifs.smb.NtlmPasswordAuthentication; //For accessing remote folders with autenitcation
+import jcifs.smb.SmbException;
+import jcifs.smb.SmbFile;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
 import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
@@ -45,7 +56,7 @@ import com.astrazeneca.rd.AutomatedDMTA.service.CompoundService;
 //Useful for file location properties. File in: AutomatedDMTA.servicesrc/main/resources/variable.properties
 @PropertySource("classpath:variable.properties")
 
-public class Scan
+public class ScanBackup2
 {
 
 	// non hard-coded constants, may be edited by customer in @PropertySource
@@ -62,29 +73,29 @@ public class Scan
 	@Value("${lineGraph_File_Path}")
 	private String	LineGraph_File_Path;
 
-	// Dictionary for mapping above file paths to corresponding stages
+	// Dictionary for mapping above file paths to corresponding stages (May not be needed)
 	private Map<StageType, String> filePath = new HashMap<StageType, String>();
 		
 	@Autowired
 	static CompoundService	service;
-
-	/**
-	 * Accept a path sting, ie: "\\pipeline04.rd.astrazeneca.net\SharedData\autodmta\run\dataset_original.smi"
-	 * And convert it into URL, so that it can be collected by ImageIO.read(url) later on
+	
+	*//**
+	 * Takes in a file path sting, ie: "\\pipeline04.rd.astrazeneca.net\SharedData\autodmta\run\dataset_original.smi"
+	 * and convert it into URL, so that it can be collected by ImageIO.read(url) later on
 	 * 
 	 * @param path
 	 * @return
 	 * @throws IOException
-	 */
+	 *//*
 	static URL ShareFilePathToURL(String path) throws IOException, FileNotFoundException, MalformedURLException, UnsupportedEncodingException
 	{
 			return new URL(path);
-
+			
 	}
 	
-	/**
+	*//**
 	 * Convert a text file into string array, each line of the text file becomes
-	 * a row of the array
+	 * a row in the array
 	 * 
 	 * @param filepath
 	 * 
@@ -92,70 +103,67 @@ public class Scan
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
-	 */
+	 *//*
 	static String[] textToArray(String filepath) throws FileNotFoundException, IOException
 	{
-		File file = new File(filepath);
+		//Get file from a windows share folder location
+		File file = getFileFromSharedFolder(filepath);
 
 		if (!file.exists())
 		{
-			System.out.println("design cmpnd list file or its folder is empty or doesn't exist");
+			System.out.println("File or folder is empty or doesn't exist");
 			return null;
 		}
 
 		// Hold the text lines into a list
 		List<String> lines = new ArrayList<String>();
 
-		// TODO: Consider skip iterating through files if we know the exact filename
-		for (final File fileEntry : file.listFiles())
-		{			
-			if (FilenameUtils.getName(fileEntry.getName()) == FilenameUtils.getName(filepath))
-			{// We have the right file
+		if (FilenameUtils.getName(file.getName()) == FilenameUtils.getName(filepath))
+		{// We have the right file
+			
+			BufferedReader br = null;
+			try
+			{
+				br = new BufferedReader(new FileReader(FilenameUtils.getName(filepath)));
+			} catch (FileNotFoundException e1)
+			{
+				// File not found, connection may failed to establish
+				System.out.println(e1.getMessage());
+				return null;
 				
-				BufferedReader br = null;
-				try
+			} catch (Exception e)
+			{
+				System.out.println(e.getMessage());
+			}
+
+			// Populate
+			String inputLine;
+			while ((inputLine = br.readLine()) != null)
+			{
+
+				// Ignore empty lines.
+				if (inputLine.equals(""))
 				{
-					br = new BufferedReader(new FileReader(FilenameUtils.getName(filepath)));
-				} catch (FileNotFoundException e1)
-				{
-					// File not found, connection may failed to establish
-					System.out.println(e1.getMessage());
-					return null;
-					
-				} catch (Exception e)
-				{
-					System.out.println(e.getMessage());
+					continue;
 				}
 
-				// Populate
-				String inputLine;
-				while ((inputLine = br.readLine()) != null)
-				{
+				lines.add(inputLine);
+			}
 
-					// Ignore empty lines.
-					if (inputLine.equals(""))
-					{
-						continue;
-					}
+			br.close();
 
-					lines.add(inputLine);
-				}
-
-				br.close();
-
-				// No new compounds found
-				if (lines.equals(null) || lines.isEmpty())
-				{
-					System.out.println("nothing found in Design stage");
-				}
+			// No new compounds found
+			if (lines.equals(null) || lines.isEmpty())
+			{
+				System.out.println("nothing found in Design stage");
 			}
 		}
 		// Convert to array and return
 		return lines.toArray(new String[lines.size()]);
 	}
 
-	/**
-	 * Go through a single line of compound information from the text file found
+	*//**
+	 * Go through each line of the compounds array as found in the text file
 	 * in the respective stage folder and try to extract the AZ identification
 	 * number. if AZ isn't found go for SN instead
 	 * 
@@ -167,7 +175,7 @@ public class Scan
 	 *            from the text file found in the respective stage folder
 	 * 
 	 * @return extracted_id string
-	 */
+	 *//*
 	static String extractIdentifier(String compoundLine)
 	{
 
@@ -175,7 +183,7 @@ public class Scan
 
 		try
 		{
-			// bblock (AZ) number is a word starting with " AZ", just remove leading space
+			// block (AZ) identifier number is a word starting with " AZ", just remove leading space
 			extracted_id = compoundLine.substring(compoundLine.indexOf(" AZ") + 1);
 
 			
@@ -192,7 +200,7 @@ public class Scan
 		return extracted_id;
 	}
 
-	/**
+	*//**
 	 * Go through a single line of compound information from the text file found
 	 * in the respective stage folder and try to extract the compound's smile
 	 * 
@@ -202,7 +210,7 @@ public class Scan
 	 *            from the text file found in the respective stage folder
 	 * 
 	 * @return smiles string
-	 */
+	 *//*
 	static String extractSmiles(String compoundLine)
 	{
 		String smiles = null;
@@ -220,7 +228,7 @@ public class Scan
 		return smiles;
 	}
 
-	/**
+	*//**
 	 * Creates a URL pointing to a compound structure graph in Chemistry connect (compounds.rd.astrazeneca.net)
 	 * using the compound's SMILES
 	 * 
@@ -231,7 +239,7 @@ public class Scan
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
-	 */
+	 *//*
 	static URL SmilesToUrl(String smiles) throws IOException, MalformedURLException, UnsupportedEncodingException
 	{
 
@@ -242,32 +250,22 @@ public class Scan
 
 	}
 	
-	/**
+	*//**
 	 * Retrieve image form a given URL
 	 * 
 	 * @param URL link / path
 	 * 
 	 * @return image file as a BufferedImage
 	 * 
-	 */
+	 *//*
 	static BufferedImage UrlToBufferedImage(URL path) throws IOException, MalformedURLException, UnsupportedEncodingException
 	{
-		BufferedImage image = null;
-
-		try
-		{
-			// Read returns a BufferedImage
-			image = ImageIO.read(path);
-			
-		} catch (IOException e)
-		{
-			System.out.println(e.getMessage());
-		}
-	
-		return image;
+		
+		return ImageIO.read(path); // Read returns a BufferedImage
+		
 	}
 	
-	/**
+	*//**
 	 * Create, populate, and save a new compound
 	 * 
 	 * @param stage
@@ -278,7 +276,7 @@ public class Scan
 	 * @return Compound
 	 * 
 	 * @throws IOException
-	 */
+	 *//*
 	static Compound newCompound(StageType stage, String sn, String smiles, byte[] structureGraph) throws IOException
 	{
 
@@ -289,20 +287,49 @@ public class Scan
 		c.setSmiles(smiles); 					// Store the smiles
 		c.setStructureGraph(structureGraph);	// StructureGraph as a byte array
 
-		// TODO: consider adding checks on whether an actual compound is
-		// returned?
-
 		return service.saveCompound(c);
 	}
 	
-	/**
+	*//**
+	 * Access and retrieve a file from a Windows shared folder using authentication
+	 * 
+	 * @param filepath: Exact location including filename
+	 * 
+	 * @return the file
+	 * 
+	 * @throws MalformedURLException
+	 * @throws SmbException
+	 * @throws IOException
+	 *//*
+	static File getFileFromSharedFolder(String filepath) throws MalformedURLException, SmbException, IOException  {
+		
+		//Get file from share folder using authentication
+		final String USER_NAME = "userName";
+	    final String PASSWORD = "password";
+	    NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, USER_NAME, PASSWORD);
+		String sFileUrl = "smb://" + USER_NAME + ":" + PASSWORD + "/" + filepath; //File path in Samba URL format
+        SmbFile smbFile = new SmbFile(sFileUrl, auth); //The Samba file object
+        InputStream in = null;
+        if (smbFile.exists()) { //Get the file from remote location
+            in = smbFile.getInputStream();
+        }
+        //Convert Samba file into a java file object
+        File file = null;
+        FileOutputStream out = new FileOutputStream(file);
+        IOUtils.copy(in, out);
+        
+		return file;
+		
+	}
+	
+	*//**
 	 * Convert a bufferedImage file into a byte[] ready to be stored into the DB
 	 * 
 	 * @param image
 	 * 
 	 * @return byte[]: The byte array, ready to be stored in a DB
 	 * @return null: No array
-	 */
+	 *//*
 	static byte[] BufferedImageToByteArray(BufferedImage image)
 	{
 		
@@ -333,7 +360,8 @@ public class Scan
 		return imageInByte;
 	}
 
-	/**
+	Legacy method, take out
+	*//**
 	 * update a compound while in stages TEST and COMPLETED
 	 * 
 	 * @param stage
@@ -346,7 +374,7 @@ public class Scan
 	 * @return Compound
 	 * 
 	 * @throws IOException
-	 */
+	 *//*
 	Compound updateBioEssay(Compound c, StageType stage, String result, byte[] lineGraph)
 	{
 		c.setStage(stage); // Store stage
@@ -356,7 +384,7 @@ public class Scan
 		return service.saveCompound(c);
 	}
 
-	/**
+	*//**
 	 * Writes a file from a bufferedImage so that an image from DB can be used in web or on disk
 	 * 
 	 * @param bi:
@@ -366,7 +394,7 @@ public class Scan
 	 * 
 	 * @return file: the image
 	 * @return null: see console for error
-	 */
+	 *//*
 	File BufferedImageToFile(BufferedImage bi, String fileName)
 	{
 		
@@ -382,12 +410,12 @@ public class Scan
 		return null;
 	}
 
-	/**
+	*//**
 	 * pair stages to file paths in filePath map dictionary
 	 * 
 	 * @param filePath the dictionary holding the pairs
 	 * 
-	 */
+	 *//*
 	private void FilePathGenerator(Map<StageType, String> filePath)
 	{
 		filePath.put(StageType.BACKLOG, backlog_File_Path);
@@ -397,127 +425,79 @@ public class Scan
 		filePath.put(StageType.TESTING, testing_File_Path);
 	}
 
-	/**
-	 * 	update record of compounds with new findings
+	*//**
+	 * Store the first line of text from a file into a String type variable
 	 * 
-	 * @param stage where the compound is in
+	 * @param file
 	 * 
-	 * @throws MalformedURLException
-	 * @throws UnsupportedEncodingException
+	 * @return String
+	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
-	 */
-	static Compound updateCompounds(StageType stage) throws MalformedURLException, UnsupportedEncodingException, FileNotFoundException, IOException
+	 *//*
+	static String fileToString(File file) throws FileNotFoundException, IOException
 	{
 
-		// Get the list of stored compounds
-		List<Compound> compoundsInDB = null;
+		if (!file.exists())
+		{
+			System.out.println("File is empty or doesn't exist");
+			return null;
+		}
+
+		BufferedReader br = null;
 		try
 		{
-			compoundsInDB = service.getAllCompounds();
+			br = new BufferedReader(new FileReader(file));
+		} catch (FileNotFoundException e1)
+		{
+			System.out.println(e1.getMessage());
+			System.out.println("File not found, connection may failed to establish");
+			return null;
 		} catch (Exception e)
 		{
 			System.out.println(e.getMessage());
 		}
 
-		for (Compound dBCompound : compoundsInDB)
-		{
-			// Identifier for the stored compound
-			String dBCompoundSN = dBCompound.getSampleNumber();
-
-			// It is a known compound, update just its stage
-			if (dBCompoundSN.equals(this.extracted_id))
+		//Collect the first line of text in the file
+		String inputLine = br.readLine();
+		while (inputLine != null)
 			{
-				dBCompound.setStage(stage);
+				// Ignore empty lines.
+				if (inputLine.equals(""))
+				{
+					continue;
+				}
+				
+				br.close();
+				return inputLine;
 			}
 
-			// IT is a known compound but AZ number is missing
-			/*
-			 * Note: Could skip checking and just add AZ number to reduce
-			 * complexity, but better avoid any conflicts in case the
-			 * extracted_id doesn't have the expected value
-			 */
-			else if (!dBCompoundSN.substring(0, 1).equals("AZ"))
-			{
-				dBCompound.setSampleNumber(this.extracted_id);
-			}
+		br.close();
+
+		// If we reach this stage then no text has been found in the file
+		System.out.println("The results file is empty");
 			
-			else // Its a new compound, add it to the DB
-			{
-				// Build, populate and save the new compound
-				try
-				{
-					dBCompound = newCompound(StageType.DESIGN, extracted_id, extracted_smiles, structureGraph);
-				} catch (IOException e)
-				{
-					System.out.println(e.getMessage());
-				}
-			}
-
-			// For compounds in or after testing stage
-			this.extractedResults = null;
-			// TODO: set source of result following updated requirements
-
-			// Compound was just moved into or after Testing stage
-			if (!dBCompound.getResult().equals(extractedResults))
-			/*
-			 * Note: Alternative comparison:
-			 * (dBCompound.getStage().ordinal()>=StageType.TESTING.ordinal()),
-			 * However avoid as a compound may have already been registered in
-			 * Testing stage but without results and a LineGraph(?)
-			 * 
-			 */
-			{
-				// Retrieve LineGraph and convert it to a byte[] ready to be stored in a db
-				try
-				{
-					lineGraph = BufferedImageToByteArray(UrlToBufferedImage(ShareFilePathToURL(LineGraph_File_Path)));
-				} catch (FileNotFoundException e)
-				{
-					System.out.println("failed to retrieve lineGraph, file not found related fault details:");
-					System.out.println(e.getMessage());
-					
-				} catch (IOException e1)
-				{
-					System.out.println("failed to retrieve lineGraph, Input/Output related fault details:");
-					System.out.println(e1.getMessage());
-				} catch (Exception e2)
-				{
-					System.out.println("failed to retrieve lineGraph, fault details:");
-					System.out.println(e2.getMessage());
-				}
-
-				// finally, update compound
-				return dBCompound = updateBioEssay(dBCompound, stage, extractedResults, lineGraph);
-			}
-		}
+		return inputLine;
 	}
-
-	/**
-	 * Read image from remote location (ie: fileShare) and stream it into a byte
-	 * array call readImage to get graph, ie:
-	 * StoreImage(readImage(filelocation))
+	
+	*//**
 	 * 
-	 * Similarly, create writeImage(file) and call it to set graphs, ie:
-	 * setGraph(writtingImage(filelocation))
+	 * Create a byte array from an image file
+	 * 
+	 * Note: The file is already been fetched from the physical location ie:
+	 * shared folder, with methods like: getFileFromSharedFolder
 	 * 
 	 * @param file
 	 * @return imageBytes byte array
 	 * @return null in case that file is too large to be streamed
 	 * @throws IOException
-	 */
-	//Note: this is a more advanced method for fetching images, using inputStream. currently I am using other methods
-	//using ImageIO.read. Keeping this in case it is needed in the future.
-/*
-	public byte[] readImage(File file) throws IOException
+	 *//*
+	public static byte[] fileToByteArray(File file) throws IOException
 	{
 		Logger.getLogger(Main.class.getName()).log(Level.INFO, "[Open File] " + file.getAbsolutePath());
 		long length = file.length();
-		// You cannot create an array using a long type. It needs to be an int
-		// type.
-
-		// Before converting to an int type, check that file is not larger than
-		// Integer.MAX_VALUE.
+		// length() returns a long type and this should be converted to int as arrays are int-indexed
+		// But first check that file is not larger than Integer.MAX_VALUE
 		if (length > Integer.MAX_VALUE)
 		{
 			// File is too large
@@ -549,24 +529,25 @@ public class Scan
 
 		return imageBytes;
 	}
-*/
 
-	/*
+
+	
 	 * Alternative method to convert image file to buyte[]. Source:
 	 * https://blogs.oracle.com/adf/jpa-insert-and-retrieve-clob-and-blob-types
 	 * Not working due to the call to IOManager
-	 */
-	/**
+	 
+	*//**
 	 * Reads image from file and converts to byte[] that can be stored into DB
 	 * 
 	 * @param fileLocation
 	 * @return
-	 */
-	/*
+	 *//*
+	
 	 * private static byte[] writtingImage(String fileLocation) {
-	 * System.out.println("file lcation is"+fileLocation); IOManager manager=new
+	 * System.out.println("file location is"+fileLocation); IOManager manager=new
 	 * IOManager(); try { return manager.getBytesFromFile(fileLocation);
 	 * 
 	 * } catch (IOException e) { } return null; }
-	 */
+	 
 }
+*/
