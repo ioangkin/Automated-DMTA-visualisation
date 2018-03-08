@@ -13,14 +13,23 @@ angular.module('myApp.people', ['myApp.services', 'ngResource'])
 		);
 	})
 	
-	.factory('personSearchFactory', function ($resource) {
+/*	.factory('personSearchFactory', function ($resource) {
 		return $resource(
 			'resources/people/search', 
 			{ }, 
             { 'and': { method: 'GET', params: {op:'and', firstName:'@firstName', lastName:'@lastName'}, isArray:true } ,
 			  'or': { method: 'GET', params: {op:'or', firstName:'@firstName', lastName:'@lastName'}, isArray:true }
 			}  
+		);*/
+	
+		.factory('personFactory', function ($resource) {
+		return $resource(
+			'resources/people/persons/:compoundId', 
+//			'http://UKCEMNGV08.emea.astrazeneca.net\\:8080/resources/people/persons/:id', 
+			{ compoundId:'@compoundId' }, 
+            { 'update': { method: 'PUT'} }  
 		);
+		
 	})
 	
 	.controller('PeopleCtrl', function($scope, personFactory, personSearchFactory, alertService, $location) {
@@ -101,9 +110,9 @@ angular.module('myApp.people', ['myApp.services', 'ngResource'])
         
         $scope.findPersonByName = function () {
         	if ($scope.firstName && $scope.lastName) {
-        		$scope.foundNames = personSearchFactory.and({ firstName: $scope.firstName, lastName: $scope.lastName });
+        		$scope.foundNames = personSearchFactory.get({ compoundId: $scope.compoundId});
         	} else {
-        		$scope.foundNames = personSearchFactory.or({ firstName: $scope.firstName, lastName: $scope.lastName });
+        		$scope.foundNames = personSearchFactory.or({ firstName: $scope.firstName});
         	}
         };
         

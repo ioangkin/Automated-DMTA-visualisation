@@ -45,3 +45,7 @@ appServices.directive('alert', function () {
 	    }
 	  };
 	});
+
+appServices.directive('getDesign', function () {
+
+	}); 

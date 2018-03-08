@@ -24,6 +24,9 @@ public interface CompoundRepository extends JpaRepository<Compound, Long> {
 	public List<Compound> findBySampleNumberAndSmiles(String sampleNumber, String smiles);
 */
 
-		
 	public Page<Compound> findAll(Pageable pageable);
+
+	@Query("select c from Compound c") //where c.stage = 'DESIGN'")
+	public List<Compound> getAllDesign();
+
 }

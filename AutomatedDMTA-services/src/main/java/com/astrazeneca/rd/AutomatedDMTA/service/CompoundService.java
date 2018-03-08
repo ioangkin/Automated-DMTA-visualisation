@@ -40,6 +40,10 @@ public class CompoundService {
 	public List<Compound> getAllCompounds() {
 		return compoundRepository.findAll();
 	}
+	
+	public List<Compound> getAllDesign() {
+		return compoundRepository.getAllDesign();
+	}
 
 	public Page<Compound> getAllCompounds(Pageable pageable) {
 		return compoundRepository.findAll(pageable);

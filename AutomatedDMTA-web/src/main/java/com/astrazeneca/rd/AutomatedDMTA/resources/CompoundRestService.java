@@ -78,6 +78,13 @@ public class CompoundRestService {
 		return compoundService.getAllCompounds();
 	}
 	
+	@GET
+    @Path("/design")
+	public List<Compound> getAllDesign() {
+		logger.debug("GET: list all compounds");
+		return compoundService.getAllDesign();
+	}
+	
 /*    ToDo: Don't we need some checks? ie:
     	LineGraph file cannot be found
     	File containing SMILES or the SMILES string inside doesn't exist (so StructureGraph cannot be looked up)

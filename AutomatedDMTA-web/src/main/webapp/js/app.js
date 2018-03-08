@@ -20,6 +20,16 @@ angular.module('myApp', ['myApp.who', 'myApp.people', 'myApp.services'])
 			return $location.path() == route;
 		};
 		
+		
+//	showDesignDetails($scope, $http) {
+//		
+//		$http.get('http://localhost:8080/AutomatedDMTA-web/design/').
+//	    	then(function(response) {
+//	
+//	    });
+//		
+//	}
+		
 		// root binding for alertService
 		$rootScope.closeAlert = alertService.closeAlert; 
 	})
