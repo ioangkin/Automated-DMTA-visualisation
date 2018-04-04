@@ -1,0 +1,3 @@
+CC#CCn1c2c(nc1N[C@H]3CCCNC3)n(c(=O)n(c2=O)Cc4nc(c5ccccc5n4)C)C AZ001
+CC#CCn1c2c(nc1N3CCC[C@H](C3)N)n(c(=O)n(c2=O)Cc4c5ccccc5ccn4)C AZ002
+CC#CCn1c2c(nc1N3CCC[C@H](C3)N)n(c(=O)n(c2=O)CC(=O)c4ccccc4OCC(=O)NC)C AZ003

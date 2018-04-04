@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
 import com.astrazeneca.rd.AutomatedDMTA.service.CompoundService;
@@ -82,7 +83,29 @@ public class CompoundRestService {
     @Path("/design")
 	public List<Compound> getAllDesign() {
 		logger.debug("GET: list all compounds");
+		System.out.println("get all design");
 		return compoundService.getAllDesign();
+	}
+	
+	@GET
+    @Path("/synthesis")
+	public List<Compound> getAllSynthesis() {
+		logger.debug("GET: list all compounds");
+		return compoundService.getAllSynthesis();
+	}
+	
+	@GET
+    @Path("/purification")
+	public List<Compound> getAllPurification() {
+		logger.debug("GET: list all compounds");
+		return compoundService.getAllPurification();
+	}
+	
+	@GET
+    @Path("/testing")
+	public List<Compound> getAllTesting() {
+		logger.debug("GET: list all compounds");
+		return compoundService.getAllTesting();
 	}
 	
 /*    ToDo: Don't we need some checks? ie:
@@ -116,9 +139,9 @@ public class CompoundRestService {
 	}
 
 	@POST
-	@Path("/compounds")
+	@Path("/saveCompounds")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response saveCompound(Compound compound) {
+	public Response saveCompound(@RequestBody Compound compound) {
 		logger.debug("POST: save compound");
 		Compound saved = compoundService.saveCompound(compound);
 		logger.debug("SAVED: "+saved.toString());

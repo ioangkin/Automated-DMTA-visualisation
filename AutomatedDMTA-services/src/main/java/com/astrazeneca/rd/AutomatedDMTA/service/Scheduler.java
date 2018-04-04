@@ -70,7 +70,7 @@ public class Scheduler {
 	static CompoundService	service;
 	
 	/**
-	 * Building the BACKLOG/DESIGN stage:
+	 * Building the BACKLOG/DESIGN compounds list:
 	 * Scan all planned compounds and populate DB irrespectively on
 	 * whether any of these compnds have moved in the cycle already.
 	 * For each compound the SMILES and an identifier strings are stored (mandatory fields)
@@ -109,7 +109,7 @@ public class Scheduler {
 			//SMILES
 			String	extracted_smiles;
 			
-			//SMILES is needed for this
+			//StructureGraph (SMILES is needed for this)
 			byte[]	structureGraph;
 
 			// Iterate through the compounds list, collecting attributes for each individual compound
@@ -176,7 +176,7 @@ public class Scheduler {
 	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
 	public void scheduleJob() throws IOException
 	{	
-		
+		//Collection of all "known" compounds
 		for (final Compound c : service.getAllCompounds())
 		{
 
@@ -221,7 +221,7 @@ public class Scheduler {
 					//collect and set results value
 					{
 						//The file path for the results.txt file
-						//For now this is identical to the last check (String filename), but requirments may change
+						//For now this is identical to the last check (String filename), but requirements may change
 						String resultsFilename = testing_File_Path + c.getSampleNumber() + ".txt";
 			
 						//Collect the file from the shared folder

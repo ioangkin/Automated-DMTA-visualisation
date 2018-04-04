@@ -44,6 +44,12 @@
 			<artifactId>jersey-media-moxy</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
+		
+	<!-- 	<dependency>
+  <groupId>org.glassfish.jersey.media</groupId>
+  <artifactId>jersey-media-json-jackson</artifactId>
+  <version>2.25</version>
+</dependency> -->
 
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
@@ -79,6 +85,7 @@
 			<version>2.2.4</version>
 			<scope>test</scope>
 		</dependency>
+		
 
 	</dependencies>
 

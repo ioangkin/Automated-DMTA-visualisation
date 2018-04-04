@@ -44,6 +44,18 @@ public class CompoundService {
 	public List<Compound> getAllDesign() {
 		return compoundRepository.getAllDesign();
 	}
+	
+	public List<Compound> getAllSynthesis() {
+		return compoundRepository.getAllSynthesis();
+	}
+	
+	public List<Compound> getAllPurification() {
+		return compoundRepository.getAllPuification();
+	}
+	
+	public List<Compound> getAllTesting() {
+		return compoundRepository.getAllTesting();
+	}
 
 	public Page<Compound> getAllCompounds(Pageable pageable) {
 		return compoundRepository.findAll(pageable);

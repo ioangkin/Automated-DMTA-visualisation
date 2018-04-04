@@ -31,7 +31,7 @@ public class Compound
 	// Note: Stages are comparable, see STageTypeTest.java and enum methods:
 	// stage.ordinal() and compareTo()
 	@Column()
-	@NotNull
+	//@NotNull
 	@Enumerated(EnumType.STRING)
 	private StageType	stage;
 
@@ -55,7 +55,7 @@ public class Compound
 	// http://compounds.rd.astrazeneca.net/resources/structure/toimage/YOUR_SMILES_HERE?inputFormat=SMILES&appid=pipelinepilot using SMILES
 	@Column()
 	@Lob
-	@NotNull
+	//@NotNull
 	private byte[]		structureGraph;
 
 	/*

@@ -26,7 +26,15 @@ public interface CompoundRepository extends JpaRepository<Compound, Long> {
 
 	public Page<Compound> findAll(Pageable pageable);
 
-	@Query("select c from Compound c") //where c.stage = 'DESIGN'")
+	@Query("select c from Compound c ") //where c.stage = 'DESIGN'")
 	public List<Compound> getAllDesign();
 
+	@Query("select c from Compound c ")//where c.stage = 'SYNTHESIS'")
+	public List<Compound> getAllSynthesis();
+	
+	@Query("select c from Compound c ") //where c.stage = 'PURIFICATION'")
+	public List<Compound> getAllPuification();
+	
+	@Query("select c from Compound c ") //where c.stage = 'TESTING'")
+	public List<Compound> getAllTesting();
 }
