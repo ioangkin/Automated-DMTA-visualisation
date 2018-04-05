@@ -106,7 +106,7 @@
 				<tbody>
 					<tr ng-repeat="d in data">
 						<td>{{d.sampleNumber}}</td>
-						<td>{{d.stage}}</td>
+						<td>{{d.stage | lowercase}}</td>
 						<td>{{d.smiles}}</td>
 						<td>{{d.results}}</td>
 					</tr>

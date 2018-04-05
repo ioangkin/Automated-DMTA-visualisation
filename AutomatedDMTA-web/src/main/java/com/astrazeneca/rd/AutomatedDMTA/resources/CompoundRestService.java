@@ -29,9 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
+import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 import com.astrazeneca.rd.AutomatedDMTA.service.CompoundService;
 
 /**
@@ -82,30 +85,33 @@ public class CompoundRestService {
 	@GET
     @Path("/design")
 	public List<Compound> getAllDesign() {
-		logger.debug("GET: list all compounds");
+		logger.debug("GET: list all design");
 		System.out.println("get all design");
-		return compoundService.getAllDesign();
+		return compoundService.getAllDesign(StageType.DESIGN);
 	}
 	
 	@GET
     @Path("/synthesis")
 	public List<Compound> getAllSynthesis() {
 		logger.debug("GET: list all compounds");
-		return compoundService.getAllSynthesis();
+		System.out.println("get all synthesis");
+		return compoundService.getAllSynthesis(StageType.SYNTHESIS);
 	}
 	
 	@GET
     @Path("/purification")
 	public List<Compound> getAllPurification() {
 		logger.debug("GET: list all compounds");
-		return compoundService.getAllPurification();
+		System.out.println("get all purification");
+		return compoundService.getAllPurification(StageType.PURIFICATION);
 	}
 	
 	@GET
     @Path("/testing")
 	public List<Compound> getAllTesting() {
 		logger.debug("GET: list all compounds");
-		return compoundService.getAllTesting();
+		System.out.println("get all testing");
+		return compoundService.getAllTesting(StageType.TESTING);
 	}
 	
 /*    ToDo: Don't we need some checks? ie:

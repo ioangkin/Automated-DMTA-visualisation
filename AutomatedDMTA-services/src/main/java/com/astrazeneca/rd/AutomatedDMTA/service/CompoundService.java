@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
+import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 import com.astrazeneca.rd.AutomatedDMTA.repository.CompoundRepository;
 
 /**
@@ -41,20 +42,20 @@ public class CompoundService {
 		return compoundRepository.findAll();
 	}
 	
-	public List<Compound> getAllDesign() {
-		return compoundRepository.getAllDesign();
+	public List<Compound> getAllDesign(StageType design) {
+		return compoundRepository.getAllDesign(design);
 	}
 	
-	public List<Compound> getAllSynthesis() {
-		return compoundRepository.getAllSynthesis();
+	public List<Compound> getAllSynthesis(StageType synthesis) {
+		return compoundRepository.getAllSynthesis(synthesis);
 	}
 	
-	public List<Compound> getAllPurification() {
-		return compoundRepository.getAllPuification();
+	public List<Compound> getAllPurification(StageType purification) {
+		return compoundRepository.getAllPuification(purification);
 	}
 	
-	public List<Compound> getAllTesting() {
-		return compoundRepository.getAllTesting();
+	public List<Compound> getAllTesting(StageType testing) {
+		return compoundRepository.getAllTesting(testing);
 	}
 
 	public Page<Compound> getAllCompounds(Pageable pageable) {

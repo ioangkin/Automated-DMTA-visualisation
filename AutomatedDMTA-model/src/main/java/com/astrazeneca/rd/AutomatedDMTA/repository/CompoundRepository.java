@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
+import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 
 /**
  *
@@ -26,15 +27,15 @@ public interface CompoundRepository extends JpaRepository<Compound, Long> {
 
 	public Page<Compound> findAll(Pageable pageable);
 
-	@Query("select c from Compound c ") //where c.stage = 'DESIGN'")
-	public List<Compound> getAllDesign();
+	@Query("select c from Compound c where c.stage = :design")
+	public List<Compound> getAllDesign(@Param("design") StageType design);
 
-	@Query("select c from Compound c ")//where c.stage = 'SYNTHESIS'")
-	public List<Compound> getAllSynthesis();
+	@Query("select c from Compound c where c.stage = :synthesis")
+	public List<Compound> getAllSynthesis(@Param("synthesis") StageType synthesis);
 	
-	@Query("select c from Compound c ") //where c.stage = 'PURIFICATION'")
-	public List<Compound> getAllPuification();
+	@Query("select c from Compound c where c.stage = :purification")
+	public List<Compound> getAllPuification(@Param("purification") StageType purification);
 	
-	@Query("select c from Compound c ") //where c.stage = 'TESTING'")
-	public List<Compound> getAllTesting();
+	@Query("select c from Compound c where c.stage = :testing")
+	public List<Compound> getAllTesting(@Param("testing") StageType testing);
 }
