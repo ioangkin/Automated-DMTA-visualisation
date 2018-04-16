@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.astrazeneca.rd.AutomatedDMTA.model.Compound;
 import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
@@ -19,7 +20,8 @@ import com.astrazeneca.rd.AutomatedDMTA.repository.CompoundRepository;
  * @author klfl423
  *
  */
-@Component
+//@Component
+@Service
 public class CompoundService {
 	private static Logger logger = LoggerFactory.getLogger(CompoundService.class);
 	

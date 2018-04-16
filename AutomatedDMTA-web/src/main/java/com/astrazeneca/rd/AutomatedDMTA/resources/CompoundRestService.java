@@ -44,7 +44,6 @@ import com.astrazeneca.rd.AutomatedDMTA.service.CompoundService;
  *
  */
 @Path("/compound")
-@Produces({"application/json"})
 public class CompoundRestService {
 	private static Logger logger = LoggerFactory.getLogger(CompoundRestService.class);
 	
@@ -84,10 +83,13 @@ public class CompoundRestService {
 	
 	@GET
     @Path("/design")
+	@Produces(MediaType.APPLICATION_JSON)
 	public List<Compound> getAllDesign() {
 		logger.debug("GET: list all design");
 		System.out.println("get all design");
 		return compoundService.getAllDesign(StageType.DESIGN);
+		
+		
 	}
 	
 	@GET

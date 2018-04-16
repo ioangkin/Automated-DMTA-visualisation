@@ -39,17 +39,17 @@
 			<version>${jersey.version}</version>
 		</dependency>
 
-		<dependency>
+	<!-- 	<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-moxy</artifactId>
 			<version>${jersey.version}</version>
-		</dependency>
+		</dependency> -->
 		
-	<!-- 	<dependency>
-  <groupId>org.glassfish.jersey.media</groupId>
-  <artifactId>jersey-media-json-jackson</artifactId>
-  <version>2.25</version>
-</dependency> -->
+		<dependency>
+ 			 <groupId>org.glassfish.jersey.media</groupId>
+ 			 <artifactId>jersey-media-json-jackson</artifactId>
+ 			 <version>${jersey.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
@@ -70,6 +70,12 @@
 			<artifactId>urlrewritefilter</artifactId>
 			<version>4.0.4</version>
 		</dependency>
+		
+		<dependency>
+		<groupId>com.owlike</groupId>
+		<artifactId>genson</artifactId>
+			<version>0.99</version>
+		</dependency>
 
 		<!-- Integration Testing -->
 		<dependency>
@@ -85,8 +91,7 @@
 			<version>2.2.4</version>
 			<scope>test</scope>
 		</dependency>
-		
-
+	
 	</dependencies>
 
 	<build>
@@ -105,7 +110,8 @@
 				</configuration>
 			</plugin>
 
-			<!-- Jetty plugin for embedded container -->
+ 			<!-- Jetty plugin for embedded container -->
+ 			<!--
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
@@ -125,7 +131,7 @@
 				</dependencies>
 			</plugin>
 
-			<!-- Tomcat plugin for embedded container -->
+			Tomcat plugin for embedded container
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
@@ -135,13 +141,13 @@
 				</configuration>
 			</plugin>			
 
-			<!-- CARGO config for Integration Testing -->
+			CARGO config for Integration Testing
 			<plugin>
-				<!-- The Cargo plugin manages the Servlet engine -->
+				The Cargo plugin manages the Servlet engine
 				<groupId>org.codehaus.cargo</groupId>
 				<artifactId>cargo-maven2-plugin</artifactId>
 				<executions>
-					<!-- start engine before tests -->
+					start engine before tests
 					<execution>
 						<id>start-container</id>
 						<phase>pre-integration-test</phase>
@@ -149,7 +155,7 @@
 							<goal>start</goal>
 						</goals>
 					</execution>
-					<!-- stop engine after tests -->
+					stop engine after tests
 					<execution>
 						<id>stop-container</id>
 						<phase>post-integration-test</phase>
@@ -159,16 +165,16 @@
 					</execution>
 				</executions>
 				<configuration>
-					<!-- the actual configuration for the webapp -->
+					the actual configuration for the webapp
 					<configuration>
-						<!-- pick some port likely to be free, 
-							 it has be matched in the test definitions -->
+						pick some port likely to be free, 
+							 it has be matched in the test definitions
 						<properties>
 							<cargo.servlet.port>9090</cargo.servlet.port>
 						</properties>
 					</configuration>
 					
-					<!-- we use a Jetty 9. Alternatives are jetty9x, tomcat7x -->
+					we use a Jetty 9. Alternatives are jetty9x, tomcat7x
 					<container>
 						<containerId>jetty9x</containerId>
 						<type>embedded</type>
@@ -207,7 +213,7 @@
 						<version>1.2.16</version>
 					</dependency>						 
 				</dependencies>
-			</plugin>
+			</plugin> -->
 
 			<!-- SKIP UNTIL PROFILES ARE ADDED TO ALLOW IT TO WORK WITH JETTY AND TOMCAT 
 			<plugin>

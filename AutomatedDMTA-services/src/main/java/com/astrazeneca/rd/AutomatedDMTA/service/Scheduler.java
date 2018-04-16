@@ -2,6 +2,7 @@ package com.astrazeneca.rd.AutomatedDMTA.service;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,17 +46,26 @@ import jcifs.smb.SmbFile;
 //Storing the file location properties. File in: AutomatedDMTA.servicesrc/main/resources/variable.properties
 @PropertySource("classpath:variable.properties")
 
+
 public class Scheduler {
 
-	// non hard-coded constants for the file paths, may be edited by customer in @PropertySource
-	@Value("${design_File_Path}")			
+	/*Temporarily hardcodying the file paths to variables, however ideally the paths are sourced in the
+	  @PropertySource("classpath:variable.properties") */
+	static private String design_File_Path = "C:/dev/workspace/AutomatedDMTA/AutomatedDMTA-services/src/test/resources/Cycle/Bioassay/";
+	static private String synthesis_File_Path = "C:/dev/workspace/AutomatedDMTA/AutomatedDMTA-services/src/test/resources/Cycle/Synthesis/";		
+	static private String purification_File_Path = "C:/dev/workspace/AutomatedDMTA/AutomatedDMTA-services/src/test/resources/Cycle/Purification/";
+	static private String testing_File_Path = "C:/dev/workspace/AutomatedDMTA/AutomatedDMTA-services/src/test/resources/Cycle/Testing/";
+
+	/* TODO: Following declarations to be used instead of the above hardcodied variables
+	 * 	// non hard-coded constants for the file paths, may be edited by customer in @PropertySource
+	@Value("${design_File_Path}")
 	static private String	design_File_Path;
-	@Value("${synthesis_File_Path}")		
+	@Value("${synthesis_File_Path}")
 	static private String	synthesis_File_Path;
-	@Value("${purification_File_Path}")		
+	@Value("${purification_File_Path}")
 	static private String	purification_File_Path;
-	@Value("${testing_File_Path}")			
-	static private String	testing_File_Path;
+	@Value("${testing_File_Path}")
+	static private String	testing_File_Path;*/
 	
 	//For testing purposes:
 	static public String getDesignFilePath()		{ return design_File_Path; }
@@ -62,12 +73,21 @@ public class Scheduler {
 	static public String getPurificationFilePath()	{ return purification_File_Path; }
 	static public String getTestingFilePath()		{ return testing_File_Path; }
 	
+	File designFile;
+	boolean isScheduled=true;
+	
 	//Following is legacy code, can go (?)
 /*	// Ensures only one job is running concurrently
 	private static boolean locked=false;*/
 	
 	@Autowired
-	static CompoundService	service;
+	CompoundService	service;
+	
+/*	public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException, IOException
+	{
+		Scheduler scheduler = new Scheduler();
+		scheduler.buildDesign();
+	}*/
 	
 	/**
 	 * Building the BACKLOG/DESIGN compounds list:
@@ -76,6 +96,8 @@ public class Scheduler {
 	 * For each compound the SMILES and an identifier strings are stored (mandatory fields)
 	 *
 	 * This method runs only once so it is outside of the scheduler
+	 * 
+	 * @author klfl423
 	 * 
 	 * @return  True: At least one compound is found and added to the DB or, If
 	 *         	for any reason a compnd was already existed their stage is updated //This shouldn't be happening, but being extra cautious
@@ -86,12 +108,19 @@ public class Scheduler {
 	 * @throws	UnsupportedEncodingException
 	 * @throws	MalformedURLException
 	 */
+	@Scheduled(cron = "* * * * * ?")
 	boolean buildDesign() throws MalformedURLException, UnsupportedEncodingException, IOException
 	{
 		boolean compoundRecorded = false; //Returned if no compound found
 		
 		//Collect the text file containing the compounds
-		File designFile = getFileFromSharedFolder(design_File_Path + "design" + ".txt");
+		/*
+		 * ToDo: For developing and testing purposes the files are fetched from local folders. However,
+		 * eventually it is a requirement to use network shared folders. For this use method:
+		 * getFileFromSharedFolder) and replace following line with:
+		 * File designFile = getFileFromSharedFolder(design_File_Path + "design" + ".txt");
+		 */
+		designFile = new File(design_File_Path + "dataset" + ".txt");
 		
 		//Collect all lines from the text file into a String array
 		String[] compoundsArr = textToArray(designFile);
@@ -131,6 +160,13 @@ public class Scheduler {
 				
 				// Using the extracted SMILES, retrieve StructureGraph from Chemistry connect web site and turn it into a byte array for DB
 				structureGraph = BufferedImageToByteArray(UrlToBufferedImage(SmilesToUrl(extracted_smiles)));
+				
+				//Testing the image
+			/*  OutputStream out = new FileOutputStream(new File("C:\\dev\\workspace\\AutomatedDMTA\\AutomatedDMTA-services\\src\\test\\resources\\sg.png"));
+				out.write(structureGraph);
+				out.close();
+			*/
+				
 				if (structureGraph.equals(null) || structureGraph.length == 0) //Check structureGraph is found
 				{
 					System.out.println("the structure Graph from the online service was not found");
@@ -158,7 +194,7 @@ public class Scheduler {
 	}
 	
 	/**
-	 * Following method is repeated in intervals and is scanning rest of stage folders (synthesis, purification and testing)
+	 * The method is repeated in intervals and is scanning rest of stage folders (synthesis, purification and testing)
 	 * for changes in compounds
 	 * 
 	 * On repeating intervals: The repetition period is defined in the cron expression, as:
@@ -170,12 +206,18 @@ public class Scheduler {
 	 * source: http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html
 	 * additional: https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
 	 * 
+	 * @author klfl423
+	 * 
 	 * @throws IOException 
 	 * 
 	 **/
-	@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
+	//@Scheduled(cron = "0 0/3 0 * * ?") //runs every 5'
+	@Scheduled(cron = "0/180 * * * * ?")
 	public void scheduleJob() throws IOException
 	{	
+		System.out.println("Inside the Scheduler------->");
+		if (buildDesign()) {
+			System.out.println("After Build design");
 		//Collection of all "known" compounds
 		for (final Compound c : service.getAllCompounds())
 		{
@@ -183,11 +225,16 @@ public class Scheduler {
 			//For compounds that haven't been in Synthesis stage yet
 			if (c.getStage().ordinal() < StageType.SYNTHESIS.ordinal())
 			{
-				//What should the filename be
-				String filename = synthesis_File_Path + c.getSampleNumber() + ".txt";
+				//The filename with its path
+				String synthesisFileNamePath = synthesis_File_Path + c.getSampleNumber() + ".txt";
 				
 				//Compound found in Synthesis stage
-				if (FileExistsInSharedFolder(filename))
+				/*
+				 * TODO: for deployment replace local folders with shared folder,
+				 * Replace "if (FileExistsInLocalFolder(filename))" with:
+				 * if (FileExistsInSharedFolder(filename))
+				 */
+				if (FileExistsInLocalFolder(synthesisFileNamePath))
 				{
 					c.setStage(StageType.SYNTHESIS); //Update stage of compound
 					continue; //Try next compound
@@ -197,10 +244,15 @@ public class Scheduler {
 			else if (c.getStage().ordinal() < StageType.PURIFICATION.ordinal())
 			{
 				//The filename to look for
-				String filename = purification_File_Path + c.getSampleNumber() + ".txt";
+				String purificationFileNamePath = purification_File_Path + c.getSampleNumber() + ".txt";
 				
 				//Compound found in Purification stage
-				if (FileExistsInSharedFolder(filename))
+				/*
+				 * TODO: for deployment shared folders are to be used instead of local folders,
+				 * Then: replace "if (FileExistsInLocalFolder(filename))" with:
+				 * if (FileExistsInSharedFolder(filename))
+				 */
+				if (FileExistsInLocalFolder(purificationFileNamePath))
 				{
 					c.setStage(StageType.PURIFICATION); //Update stage of compound
 					continue; //Try next compound
@@ -210,10 +262,16 @@ public class Scheduler {
 			else if (c.getStage().ordinal() < StageType.TESTING.ordinal())
 			{
 				//The filename to look for
-				String filename = testing_File_Path + c.getSampleNumber() + ".txt";
+				String testingFileNamePath = testing_File_Path + c.getSampleNumber() + ".txt";
 
 				//Compound found in testing stage
-				if ((FileExistsInSharedFolder(filename)) != false)
+				/*
+				 * TODO: for deployment shared folders are to be used instead of local folders,
+				 * Then: replace "if ((FileExistsInLocalFolder(filename)) != false)" with:
+				 * if ((FileExistsInSharedFolder(filename)) != false)
+				 */
+				if ((FileExistsInLocalFolder(testingFileNamePath)) != false)
+				
 				{
 					//Update compound's stage
 					c.setStage(StageType.TESTING);
@@ -222,10 +280,15 @@ public class Scheduler {
 					{
 						//The file path for the results.txt file
 						//For now this is identical to the last check (String filename), but requirements may change
-						String resultsFilename = testing_File_Path + c.getSampleNumber() + ".txt";
+						String resultsFileNamePath = testing_File_Path + c.getSampleNumber() + ".txt";
 			
 						//Collect the file from the shared folder
-						File resultsFile = getFileFromSharedFolder(resultsFilename);
+						/*TODO: At deployment files are to be accessed from shared folders (instead of
+						 * local folders as currently during dev and testing). Then, instead of:
+						 * "File resultsFile = new File(resultsFilename)", use:
+						 * "File resultsFile = getFileFromSharedFolder(resultsFilename)" 
+						 */
+						File resultsFile = new File(resultsFileNamePath);
 						
 						//Parse through the text file and collect the results (first line of actual text)
 						String results = fileToString(resultsFile);
@@ -240,10 +303,15 @@ public class Scheduler {
 					//collect and store results' linegraph
 					{
 						//The file path for the lineGraph .png image file
-						String lineGraphFileName = testing_File_Path + c.getSampleNumber() + ".png";
+						String lineGraphFileNamePath = testing_File_Path + c.getSampleNumber() + ".png";
 						
 						//Collect the file from the shared folder
-						File lineGraphFile = getFileFromSharedFolder(lineGraphFileName);
+						/*TODO: At deployment files are to be accessed from shared folders (instead of
+						 * local folders as currently during dev and testing). Then, instead of:
+						 * "File lineGraphFile = new File(lineGraphFileName)", use:
+						 * "File lineGraphFile = getFileFromSharedFolder(lineGraphFileName)" 
+						 */
+						File lineGraphFile = new File(lineGraphFileNamePath);
 						
 						//Parse the image to a byte array, ready for DB storage
 						byte[] lineGraph = fileToByteArray(lineGraphFile);
@@ -256,7 +324,8 @@ public class Scheduler {
 					}
 				}
 			}
-		}		
+		}
+		}
 	}
 	
 	//Note: All methods from here on are tools used by the buildDesign() and scheduler() methods in this class to collect information about the compounds
@@ -265,14 +334,16 @@ public class Scheduler {
 	 * Convert a text file into string array, each line of the text file becomes
 	 * a row in the array
 	 * 
-	 * @param filepath
+	 * @author klfl423
+	 * 
+	 * @param file
 	 * 
 	 * @return array with the text lines
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private String[] textToArray(File file) throws FileNotFoundException, IOException
+	public String[] textToArray(File file) throws FileNotFoundException, IOException
 	{
 
 		if (!file.exists())
@@ -325,8 +396,11 @@ public class Scheduler {
 		return lines.toArray(new String[lines.size()]);
 	}
 	
+	
 	/**
 	 * Access and retrieve a file from a Windows shared folder using authentication with Samba JCIFS
+	 * 
+	 * @author klfl423
 	 * 
 	 * @param filepath: Exact location including filename
 	 * 
@@ -336,6 +410,7 @@ public class Scheduler {
 	 * @throws SmbException
 	 * @throws IOException
 	 */
+	//ToDo: At the moment this method is not used, but later will be
 	private File getFileFromSharedFolder(String filepath) throws MalformedURLException, SmbException, IOException  {
 		
 		//Authenticate at remote shared folder
@@ -362,11 +437,13 @@ public class Scheduler {
 	 * Look for a file within a shared folder/ Authentication is attempted
 	 * Same as the getFileFromSharedFolder(String filepath) method, but it doesnt return the file
 	 * 
+	 * @author klfl423
+	 * 
 	 * @param filepath: Exact location including filename
 	 * 
 	 * @return
-	 * 			true: The file exists
-	 * 			false: The file was not found or error occurred (ie connection error)
+	 * 			true:  File found
+	 * 			false: File not found or error occurred (ie connection failed)
 	 * 
 	 * @throws MalformedURLException
 	 * @throws SmbException
@@ -382,19 +459,39 @@ public class Scheduler {
         SmbFile smbFile = new SmbFile(sFileUrl, auth);
         
         return smbFile.exists()? true:false;
-        
-/*        if (smbFile.exists()) { //File found
-            return true;
-        }
-        
-        return false;*/ 
 	}
-		
+
+	/**
+	 * TODO: This is a temporary method replacing the FileExistsInSharedFolder(String filepath) during
+	 * development and testing. From deployment on, shared folders are to be used (instead of local),
+	 * then this current method will become absolute and the FileExistsInSharedFolder(String filepath)
+	 * method will be used instead.
+	 * 
+	 * Look for a file within the local folder
+	 * 
+	 * @author klfl423
+	 * 
+	 * @param filepath: Exact location including filename
+	 * 
+	 * @return
+	 * 			true:  File found
+	 * 			false: File not found or error occurred (ie connection failed)
+	 * 
+	 * @throws MalformedURLException
+	 * @throws SmbException
+	 * @throws IOException
+	 */
+	private boolean FileExistsInLocalFolder(String filepath) throws IOException  {
+      
+        return new File(filepath).exists()? true:false;
+	}
 	
 	/**
 	 * Go through each line of the compounds array as found in the text file
 	 * in the respective stage folder and try to extract the AZ identification
 	 * number. if AZ isn't found go for SN instead
+	 * 
+	 * @author klfl423
 	 * 
 	 * TODO: Differentiate between AZ and SN numbers. When requirements are more
 	 * concrete Consider using stage to chose between AZ and SN numbers
@@ -405,7 +502,7 @@ public class Scheduler {
 	 * 
 	 * @return extracted_id string
 	 */
-	private String extractIdentifier(String compoundLine)
+	String extractIdentifier(String compoundLine)
 	{
 
 		String extracted_id = null;
@@ -431,8 +528,9 @@ public class Scheduler {
 
 	/**
 	 * Go through a single line of compound information from the text file found
-	 * in the respective stage folder and try to extract the compound's smile
+	 * in the respective stage folder and extract the compound's smile
 	 * 
+	 * @author klfl423
 	 * 
 	 * @param compoundLine
 	 *            The line of text containing the compound information extracted
@@ -440,7 +538,7 @@ public class Scheduler {
 	 * 
 	 * @return smiles string
 	 */
-	private String extractSmiles(String compoundLine)
+	String extractSmiles(String compoundLine)
 	{
 		String smiles = null;
 
@@ -458,8 +556,16 @@ public class Scheduler {
 	}
 
 	/**
-	 * Creates a URL pointing to a compound structure graph in Chemistry connect (compounds.rd.astrazeneca.net)
+	 * Creates a URL pointing to a compound structure graph in pipeline Chemistry connect (compounds.rd.astrazeneca.net)
 	 * using the compound's SMILES
+	 * 
+	 * The method is part of code for retrieving the strucutreGraph image file from the pipeline web site
+	 * and store it to the DB.
+	 * The input is the SMILES signature of the compound which is then embedded in the URL encoded,
+	 * using the UTF-8 encoding scheme.
+	 * The output URL is used by the method UrlToBufferedImage(URL path) for collecting the image from the site  
+	 * 
+	 * @author klfl423
 	 * 
 	 * @param smiles
 	 * 
@@ -473,13 +579,22 @@ public class Scheduler {
 	{
 
 		// A URL for building the compound's structure image graph
-		return new URL("http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(smiles, "UTF-8") + "?inputFormat=SMILES&appid=chemistry connect");
+		return new URL("http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot");
 		
 		// TODO: consider saving the URL as a compound's property as well
 	}
 	
 	/**
-	 * Retrieve image form a given URL
+	 * Retrieve image from a given URL and return it as a BufferedImage object
+	 * 
+	 * The method is part of code for retrieving the strucutreGraph image file from the pipeline web site
+	 * and store it to the DB.
+	 * The source is a URL of the file on the pipleine website coming from the method SmilesToUrl(String smiles).
+	 * The output is a BufferedImage object sent to a method BufferedImageToByteArray(BufferedImage image) that
+	 * returns a byte array of the image ready for storing in the DB 
+	 * 
+	 * 
+	 * @author klfl423
 	 * 
 	 * @param URL link / path
 	 * 
@@ -494,7 +609,14 @@ public class Scheduler {
 	}
 	
 	/**
-	 * Convert a bufferedImage file into a byte[] ready to be stored into the DB
+	 * Convert a bufferedImage file into a byte[] ready for the DB
+	 * 
+	 * The method is part of code set to retrieve the strucutreGraph image file from the pipeline web site
+	 * and store it to the DB.
+	 * The input is an image file typically coming form method: UrlToBufferedImage(URL), and the
+	 * output is a byte array ready to be stored in the DB.
+	 * 
+	 * @author klfl423
 	 * 
 	 * @param image
 	 * 
@@ -534,6 +656,8 @@ public class Scheduler {
 	/**
 	 * Create, populate, and save a new compound
 	 * 
+	 * @author klfl423
+	 * 
 	 * @param stage
 	 * @param sn
 	 * @param smiles
@@ -543,11 +667,9 @@ public class Scheduler {
 	 * 
 	 * @throws IOException
 	 */
-	private Compound newCompound(StageType stage, String sn, String smiles, byte[] structureGraph) throws IOException
+	private Compound newCompound(StageType stage, String smiles, String sn, byte[] structureGraph) throws IOException
 	{
-
 		Compound c = new Compound(); 			// Create the new compound
-
 		c.setStage(stage); 						// Store its stage
 		c.setSampleNumber(sn); 					// Store the sample number
 		c.setSmiles(smiles); 					// Store the smiles
@@ -557,7 +679,9 @@ public class Scheduler {
 	}
 	
 	/**
-	 * Store the first line of text from a file into a String type variable
+	 * Store the first line of text from a file into a String variable
+	 * 
+	 * @author klfl423
 	 * 
 	 * @param file
 	 * 
@@ -612,11 +736,13 @@ public class Scheduler {
 	}
 	
 	/**
+	 * Create a byte array from an image file.
 	 * 
-	 * Create a byte array from an image file
+	 * The method is part of code set to store an image to the DB.
+	 * The input, an image file, is already been fetched by a method like getFileFromSharedFolder(filePath). 
+	 * The output, a Byte[], is typically stored in the DB 
 	 * 
-	 * Note: The file is already been fetched from the physical location ie:
-	 * shared folder, with methods like: getFileFromSharedFolder
+	 * @author klfl423
 	 * 
 	 * @param file
 	 * @return imageBytes byte array
@@ -661,14 +787,49 @@ public class Scheduler {
 		return imageBytes;
 	}
 
-	//Note following method is not used yet, as the data (image) is not retreived form the DB yet
+
+	//TODO: This method is not used yet, as the data (image) is not retrieved form the DB yet
 	/**
-	 * Writes a file from a bufferedImage so that an image from DB can be used in web or on disk
+	 * Create a bufferedImage from a Byte array (typically stored in the DB).
+	 * 
+	 * The method is part of a group of methods set to return an image from DB to web or disk.
+	 * The input is an array of bytes representing an image file stored in the db and its output
+	 * is a BufferedImage object which is fed into a method (such as: BufferedImageToFile(BufferedImage, fileName),
+	 * turning it into an image file.
+	 *  
+	 * @author klfl423
+	 *  
+	 * @param bi:
+	 *            The bufferedImage
+	 * @param fileName:
+	 *            The required file name for the disk
+	 * 
+	 * @return file: the image
+	 * @return null: see console for error
+	 */
+	private BufferedImage ByteArrayToBufferedImage(byte[] imageInBytes) {
+	    ByteArrayInputStream bais = new ByteArrayInputStream(imageInBytes);
+	    try {
+	        return ImageIO.read(bais);
+	    } catch (IOException e) {
+	        throw new RuntimeException(e);
+	    }
+	}
+
+	//TODO: This method is not used yet, as the data (image) is not retrieved form the DB yet
+	/**
+	 * writes a file from a bufferedImage .
+	 * 
+	 * The method is part of a group of methods set to return an image from DB to web or disk.
+	 * The input (a BufferedImage) typically comes from a method (such as ByteArrayToBufferedImage(byte[]))
+	 * that writes a Byte[] stream into a buffereImage object.
+	 * 
+	 * @author klfl423
 	 * 
 	 * @param bi:
 	 *            The bufferedImage
 	 * @param fileName:
-	 *            The required file name for the disk (does this include a path?)
+	 *            The required file name for the disk
 	 * 
 	 * @return file: the image
 	 * @return null: see console for error
@@ -687,4 +848,5 @@ public class Scheduler {
 		}
 		return null;
 	}
+
 }

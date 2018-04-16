@@ -6,6 +6,12 @@ angular.module('myApp.compound', ['ngResource'])
 	
 	.controller('CompoundCtrl', function($scope, alertService, $location,$http) {
 	
+//		$scope.filter('capitalize', function() {
+//	        return function(input) {
+//	            return (!!input) ? input.split(' ').map(function(wrd){return wrd.charAt(0).toUpperCase() + wrd.substr(1).toLowerCase();}).join(' ') : '';
+//	        }
+//	    });
+		
         //Design Stage
 		$scope.showDesignDetails = function () {
 			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/design')
