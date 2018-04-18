@@ -21,6 +21,7 @@ angular.module('myApp.compound', ['ngResource'])
 		        });
 		};
    
+		//TODO: Remove obsolete code
         $scope.createDesignDetails = function () {
         	 console.log("inside my createDesign");
 			   var compound={
@@ -49,6 +50,7 @@ angular.module('myApp.compound', ['ngResource'])
 		       });
 		};
 
+		//TODO: Remove obsolete code
 		$scope.createSynthesisDetails = function () {
 			 console.log("inside my createSynthesis");
 			   var compound={
@@ -78,6 +80,7 @@ angular.module('myApp.compound', ['ngResource'])
 		        });
         };
         
+		//TODO: Remove obsolete code
         $scope.createPurificationDetails = function () {
         	 console.log("inside my createPurification");
 			   var compound={
@@ -108,6 +111,7 @@ angular.module('myApp.compound', ['ngResource'])
 		        });
         };
    
+        //TODO: Remove obsolete code
         $scope.createTestingDetails = function () {
         	 console.log("inside my createTesting");
 			   var compound={
