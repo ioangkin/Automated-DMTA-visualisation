@@ -222,7 +222,7 @@ public class CompoundRestService {
 	}
 */
 
-	//ToDo: Manu: The customer has abandoned the Search field, do we still need all the search queries methods?
+	//TODO: The customer has abandoned the Search field, do we still need all the search queries methods?
 	//In case of a search with multiple attribs, use above method instead
 	@GET
 	@Path("/search")

@@ -52,10 +52,10 @@ public class Scheduler {
 
 	/*Temporarily hardcodying the file paths to variables, however ideally the paths are sourced in the
 	  @PropertySource("classpath:variable.properties") */
-	static private String design_File_Path = "C:/dev/workspace/AutomatedDMTA/AutomatedDMTA-services/src/test/resources/Cycle/Bioassay/";
-	static private String synthesis_File_Path = "C:/dev/workspace/AutomatedDMTA/AutomatedDMTA-services/src/test/resources/Cycle/Synthesis/";		
-	static private String purification_File_Path = "C:/dev/workspace/AutomatedDMTA/AutomatedDMTA-services/src/test/resources/Cycle/Purification/";
-	static private String testing_File_Path = "C:/dev/workspace/AutomatedDMTA/AutomatedDMTA-services/src/test/resources/Cycle/Testing/";
+	static private String design_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Design/";
+	static private String synthesis_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Synthesis/";		
+	static private String purification_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Purification/";
+	static private String testing_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Testing/";
 
 	/* TODO: Following declarations to be used instead of the above hardcodied variables
 	 * 	// non hard-coded constants for the file paths, may be edited by customer in @PropertySource
@@ -77,19 +77,9 @@ public class Scheduler {
 	File designFile;
 	boolean isScheduled=true;
 	
-	//Following is legacy code, can go (?)
-/*	// Ensures only one job is running concurrently
-	private static boolean locked=false;*/
 	
 	@Autowired
 	CompoundService	service;
-	
-	public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException, IOException
-	{
-		Scheduler scheduler = new Scheduler();
-		//scheduler.buildDesign();
-		scheduler.scheduleJob();
-	}
 	
 	/**
 	 * Building the BACKLOG/DESIGN compounds list:
@@ -217,125 +207,121 @@ public class Scheduler {
 	 * 
 	 **/
 	//@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
-	@Scheduled(cron = "0/180 * * * * ?")
+	@Scheduled(cron = "0/10 * * * * ?")
 	public void scheduleJob() throws IOException
 	{	
 		System.out.println("Inside the Scheduler------->");
-		//	if (buildDesign())
-			//{
-					System.out.println("After Build design");
-				//Collection of all "known" compounds
-				for (final Compound c : service.getAllCompounds())
+		//Collection of all "known" compounds
+		for (final Compound c : service.getAllCompounds())
+		{
+			
+			//For compounds that haven't been in Synthesis stage yet
+			if (c.getStage().ordinal() < StageType.SYNTHESIS.ordinal())
+			{
+				//The filename with its path
+				String synthesisFileNamePath = synthesis_File_Path + c.getSampleNumber() + ".txt";
+				
+				//Compound found in Synthesis stage
+				/*
+				 * TODO: for deployment replace local folders with shared folder,
+				 * Replace "if (FileExistsInLocalFolder(filename))" with:
+				 * if (FileExistsInSharedFolder(filename))
+				 */
+				if (FileExistsInLocalFolder(synthesisFileNamePath))
 				{
-					
-					//For compounds that haven't been in Synthesis stage yet
-					if (c.getStage().ordinal() < StageType.SYNTHESIS.ordinal())
-					{
-						//The filename with its path
-						String synthesisFileNamePath = synthesis_File_Path + c.getSampleNumber() + ".txt";
-						
-						//Compound found in Synthesis stage
-						/*
-						 * TODO: for deployment replace local folders with shared folder,
-						 * Replace "if (FileExistsInLocalFolder(filename))" with:
-						 * if (FileExistsInSharedFolder(filename))
-						 */
-						if (FileExistsInLocalFolder(synthesisFileNamePath))
-						{
-							c.setStage(StageType.SYNTHESIS); //Update stage of compound
-							service.saveCompound(c);
-							continue; //Try next compound
-						}
-					}
-					//For compounds that haven't been in Purification stage yet
-					 if (c.getStage().ordinal() < StageType.PURIFICATION.ordinal())
-					{
-						//The filename to look for
-						String purificationFileNamePath = purification_File_Path + c.getSampleNumber() + ".txt";
-						
-						//Compound found in Purification stage
-						/*
-						 * TODO: for deployment shared folders are to be used instead of local folders,
-						 * Then: replace "if (FileExistsInLocalFolder(filename))" with:
-						 * if (FileExistsInSharedFolder(filename))
-						 */
-						if (FileExistsInLocalFolder(purificationFileNamePath))
-						{
-							c.setStage(StageType.PURIFICATION); //Update stage of compound
-							service.saveCompound(c);
-							continue; //Try next compound
-						}
-					}
-					//For compounds that haven't been in Testing stage yet
-					 if (c.getStage().ordinal() < StageType.TESTING.ordinal())
-					{
-						//The filename to look for
-						String testingFileNamePath = testing_File_Path + c.getSampleNumber() + ".txt";
-		
-						//Compound found in testing stage
-						/*
-						 * TODO: for deployment shared folders are to be used instead of local folders,
-						 * Then: replace "if ((FileExistsInLocalFolder(filename)) != false)" with:
-						 * if ((FileExistsInSharedFolder(filename)) != false)
-						 */
-						if ((FileExistsInLocalFolder(testingFileNamePath)) != false)
-						
-						{
-							//Update compound's stage
-							c.setStage(StageType.TESTING);
-							
-							//collect and set results value
-							{
-								//The file path for the results.txt file
-								//For now this is identical to the last check (String filename), but requirements may change
-								String resultsFileNamePath = testing_File_Path + c.getSampleNumber() + ".txt";
-					
-								//Collect the file from the shared folder
-								/*TODO: At deployment files are to be accessed from shared folders (instead of
-								 * local folders as currently during dev and testing). Then, instead of:
-								 * "File resultsFile = new File(resultsFilename)", use:
-								 * "File resultsFile = getFileFromSharedFolder(resultsFilename)" 
-								 */
-								File resultsFile = new File(resultsFileNamePath);
-								
-								//Parse through the text file and collect the results (first line of actual text)
-								String results = fileToString(resultsFile);
-								
-								//Store the data in the DB
-								if (!results.equals(null) || results.length() != 0)
-								{
-									c.setResults(results);
-								}
-							}
-							
-							//collect and store results' linegraph
-							{
-								//The file path for the lineGraph .png image file
-								String lineGraphFileNamePath = testing_File_Path + c.getSampleNumber() + ".png";
-								
-								//Collect the file from the shared folder
-								/*TODO: At deployment files are to be accessed from shared folders (instead of
-								 * local folders as currently during dev and testing). Then, instead of:
-								 * "File lineGraphFile = new File(lineGraphFileName)", use:
-								 * "File lineGraphFile = getFileFromSharedFolder(lineGraphFileName)" 
-								 */
-								File lineGraphFile = new File(lineGraphFileNamePath);
-								
-								//Parse the image to a byte array, ready for DB storage
-								byte[] lineGraph = fileToByteArray(lineGraphFile);
-								
-								//Store the image in the DB (as a byte array)
-								if (!lineGraph.equals(null) || lineGraph.length != 0)
-								{
-									c.setLineGraph(lineGraph);
-								}
-							}
-						}
-						service.saveCompound(c);
-					}
+					c.setStage(StageType.SYNTHESIS); //Update stage of compound
+					service.saveCompound(c);
+					continue; //Try next compound
 				}
 			}
-		//}
+			//For compounds that haven't been in Purification stage yet
+			 if (c.getStage().ordinal() < StageType.PURIFICATION.ordinal())
+			{
+				//The filename to look for
+				String purificationFileNamePath = purification_File_Path + c.getSampleNumber() + ".txt";
+				
+				//Compound found in Purification stage
+				/*
+				 * TODO: for deployment shared folders are to be used instead of local folders,
+				 * Then: replace "if (FileExistsInLocalFolder(filename))" with:
+				 * if (FileExistsInSharedFolder(filename))
+				 */
+				if (FileExistsInLocalFolder(purificationFileNamePath))
+				{
+					c.setStage(StageType.PURIFICATION); //Update stage of compound
+					service.saveCompound(c);
+					continue; //Try next compound
+				}
+			}
+			//For compounds that haven't been in Testing stage yet
+			 if (c.getStage().ordinal() < StageType.TESTING.ordinal())
+			{
+				//The filename to look for
+				String testingFileNamePath = testing_File_Path + c.getSampleNumber() + ".txt";
+
+				//Compound found in testing stage
+				/*
+				 * TODO: for deployment shared folders are to be used instead of local folders,
+				 * Then: replace "if ((FileExistsInLocalFolder(filename)) != false)" with:
+				 * if ((FileExistsInSharedFolder(filename)) != false)
+				 */
+				if ((FileExistsInLocalFolder(testingFileNamePath)) != false)
+				
+				{
+					//Update compound's stage
+					c.setStage(StageType.TESTING);
+					
+					//collect and set results value
+					{
+						//The file path for the results.txt file
+						//For now this is identical to the last check (String filename), but requirements may change
+						String resultsFileNamePath = testing_File_Path + c.getSampleNumber() + ".txt";
+			
+						//Collect the file from the shared folder
+						/*TODO: At deployment files are to be accessed from shared folders (instead of
+						 * local folders as currently during dev and testing). Then, instead of:
+						 * "File resultsFile = new File(resultsFilename)", use:
+						 * "File resultsFile = getFileFromSharedFolder(resultsFilename)" 
+						 */
+						File resultsFile = new File(resultsFileNamePath);
+						
+						//Parse through the text file and collect the results (first line of actual text)
+						String results = fileToString(resultsFile);
+						
+						//Store the data in the DB
+						if (!results.equals(null) || results.length() != 0)
+						{
+							c.setResults(results);
+						}
+					}
+					
+					//collect and store results' linegraph
+					{
+						//The file path for the lineGraph .png image file
+						String lineGraphFileNamePath = testing_File_Path + c.getSampleNumber() + ".png";
+						
+						//Collect the file from the shared folder
+						/*TODO: At deployment files are to be accessed from shared folders (instead of
+						 * local folders as currently during dev and testing). Then, instead of:
+						 * "File lineGraphFile = new File(lineGraphFileName)", use:
+						 * "File lineGraphFile = getFileFromSharedFolder(lineGraphFileName)" 
+						 */
+						File lineGraphFile = new File(lineGraphFileNamePath);
+						
+						//Parse the image to a byte array, ready for DB storage
+						byte[] lineGraph = fileToByteArray(lineGraphFile);
+						
+						//Store the image in the DB (as a byte array)
+						if (!lineGraph.equals(null) || lineGraph.length != 0)
+						{
+							c.setLineGraph(lineGraph);
+						}
+					}
+				}
+				service.saveCompound(c);
+			}
+		}
+	}
 	
 	//Note: All methods from here on are tools used by the buildDesign() and scheduler() methods in this class to collect information about the compounds
 	

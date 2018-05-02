@@ -20,7 +20,6 @@ import com.astrazeneca.rd.AutomatedDMTA.repository.CompoundRepository;
  * @author klfl423
  *
  */
-//@Component
 @Service
 public class CompoundService {
 	private static Logger logger = LoggerFactory.getLogger(CompoundService.class);
@@ -73,7 +72,6 @@ public class CompoundService {
 		Compound compound = this.getCompoundById(id);
 		byte[] array = compound.getLineGraph();
 		return new BufferedImage(640,480,BufferedImage.TYPE_INT_RGB);
-		//Manu: Above code puts lineGraph in array but does not return it. Only returns an empty bufferedImage eventually
 	}
 	
 	public BufferedImage showStructureGraph(Long id){

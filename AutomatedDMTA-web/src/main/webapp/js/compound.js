@@ -6,43 +6,35 @@ angular.module('myApp.compound', ['ngResource'])
 	
 	.controller('CompoundCtrl', function($scope, alertService, $location,$http) {
 	
-//		$scope.filter('capitalize', function() {
-//	        return function(input) {
-//	            return (!!input) ? input.split(' ').map(function(wrd){return wrd.charAt(0).toUpperCase() + wrd.substr(1).toLowerCase();}).join(' ') : '';
-//	        }
-//	    });
-		
+		//Show All Compounds
+		$scope.showAllCompounds = function () {
+			$scope.structureGraph=null;
+			$scope.flag=false;
+			$scope.showImg=false;
+			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/compounds')
+		        .then(function(response) {
+		        	$scope.data=response.data;
+		        	 console.log(response.data);
+		        });
+		}
+
         //Design Stage
 		$scope.showDesignDetails = function () {
+			$scope.structureGraph=null;
+			$scope.flag=false;
+			$scope.showImg=false;
 			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/design')
 		        .then(function(response) {
 		        	$scope.data=response.data;
 		        	 console.log(response.data);
 		        });
 		};
-   
-		//TODO: Remove obsolete code
-        $scope.createDesignDetails = function () {
-        	 console.log("inside my createDesign");
-			   var compound={
-				    sampleNumber:'100001',
-	        		stage:'DESIGN',
-	        		smiles:'smiles1',
-	        		results: ''
-		        };
-			   
-			   $http.post("http://localhost:8080/AutomatedDMTA-web/resources/compound/saveCompounds", compound, {
-				           headers: { 'Content-Type': 'application/json; charset=UTF-8'}
-				       }).success(function(responseData) {
-				         console.log(responseData);
-				   $scope.showDesignDetails();
-				       }).error(function(error){
-			        	    console.log(error);
-				   	});
-        };
-     
+ 
         //Synthesis Stage
 		$scope.showSynthesisDetails = function () {
+			$scope.structureGraph=null;
+			$scope.flag=false;
+			$scope.showImg=false;
 			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/synthesis').
 		       then(function(response) {
 		       	$scope.data=response.data;
@@ -50,29 +42,11 @@ angular.module('myApp.compound', ['ngResource'])
 		       });
 		};
 
-		//TODO: Remove obsolete code
-		$scope.createSynthesisDetails = function () {
-			 console.log("inside my createSynthesis");
-			   var compound={
-					sampleNumber:'100002',
-		       		stage:'SYNTHESIS',
-		    		smiles:'smiles2',
-		    		results: ''
-		       };
-
-			   $http.post("http://localhost:8080/AutomatedDMTA-web/resources/compound/saveCompounds", compound, {
-				           headers: { 'Content-Type': 'application/json; charset=UTF-8'}
-				       }).success(function(responseData) {
-				         console.log(responseData);
-				   $scope.showSynthesisDetails();
-				       }).error(function(error){
-			        	    console.log(error);
-				   });
-		};
-		
-		
         //Purification Stage
-		$scope.showPurificationDetails = function () {			
+		$scope.showPurificationDetails = function () {
+			$scope.structureGraph=null;
+			$scope.flag=false;
+			$scope.showImg=false;
 			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/purification').
 		        then(function(response) {
 		        	$scope.data=response.data;
@@ -80,56 +54,39 @@ angular.module('myApp.compound', ['ngResource'])
 		        });
         };
         
-		//TODO: Remove obsolete code
-        $scope.createPurificationDetails = function () {
-        	 console.log("inside my createPurification");
-			   var compound={
-					    sampleNumber:'100003',
-		        		stage:'PURIFICATION',
-		        		smiles:'smiles3',
-		        		results: ''
-		        };
-
-			   $http.post("http://localhost:8080/AutomatedDMTA-web/resources/compound/saveCompounds", compound, {
-				           headers: { 'Content-Type': 'application/json; charset=UTF-8'}
-				       }).success(function(responseData) {
-				         console.log(responseData);
-				   $scope.showPurificationDetails();
-				       }).error(function(error){
-			        	    console.log(error);
-				   }); 
-	
-        };
-        
-        
         //Testing Stage
 		$scope.showTestingDetails = function () {
+			$scope.structureGraph=null;
+			$scope.flag=false;
+			$scope.showImg=false;
 			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/testing').
 		        then(function(response) {
 		        	$scope.data=response.data;
 		        	 console.log(response.data);
 		        });
         };
-   
-        //TODO: Remove obsolete code
-        $scope.createTestingDetails = function () {
-        	 console.log("inside my createTesting");
-			   var compound={
-					    sampleNumber:'100004',
-		        		stage:'TESTING',
-		        		smiles:'smiles4',
-		        		results: '1.00'
-		        };
-			   
-			   $http.post("http://localhost:8080/AutomatedDMTA-web/resources/compound/saveCompounds", compound, {
-				           headers: { 'Content-Type': 'application/json; charset=UTF-8'}
-				       }).success(function(responseData) {
-				         console.log(responseData);
-				   $scope.showTestingDetails();
-				       }).error(function(error){
-			        	    console.log(error);
-		        	});
-        };
-
+        
+        //Display Graphs
+		$scope.showGraph = function (data) {
+	
+			$scope.showImg=true;
+			if(data.stage=='TESTING'){
+				$scope.flag=true;
+			}else{
+				$scope.flag=false;
+			}
+			
+			$scope.structureGraph =data.structureGraph;
+			$scope.lineGraph =data.lineGraph;
+			
+       };
+       
+       $scope.zoomImage = function () {
+    	   console.log("inside zoom image");
+       
+    	var imgId=    document.getElementById('struct_graph');
+    	imgId.style.width = "300px";
+    	
+       };
     })
     ;

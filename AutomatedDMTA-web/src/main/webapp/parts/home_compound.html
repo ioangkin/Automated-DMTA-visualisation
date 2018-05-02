@@ -10,12 +10,12 @@
 		<p><a href class="btn btn-primary" tooltip-trigger="click" tooltip-placement="right" tooltip-animation="true" tooltip-html-unsafe="You're right, this should<br/>say something useful.<br/><span style='font-size:400%'>&#x263A;</span>">Learn more &raquo;</a></p>
 	</div> -->
 
-	<div class="container" >
+	<div class="container" data-ng-init="showAllCompounds()">
 
 		<!-- Left panel -->
 		<div class="left-panel">
 			<!-- Somehow first row's last image is dropped down when container mid-width is more than 900px window-width
-			     As a work around added an additional empty row at the top-->
+			     As a workaround added an additional empty row at the top-->
 			<div class="row"></div>
 
 			<!-- Repeat 2nd row for troubleshooting purposes  -->
@@ -54,14 +54,17 @@
 					</div>
 				</div>
 
+				<!-- The cientre of the cycle is empty  -->
 				<div class="col-md-4"></div>
 
 				<div class="col-md-4">
 					<div class="media">
-						<img class="img-responsive" src="img/vadmta/synthesis.png" data-toggle="tooltip" ng-click="showSynthesisDetails()" title="Synthesis Stage">
-<!--					<div class="caption">
+						<div class="span12">
+							<img class="img-responsive" src="img/vadmta/synthesis.png" style="max-width: 70%" data-toggle="tooltip" ng-click="showSynthesisDetails()" title="Synthesis Stage">
+<!--						<div class="caption">
 							<h3>Synthesis</h3>	
 						</div> -->
+						</div>
 					</div>
 				</div>
 			</div>
@@ -92,36 +95,66 @@
 		</div>
 
 		<!--Right panel  -->
-		<div class="right-panel">
+		<div class="right-panel" >
+			<button type="button" ng-click="showAllCompounds()" style="float: right;">Reload all! </button>
+			
 			<table class="table table-striped table-hover" >
 				<thead>
 					<tr>
 						<th>Compound</th>
 						<th>Stage</th>
-						<th>Smiles</th>
 						<th>Result</th>
-						
 					</tr>
+
+					
 				</thead>
 				<tbody>
-					<tr ng-repeat="d in data">
+					<tr ng-repeat="d in data" ng-click="showGraph(d)" >
 						<td>{{d.sampleNumber}}</td>
 						<td>{{d.stage | lowercase}}</td>
-						<td>{{d.smiles}}</td>
 						<td>{{d.results}}</td>
-						
-						
 					</tr>
-					
+				
 				</tbody>
+				
 			</table>
-			<div ng-if="d.stage == TESTING" > 
-				<div  ng-repeat="d in data">
+	
+	
 			
-				<img ng-src="data:image/PNG;base64,{{d.lineGraph}}">
+				
+			<!-- Display graphs -->
+			<div class="panel-group"  >
+				<div class="col-md-6"  ng-show="showImg" >
+					<div class="panel panel-default">
+						<div class="panel-heading">Structure</div>
+						<img id="struct_graph" ng-src="data:image/PNG;base64,{{structureGraph}}" class="img-responsive" ng-click="zoomImage()">
+					</div>
+				</div>
+			
+				<div class="col-md-6" ng-show="flag">
+					<div class="panel panel-default">
+						<div class="panel-heading">Results graph</div>
+						<img ng-src="data:image/PNG;base64,{{lineGraph}}" class="img-responsive">
+				
+					</div>
 				</div>
 			</div>
-		</div>
+			
+			<!-- Modal -->
+	<!-- 		<div class="modal fade" id="modal" role="dialog">
+    			<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title">Structure Graph</h4>
+						</div>
+						<div class="modal-body">
+							<img ng-src="data:image/PNG;base64,{{structureGraph}}">
+       					</div>
+					</div>
+	      		</div>
+			</div> -->
+
+		</div> <!--End of right side screen-panel  -->
 	</div>
 
 </section>
