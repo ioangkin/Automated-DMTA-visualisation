@@ -88,5 +88,7 @@ angular.module('myApp.compound', ['ngResource'])
     	imgId.style.width = "300px";
     	
        };
+       
+       
     })
     ;

@@ -47,19 +47,21 @@ import jcifs.smb.SmbFile;
 //Storing the file location properties. File in: AutomatedDMTA.servicesrc/main/resources/variable.properties
 @PropertySource("classpath:variable.properties")
 
-
 public class Scheduler {
 
-	/*Temporarily hardcodying the file paths to variables, however ideally the paths are sourced in the
-	  @PropertySource("classpath:variable.properties") */
+	/*Temporarily hardcodying the file paths to variables, however ideally the paths are sourced from the
+	  @PropertySource("classpath:variable.properties")
+	  Folder source: \\pipeline04.rd.astrazeneca.net\SharedData\autodmta\FrontEndTesting
+	*/
 	static private String design_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Design/";
 	static private String synthesis_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Synthesis/";		
 	static private String purification_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Purification/";
 	static private String testing_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Testing/";
 
-	/* TODO: Following declarations to be used instead of the above hardcodied variables
-	 * 	// non hard-coded constants for the file paths, may be edited by customer in @PropertySource
-	@Value("${design_File_Path}")
+
+	//TODO: Following declarations to be used instead of the above hardcodied variables
+	// non hard-coded constants for the file paths, may be edited by customer in @PropertySource
+/*	@Value("${design_File_Path}")
 	static private String	design_File_Path;
 	@Value("${synthesis_File_Path}")
 	static private String	synthesis_File_Path;
@@ -81,6 +83,15 @@ public class Scheduler {
 	@Autowired
 	CompoundService	service;
 	
+/*	public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException, IOException
+	{
+		
+		Scheduler s = new Scheduler();
+		System.out.println(s.getDesignFilePath());
+		s.buildDesign();
+		s.scheduleJob();
+
+	}*/
 	/**
 	 * Building the BACKLOG/DESIGN compounds list:
 	 * Scan all planned compounds and populate DB irrespectively on
@@ -113,19 +124,19 @@ public class Scheduler {
 		 * ToDo: For developing and testing purposes the files are fetched from local folders. However,
 		 * eventually it is a requirement to use network shared folders. For this use method:
 		 * getFileFromSharedFolder) and replace following line with:
-		 * File designFile = getFileFromSharedFolder(design_File_Path + "design" + ".txt");
+		 * File designFile = getFileFromSharedFolder(design_File_Path + "design" + ".smi");
 		 */
-		designFile = new File(design_File_Path + "dataset" + ".txt");
+		designFile = new File(design_File_Path + "dataset" + ".smi");
 		
 		//Collect all lines from the text file into a String array
 		String[] compoundsArr = textToArray(designFile);
 		
 		//Check for array integrity
-		if (compoundsArr.equals(null) || compoundsArr.length == 0)
+		if (compoundsArr == null || compoundsArr.length == 0)
 		{ 
-			System.out.println("The cmpnd list from the desing stage returned empty or null");
+			System.out.println("The compounds list from the desing stage returned empty or null");
 			
-		} else {//Extract info about the compound from the array
+		} else {//Extract compound's attributes from the array
 			
 			//identifier number
 			String	extracted_id;
@@ -141,46 +152,41 @@ public class Scheduler {
 			{
 				// Extract identifier (AZ or SN number) from the list
 				extracted_id = extractIdentifier(compoundLine);
-				if (extracted_id.equals("")) //Check that identification is found
+				 //Check identification is found
+				if (extracted_id.equals(""))
 				{
-					System.out.println("no identification for the compound found");
+					System.out.println("oops! no identification found for a compound");
 				}
 				
 				// Extract SMILES (first word in the line) from the list
 				extracted_smiles = extractSmiles(compoundLine);
 				if (extracted_smiles.equals("")) //Check that smiles is found
 				{
-					System.out.println("no smiles for the compound found");
+					System.out.println("oops! no smiles found for compound : " + extracted_id);
 				}
 				
 				// Using the extracted SMILES, retrieve StructureGraph from Chemistry connect web site and turn it into a byte array for DB
 				structureGraph = BufferedImageToByteArray(UrlToBufferedImage(SmilesToUrl(extracted_smiles)));
 				
-				//Testing the image
-			/*  OutputStream out = new FileOutputStream(new File("C:\\dev\\workspace\\AutomatedDMTA\\AutomatedDMTA-services\\src\\test\\resources\\sg.png"));
-				out.write(structureGraph);
-				out.close();
-			*/
-				
-				if (structureGraph.equals(null) || structureGraph.length == 0) //Check structureGraph is found
+				if (structureGraph == null || structureGraph.length == 0) //Check structureGraph is found
 				{
-					System.out.println("the structure Graph from the online service was not found");
+					System.out.println("oops! Failed to retrieve structure Graph for compound: "  + extracted_id + " from the online service");
 				}
 				
 				// Update existing compounds
-				if (!newCompound(StageType.DESIGN, extracted_smiles, extracted_id, structureGraph).equals(null))
+				if (newCompound(StageType.DESIGN, extracted_smiles, extracted_id, structureGraph) != null)
 				{
 					compoundRecorded = true;
 					
 				} else {
 	
-					System.out.println("The new compound was not stored in database (The newCompound() method returned false)");
+					System.out.println("oops! New compound was not stored in database (The newCompound() method returned false)");
 				}
 			}
 		}
 		if (!compoundRecorded)
 		{
-			System.out.println("no new compound was recorded in Design");
+			System.out.println("Result: No compounds were recorded in Design stage");
 			
 			//return false;
 		}
@@ -262,44 +268,48 @@ public class Scheduler {
 				//Compound found in testing stage
 				/*
 				 * TODO: for deployment shared folders are to be used instead of local folders,
-				 * Then: replace "if ((FileExistsInLocalFolder(filename)) != false)" with:
-				 * if ((FileExistsInSharedFolder(filename)) != false)
-				 */
-				if ((FileExistsInLocalFolder(testingFileNamePath)) != false)
-				
+				 * Then replace:
+				 * "if ((FileExistsInLocalFolder(filename)) != false)" with:
+				 * "if ((FileExistsInSharedFolder(filename)) != false)"
+				 */				
+				//A file with the compound's name is found in TEST folder
+				if ((FileExistsInLocalFolder(testingFileNamePath)) != false)	
 				{
 					//Update compound's stage
 					c.setStage(StageType.TESTING);
 					
 					//collect and set results value
 					{
-						//The file path for the results.txt file
-						//For now this is identical to the last check (String filename), but requirements may change
-						String resultsFileNamePath = testing_File_Path + c.getSampleNumber() + ".txt";
-			
 						//Collect the file from the shared folder
 						/*TODO: At deployment files are to be accessed from shared folders (instead of
 						 * local folders as currently during dev and testing). Then, instead of:
 						 * "File resultsFile = new File(resultsFilename)", use:
 						 * "File resultsFile = getFileFromSharedFolder(resultsFilename)" 
 						 */
-						File resultsFile = new File(resultsFileNamePath);
+						File resultsFile = new File(testingFileNamePath);
 						
+						//Results is a number saved in the compound file (testingFileNamePath)
 						//Parse through the text file and collect the results (first line of actual text)
 						String results = fileToString(resultsFile);
 						
 						//Store the data in the DB
-						if (!results.equals(null) || results.length() != 0)
+						if (results == null || results.length() == 0)
+						{
+							System.out.println("oops! Test results for " + c.getSampleNumber() + " not found in the file");
+						}
+						else
 						{
 							c.setResults(results);
 						}
 					}
 					
-					//collect and store results' linegraph
+					/*
+					 * Store results' linegraph
+					 */					
+					//The file path for the lineGraph .png image file
+					String lineGraphFileNamePath = testing_File_Path + c.getSampleNumber() + ".png";
+					if ((FileExistsInLocalFolder(lineGraphFileNamePath)) != false)
 					{
-						//The file path for the lineGraph .png image file
-						String lineGraphFileNamePath = testing_File_Path + c.getSampleNumber() + ".png";
-						
 						//Collect the file from the shared folder
 						/*TODO: At deployment files are to be accessed from shared folders (instead of
 						 * local folders as currently during dev and testing). Then, instead of:
@@ -307,15 +317,29 @@ public class Scheduler {
 						 * "File lineGraphFile = getFileFromSharedFolder(lineGraphFileName)" 
 						 */
 						File lineGraphFile = new File(lineGraphFileNamePath);
-						
-						//Parse the image to a byte array, ready for DB storage
-						byte[] lineGraph = fileToByteArray(lineGraphFile);
-						
-						//Store the image in the DB (as a byte array)
-						if (!lineGraph.equals(null) || lineGraph.length != 0)
+						if (lineGraphFile == null || lineGraphFile.length() == 0)
 						{
-							c.setLineGraph(lineGraph);
+							System.out.println("oops! The results line graph for " +  c.getSampleNumber() + " was not found in folder");
 						}
+						else
+						{
+							//Parse the image to a byte array, ready for DB storage
+							byte[] lineGraph = fileToByteArray(lineGraphFile);
+							
+							//Store the image in the DB (as a byte array)
+							if (!lineGraph.equals(null) || lineGraph.length != 0)
+							{
+								c.setLineGraph(lineGraph);
+							}
+							else
+							{
+								System.out.println("oops! The results line graph: " + lineGraphFile.getName() + " was located and retreaved succesfully but something went wrong trying to store the image in the temp memory database");
+							}
+						}
+					}
+					else
+					{
+						System.out.println("Resutls line graph for " + c.getSampleNumber() + " not found");
 					}
 				}
 				service.saveCompound(c);
@@ -343,7 +367,7 @@ public class Scheduler {
 
 		if (!file.exists())
 		{
-			System.out.println("File or folder is empty or doesn't exist");
+			System.out.println("oops! File " + file.getName() + " is empty or doesn't exist");
 			return null;
 		}
 
@@ -358,6 +382,7 @@ public class Scheduler {
 		{
 			// File not found, connection may failed to establish
 			System.out.println(e1.getMessage());
+			System.out.println("oops! File " + file.getName() + " not found, connection may failed to establish");
 			return null;
 			
 		} catch (Exception e)
@@ -382,9 +407,10 @@ public class Scheduler {
 		br.close();
 
 		// No new compounds found
-		if (lines.equals(null) || lines.isEmpty())
+		if (lines == null || lines.isEmpty())
 		{
-			System.out.println("nothing found in Design stage");
+			System.out.println("oops! No compounds found in Design stage");
+			return null;
 		}
 		
 		// Convert to array and return
@@ -629,7 +655,7 @@ public class Scheduler {
 		// Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
 		if (length > Integer.MAX_VALUE)
 		{
-			System.out.println("file is too large to be stored in a byte array for the database (length > Integer.MAX_VALUE), still will try...");
+			System.out.println("oops! Image file is too large for the database (length > Integer.MAX_VALUE), still will try...");
 		}
 
 		try
@@ -690,7 +716,7 @@ public class Scheduler {
 
 		if (!file.exists())
 		{
-			System.out.println("File is empty or doesn't exist");
+			System.out.println("oops! File " + file.getName() + " is empty or doesn't exist");
 			return null;
 		}
 
@@ -701,7 +727,7 @@ public class Scheduler {
 		} catch (FileNotFoundException e1)
 		{
 			System.out.println(e1.getMessage());
-			System.out.println("File not found, connection may failed to establish");
+			System.out.println("oops! File " + file.getName() + " not found, connection may failed to establish");
 			return null;
 		} catch (Exception e)
 		{
@@ -724,10 +750,10 @@ public class Scheduler {
 
 		br.close();
 
-		// If we reach this stage then no text has been found in the file
-		System.out.println("The results file is empty");
+		// If we reached so far then no text has been found in the file
+		System.out.println("file " + file.getName() + " is empty");
 			
-		return inputLine;
+		return null;
 	}
 	
 	/**
@@ -753,7 +779,7 @@ public class Scheduler {
 		if (length > Integer.MAX_VALUE)
 		{
 			// File is too large
-			System.out.println("File :" + file.getName() + " is to large to be streamed into a byte array");
+			System.out.println("oops! File " + file.getName() + " is to large to be streamed into a byte array");
 			return null;
 		}
 		
