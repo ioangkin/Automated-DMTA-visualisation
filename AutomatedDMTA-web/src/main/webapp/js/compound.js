@@ -11,7 +11,9 @@ angular.module('myApp.compound', ['ngResource'])
 			$scope.structureGraph=null;
 			$scope.flag=false;
 			$scope.showImg=false;
-			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/compounds')
+			 $http.get('/AutomatedDMTA-web/resources/compound/compounds')
+			 /*$http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/compounds')*/
+
 		        .then(function(response) {
 		        	$scope.data=response.data;
 		        	 console.log(response.data);
@@ -23,7 +25,7 @@ angular.module('myApp.compound', ['ngResource'])
 			$scope.structureGraph=null;
 			$scope.flag=false;
 			$scope.showImg=false;
-			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/design')
+			 $http.get('/AutomatedDMTA-web/resources/compound/design')
 		        .then(function(response) {
 		        	$scope.data=response.data;
 		        	 console.log(response.data);
@@ -35,7 +37,7 @@ angular.module('myApp.compound', ['ngResource'])
 			$scope.structureGraph=null;
 			$scope.flag=false;
 			$scope.showImg=false;
-			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/synthesis').
+			 $http.get('/AutomatedDMTA-web/resources/compound/synthesis').
 		       then(function(response) {
 		       	$scope.data=response.data;
 		       	 console.log(response.data);
@@ -47,7 +49,7 @@ angular.module('myApp.compound', ['ngResource'])
 			$scope.structureGraph=null;
 			$scope.flag=false;
 			$scope.showImg=false;
-			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/purification').
+			 $http.get('/AutomatedDMTA-web/resources/compound/purification').
 		        then(function(response) {
 		        	$scope.data=response.data;
 		        	 console.log(response.data);
@@ -59,7 +61,7 @@ angular.module('myApp.compound', ['ngResource'])
 			$scope.structureGraph=null;
 			$scope.flag=false;
 			$scope.showImg=false;
-			 $http.get('http://localhost:8080/AutomatedDMTA-web/resources/compound/testing').
+			 $http.get('/AutomatedDMTA-web/resources/compound/testing').
 		        then(function(response) {
 		        	$scope.data=response.data;
 		        	 console.log(response.data);
@@ -83,11 +85,29 @@ angular.module('myApp.compound', ['ngResource'])
        
        $scope.zoomImage = function () {
     	   console.log("inside zoom image");
-       
-    	var imgId=    document.getElementById('struct_graph');
-    	imgId.style.width = "300px";
     	
        };
+       
+    // Get the modal
+       var modal = document.getElementById('myModal');
+
+       // Get the image and insert it inside the modal - use its "alt" text as a caption
+       var img = document.getElementById('struct_graph');
+       var modalImg = document.getElementById("struct_graph_img");
+       var captionText = document.getElementById("caption");
+       img.onclick = function(){
+           modal.style.display = "block";
+           modal.src = this.src;
+           captionText.innerHTML = this.alt;
+       }
+
+       // Get the <span> element that closes the modal
+       var span = document.getElementsByClassName("close")[0];
+
+       // When the user clicks on <span> (x), close the modal
+       span.onclick = function() { 
+           modal.style.display = "none";
+       }
        
        
     })

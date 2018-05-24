@@ -14,21 +14,12 @@ angular.module('myApp', ['myApp.who', 'myApp.people', 'myApp.services','myApp.co
 
 	.controller('IndexCtrl', function($rootScope, $scope, $location, alertService, $http) {
 		$scope.title = 'ADMTA Dashboard';
-		$scope.version = 'Demo';
+		$scope.version = 'Under developement';
 
 		$scope.isRoute = function(route) {
 			return $location.path() == route;
 		};
 		
-		$scope.showDesignDetails = function() {
-			alert('inside showdesign');
-			
-			$http.get('http://localhost:8080/AutomatedDMTA-web/design/').then(function(response) {
-				alert('inside response');
-	    });
-		};
-		
-	
 		// root binding for alertService
 		$rootScope.closeAlert = alertService.closeAlert; 
 	})

@@ -59,9 +59,8 @@ public class Compound
 	private byte[]		structureGraph;
 
 	/*
-	 * Note: A compound is completed either when passed the test stage and has a
-	 * lineGraph or failed somewhere during the DMTA cycle. requirements are not
-	 * set yet on what is causing failure and this can't be monitored
+	 * A compound is completed either when passed to the test stage or failed somewhere in a previous stage.
+	 * Requirements are not set yet on what is causing failure and this can't be monitored
 	 */
 	@Column()
 	private boolean		completed	= false;

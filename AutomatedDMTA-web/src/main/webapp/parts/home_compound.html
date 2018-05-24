@@ -2,7 +2,7 @@
   <a href="#">
     <img class="pull-left" src="img/logo-96.png" alt="Logo">
   </a>
-  <h1><span ng-bind="title">...</span><br/><small>Version: </small></h1>
+  <h1><span ng-bind="title">...</span><br/><small ng-bind="version">...</small></h1>
   
 <!--   <div class="jumbotron">
 		<h1></h1>
@@ -103,9 +103,7 @@
 						<td>{{d.stage | lowercase}}</td>
 						<td>{{d.results}}</td>
 					</tr>
-				
 				</tbody>
-				
 			</table>
 	
 	
@@ -123,12 +121,22 @@
 				<div class="col-md-6" style="width: 50%" ng-show="flag">
 					<div class="panel panel-default">
 						<div class="panel-heading">Results graph</div>
-						<img class="img-button" ng-src="data:image/PNG;base64,{{lineGraph}}" style="width: 100%;">
+						<img class="img-button" id="line_graph" ng-src="data:image/PNG;base64,{{lineGraph}}" style="width: 100%;">
 				
 					</div>
 				</div>
 			</div>
 		</div> <!--End of right side screen-panel  -->
 	</div>
+	
+			<!-- The Modal -->
+<div id="myModal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="struct_graph_img">
+  <div id="caption"></div>
+</div>
+
+
 
 </section>
+</head>

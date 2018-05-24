@@ -21,7 +21,8 @@ Please see the README file for info
 
 	<!--  //Content is not messed up when opened in different devices  -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+	<!-- TODO: Remove follwoing line of code if no causing problems -->
+<!-- 	<link href="assets/css/bootstrap-responsive.css" rel="stylesheet"> -->
 	
 	<meta name="description" content="...">
 	<meta name="author" content="RDI">
@@ -31,6 +32,7 @@ Please see the README file for info
 	<link rel="stylesheet" href="css/bootstrap.min.css" media="screen"/>
 	<link rel="stylesheet" href="css/bootstrap-theme.min.css" media="screen"/>
 	<link rel="stylesheet" href="css/app.css"/>
+	<link rel="stylesheet" href="css/modal.css"/>
 </head>
 
 <body>
@@ -56,14 +58,15 @@ Please see the README file for info
 		    </button>
 		    <a class="navbar-brand" href="home"><span ng-bind="title">...</span></a>
 		  </div>
-		  		
+<!--				No navbar pannel atm
 			<div class="collapse navbar-collapse navbar-menu1-collapse">
 				<ul class="nav navbar-nav">
-					<li ng-class="{active: isRoute('/home')}"><a href="home">Home</a></li>
-          <li ng-class="{active: isRoute('/who')}"><a href="who">Who's Who</a></li>
-          <li ng-class="{active: isRoute('/people')}"><a href="people">People</a></li>
+ 					<li ng-class="{active: isRoute('/home')}"><a href="home">Home</a></li>
+        			<li ng-class="{active: isRoute('/who')}"><a href="who">Who's Who</a></li>
+          			<li ng-class="{active: isRoute('/people')}"><a href="people">People</a></li>
 				</ul>
 			</div>
+-->
 		</div>
 	</nav>
 

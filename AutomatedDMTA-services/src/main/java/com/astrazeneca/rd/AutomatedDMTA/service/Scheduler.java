@@ -278,6 +278,9 @@ public class Scheduler {
 					//Update compound's stage
 					c.setStage(StageType.TESTING);
 					
+					//Compound completed the cycle
+					c.setCompleted(true);
+					
 					//collect and set results value
 					{
 						//Collect the file from the shared folder
@@ -306,7 +309,7 @@ public class Scheduler {
 					/*
 					 * Store results' linegraph
 					 */					
-					//The file path for the lineGraph .png image file
+					//The file path for the result lineGraph .png image file
 					String lineGraphFileNamePath = testing_File_Path + c.getSampleNumber() + ".png";
 					if ((FileExistsInLocalFolder(lineGraphFileNamePath)) != false)
 					{
@@ -600,7 +603,7 @@ public class Scheduler {
 	{
 
 		// A URL for building the compound's structure image graph
-		return new URL("http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot");
+		return new URL("http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot&width=500&height=500");
 		
 		// TODO: consider saving the URL as a compound's property as well
 	}

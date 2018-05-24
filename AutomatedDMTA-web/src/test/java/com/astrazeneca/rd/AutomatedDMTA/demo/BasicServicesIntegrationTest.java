@@ -32,7 +32,8 @@ public class BasicServicesIntegrationTest {
 	 * 2. The application context (root in this case) is defined in the cargo deployable properties
 	 * 3. The REST resources' location is defined in an annotation in com.astrazeneca.rd.AutomatedDMTA.service.RestApplication   
 	 */
-	private static String BASE_URL = "http://localhost:9090/resources/people/";
+	private static String BASE_URL = "/resources/people/";
+/*	private static String BASE_URL = "http://localhost:9090/resources/people/";*/
 	private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 /*	DISABLED UNTIL WE WORK OUT HOW TO ENSURE THIS TESTS WITH THE EMBEEDDED DATABASE

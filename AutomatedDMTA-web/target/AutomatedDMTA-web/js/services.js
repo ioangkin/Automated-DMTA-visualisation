@@ -50,7 +50,8 @@ appServices.factory('designService', function ($rootScope,$scope, $http) {
 	
 	getDesign=function($http){
 		
-		  $http.get('http:/localhost:8080/compound/design').
+		  $http.get('/compound/design').
+/*		  $http.get('http:/localhost:8080/compound/design').*/
 	      then(function(response) {
 	    	  console.log(response.data);
 	         // $scope.greeting = response.data;
