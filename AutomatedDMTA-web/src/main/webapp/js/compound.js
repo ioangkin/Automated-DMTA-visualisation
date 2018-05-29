@@ -82,33 +82,43 @@ angular.module('myApp.compound', ['ngResource'])
 			$scope.lineGraph =data.lineGraph;
 			
        };
-       
-       $scope.zoomImage = function () {
-    	   console.log("inside zoom image");
-    	
-       };
-       
-    // Get the modal
-       var modal = document.getElementById('myModal');
+      
+       // Get the Structure-graph modal
+       var structModal = document.getElementById('structureGraphModal');
 
-       // Get the image and insert it inside the modal - use its "alt" text as a caption
-       var img = document.getElementById('struct_graph');
-       var modalImg = document.getElementById("struct_graph_img");
-       var captionText = document.getElementById("caption");
-       img.onclick = function(){
-           modal.style.display = "block";
-           modal.src = this.src;
-           captionText.innerHTML = this.alt;
+       // Get Structure-graph and insert it inside the modal
+       var structureImg = document.getElementById('struct_graph');
+       var structModalImg = document.getElementById("struct_graph_img");
+       structureImg.onclick = function(){
+    	   structModal.style.display = "block";
+    	   structModalImg.src = this.src;
        }
 
        // Get the <span> element that closes the modal
-       var span = document.getElementsByClassName("close")[0];
+       var span = document.getElementsByClassName("closeStructureGraphModal")[0];
 
        // When the user clicks on <span> (x), close the modal
        span.onclick = function() { 
-           modal.style.display = "none";
+    	   structModal.style.display = "none";
        }
        
+       // Get the Line-graph modal
+       var lineModal = document.getElementById('lineGraphModal');
+
+       // Get the Line-graph and insert it inside the modal
+       var lineImg = document.getElementById('line_graph');
+       var lineModalImg = document.getElementById("line_graph_img");
+       lineImg.onclick = function(){
+    	   lineModal.style.display = "block";
+    	   lineModalImg.src = this.src;
+       }
+
+       // Get the <span> element that closes the modal
+       var lineSpan = document.getElementsByClassName("closeLineGraphModal")[0];
+
+       // When the user clicks on <span> (x), close the modal
+       lineSpan.onclick = function() {
+    	   lineModal.style.display = "none";
+       }
        
-    })
-    ;
+    });

@@ -49,7 +49,7 @@
 
 				<!-- The cientre of the cycle is empty  -->
 				<div class="col-md-4">
-					<img class="img-responsive img-button" src="img/vadmta/refresh.png" data-toggle="tooltip" ng-click="showAllCompounds()" title="List all compounds">
+					<img class="img-responsive img-button" src="img/vadmta/refresh_unpressed.png" data-toggle="tooltip" ng-click="showAllCompounds()" title="List all compounds">
 				</div>
 
 				<div class="col-md-4">
@@ -114,7 +114,7 @@
 				<div class="col-md-6" style="width: 50%" ng-show="showImg" >
 					<div class="panel panel-default">
 						<div class="panel-heading">Structure</div>
-						<img class="img-button" id="struct_graph" ng-src="data:image/PNG;base64,{{structureGraph}}" style="width: 75%; margin-left: 10%;" ng-click="zoomImage()">
+						<img class="img-button" id="struct_graph" ng-src="data:image/PNG;base64,{{structureGraph}}" style="width: 75%; margin-left: 10%;">
 					</div>
 				</div>
 			
@@ -129,13 +129,28 @@
 		</div> <!--End of right side screen-panel  -->
 	</div>
 	
-			<!-- The Modal -->
-<div id="myModal" class="modal">
-  <span class="close">&times;</span>
-  <img class="modal-content" id="struct_graph_img">
-  <div id="caption"></div>
-</div>
-
+	<!-- The Modal for structure graph-->
+	<div id="structureGraphModal" class="modal">
+	
+		<!-- The Close Button -->
+		<span class="close closeStructureGraphModal">&times;</span>
+	
+		<!-- Modal Content (The Image) -->
+		<img class="modal-content" id="struct_graph_img">
+	
+	</div>
+	
+ 	
+	<!-- The Modal for line graph-->
+	<div id="lineGraphModal" class="modal">
+	
+		<!-- The Close Button -->
+		<span class="close closeLineGraphModal">&times;</span>
+		
+		<!-- Modal Content (The Image) -->
+		<img class="modal-content" id="line_graph_img">
+		
+	</div>
 
 
 </section>
