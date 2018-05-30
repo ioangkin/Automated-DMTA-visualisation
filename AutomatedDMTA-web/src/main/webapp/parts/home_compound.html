@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+    	
 <section ng-controller="CompoundCtrl">
   <a href="#">
     <img class="pull-left" src="img/logo-96.png" alt="Logo">
@@ -11,7 +13,7 @@
 	</div> -->
 
 	<div class="container" data-ng-init="showAllCompounds()">
-
+		
 		<!-- Left panel -->
 		<div class="left-panel">
 			<!-- Somehow first row's last image is dropped down when container mid-width is more than 900px window-width
@@ -26,10 +28,13 @@
 					</div>
 				</div>
 
-				<div class="col-md-4">
-					<div class="media">
-						<img class="img-responsive img-button" src="img/vadmta/design.png"	data-toggle="tooltip" ng-click="showDesignDetails()" title="Design Stage">
-					</div>
+				<div class="col-md-4 media">
+					<img class="img-responsive pointer-on-hover"
+						src="img/vadmta/design.png"
+						data-toggle="tooltip"
+						ng-click="showDesignDetails()"
+						title="Design Stage"
+					>
 				</div>
 
 				<div class="col-md-4">
@@ -41,22 +46,41 @@
 
 			<!-- 2nd row of 3 columns (images)  -->
 			<div class="row">
-				<div class="col-md-4">
-					<div class="media">
-						<img class="img-responsive img-button" src="img/vadmta/testing.png" data-toggle="tooltip" ng-click="showTestingDetails()" title="Testing Stage">
-					</div>
+				<div class="col-md-4 media">
+					<img class="img-responsive pointer-on-hover"
+						src="img/vadmta/testing.png"
+						data-toggle="tooltip"
+						ng-click="showTestingDetails()"
+						title="Testing Stage"
+					>
 				</div>
 
-				<!-- The cientre of the cycle is empty  -->
-				<div class="col-md-4">
-					<img class="img-responsive img-button" src="img/vadmta/refresh_unpressed.png" data-toggle="tooltip" ng-click="showAllCompounds()" title="List all compounds">
+				<!-- Refresh compounds list button in the centre of the cycle  -->
+				<div class="col-md-4 media">
+					<img class="img-responsive pointer-on-hover"
+						src="img/vadmta/refresh.png"
+						data-toggle="tooltip"
+						title="List all compounds"
+						ng-click="showAllCompounds()"
+					>
+					<!--clicking button effect-->		
+					<!-- 			
+						ng-init="imgsrc='img/vadmta/refresh.png'"
+						ng-mousedown="imgsrc='img/vadmta/refresh_clicked.png'"
+						ng-mouseup="imgsrc='img/vadmta/refresh.png'"
+						ng-mouseout="imgsrc='img/vadmta/refresh.png'"
+						 -->
 				</div>
-
-				<div class="col-md-4">
-					<div class="media">
-						<div class="span12">
-							<img class="img-responsive img-button" src="img/vadmta/synthesis.png" style="margin-left: 20%;" data-toggle="tooltip" ng-click="showSynthesisDetails()" title="Synthesis Stage">
-						</div>
+				
+				<div class="col-md-4 media">
+					<div class="span12">
+						<img class="img-responsive pointer-on-hover"
+							src="img/vadmta/synthesis.png"
+							style="margin-left: 20%;"
+							data-toggle="tooltip"
+							ng-click="showSynthesisDetails()"
+							title="Synthesis Stage"
+						>
 					</div>
 				</div>
 			</div>
@@ -69,10 +93,13 @@
 					</div>
 				</div>
 
-				<div class="col-md-4">
-					<div class="media">
-						<img class="img-responsive img-button" src="img/vadmta/purification.png" data-toggle="tooltip" ng-click="showPurificationDetails()" title="Purification Stage">
-					</div>
+				<div class="col-md-4 media">
+					<img class="img-responsive pointer-on-hover"
+						src="img/vadmta/purification.png"
+						data-toggle="tooltip"
+						ng-click="showPurificationDetails()"
+						title="Purification Stage"
+					>
 				</div>
 
 				<div class="col-md-4">
@@ -114,14 +141,23 @@
 				<div class="col-md-6" style="width: 50%" ng-show="showImg" >
 					<div class="panel panel-default">
 						<div class="panel-heading">Structure</div>
-						<img class="img-button" id="struct_graph" ng-src="data:image/PNG;base64,{{structureGraph}}" style="width: 75%; margin-left: 10%;">
+						<img class="pointer-on-hover"
+							id="struct_graph"
+							ng-src="data:image/PNG;base64,{{structureGraph}}"
+							style="width: 75%;
+							margin-left: 10%;"
+						>
 					</div>
 				</div>
 			
 				<div class="col-md-6" style="width: 50%" ng-show="flag">
 					<div class="panel panel-default">
 						<div class="panel-heading">Results graph</div>
-						<img class="img-button" id="line_graph" ng-src="data:image/PNG;base64,{{lineGraph}}" style="width: 100%;">
+						<img class="pointer-on-hover"
+							id="line_graph"
+							ng-src="data:image/PNG;base64,{{lineGraph}}"
+							style="width: 100%;"
+						>
 				
 					</div>
 				</div>
@@ -151,7 +187,6 @@
 		<img class="modal-content" id="line_graph_img">
 		
 	</div>
-
-
+	
 </section>
-</head>
+</html>
