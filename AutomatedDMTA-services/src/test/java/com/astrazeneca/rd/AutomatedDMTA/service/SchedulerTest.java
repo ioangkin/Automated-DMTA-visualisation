@@ -1,6 +1,6 @@
 /*package com.astrazeneca.rd.AutomatedDMTA.service;
 
-import com.astrazeneca.rd.AutomatedDMTA.service.Scheduler;
+import com.astrazeneca.rd.AutomatedDMTA.service.Scheduler_old;
 
 import static org.junit.Assert.*;
 
@@ -16,7 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 *//**
- * The test class for the Scheduler.
+ * The test class for the Scheduler_old.
  *
  * @author  klfl423
  * @see Assert methods: http://junit.sourceforge.net/javadoc/org/junit/Assert.html
@@ -24,7 +24,7 @@ import org.junit.Test;
  *//*
 public class SchedulerTest
 {
-	Scheduler aScheduler = new Scheduler();
+	Scheduler_old aScheduler = new Scheduler_old();
 
 	//Stages's file paths
 	String design_FilePath			=	"C:\\dev\\workspace\\AutomatedDMTA\\AutomatedDMTA-services\\src\\test\\resources\\Cycle\\Bioassay\\";
@@ -85,10 +85,10 @@ public class SchedulerTest
 	@Test
 	public void testFilePaths()
 	{
-		assertEquals("Unexpected DESIGN file Path", design_FilePath, Scheduler.getDesignFilePath());
-		assertEquals("Unexpected SYNTHESIS file Path", synthesis_FilePath, Scheduler.getSynthesisFilePath());
-		assertEquals("Unexpected PURIFICATION file Path", purification_FilePath, Scheduler.getPurificationFilePath());
-		assertEquals("Unexpected TESTING file Path", testing_FilePath, Scheduler.getTestingFilePath());
+		assertEquals("Unexpected DESIGN file Path", design_FilePath, Scheduler_old.getDesignFilePath());
+		assertEquals("Unexpected SYNTHESIS file Path", synthesis_FilePath, Scheduler_old.getSynthesisFilePath());
+		assertEquals("Unexpected PURIFICATION file Path", purification_FilePath, Scheduler_old.getPurificationFilePath());
+		assertEquals("Unexpected TESTING file Path", testing_FilePath, Scheduler_old.getTestingFilePath());
 	}
 	
 	*//**

@@ -28,6 +28,7 @@ import org.apache.log4j.chainsaw.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -49,49 +50,65 @@ import jcifs.smb.SmbFile;
 
 public class Scheduler {
 
+/*	public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException, IOException
+	{
+		Scheduler s = new Scheduler();
+		s.buildDesign();
+		s.scheduleJob();
+	}*/
+	
 	/*Temporarily hardcodying the file paths to variables, however ideally the paths are sourced from the
 	  @PropertySource("classpath:variable.properties")
 	  Folder source: \\pipeline04.rd.astrazeneca.net\SharedData\autodmta\FrontEndTesting
 	*/
-	static private String design_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Design/";
-	static private String synthesis_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Synthesis/";		
-	static private String purification_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Purification/";
-	static private String testing_File_Path = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Testing/";
+	
+	static private String designFilePath = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Design/";
+	static private String synthesisFilePath = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Synthesis/";		
+	static private String purificationFilePath = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Purification/";
+	static private String testingFilePath = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Testing/";
 
-
+	
 	//TODO: Following declarations to be used instead of the above hardcodied variables
 	// non hard-coded constants for the file paths, may be edited by customer in @PropertySource
-/*	@Value("${design_File_Path}")
-	static private String	design_File_Path;
-	@Value("${synthesis_File_Path}")
-	static private String	synthesis_File_Path;
-	@Value("${purification_File_Path}")
-	static private String	purification_File_Path;
-	@Value("${testing_File_Path}")
-	static private String	testing_File_Path;*/
+/*	@Value("${designFilePath}")
+	static private String	designFilePath;
+	@Value("${synthesisFilePath}")
+	static private String	synthesisFilePath;
+	@Value("${purificationFilePath}")
+	static private String	purificationFilePath;
+	@Value("${testingFilePath}")
+	static private String	testingFilePath;*/
+	
+	//Temporarily locate files from within project for demo
+/*	ClassLoader classLoader = getClass().getClassLoader();
+	File designFile = new File(classLoader.getResource("/Cycle/Design/dataset.smi").getFile());
+	File syntheisFile = new File(classLoader.getResource("/Cycle/Synthesis/AZ14128521_ERM321057299.txt").getFile());
+	File purificationFile = new File(classLoader.getResource("/Cycle/Purification/AZ14125558_ERM321011162.txt").getFile());
+	File testingFile = new File(classLoader.getResource("/Cycle/Testing/AZ14125558_ERM321025625.txt").getFile());
+	File testingPngFile = new File(classLoader.getResource("/Cycle/Testing/AZ14125558_ERM321025625.png").getFile());
+	
+	String designFilePath = designFile.getParent() + "\\";
+	String synthesisFilePath = purificationFile.getParent() + "\\";
+	String purificationFilePath = syntheisFile.getParent()  + "\\";
+	String testingFilePath = testingPngFile.getParent() + "\\";
+	*/
 	
 	//For testing purposes:
-	static public String getDesignFilePath()		{ return design_File_Path; }
-	static public String getSynthesisFilePath()		{ return synthesis_File_Path; }
-	static public String getPurificationFilePath()	{ return purification_File_Path; }
-	static public String getTestingFilePath()		{ return testing_File_Path; }
+	static public String getDesignFilePath()		{ return designFilePath; }
+	static public String getSynthesisFilePath()		{ return synthesisFilePath; }
+	static public String getPurificationFilePath()	{ return purificationFilePath; }
+	static public String getTestingFilePath()		{ return testingFilePath; }
 	
 	File designFile;
 	boolean isScheduled=true;
-	
-	
+		
 	@Autowired
 	CompoundService	service;
 	
-/*	public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException, IOException
-	{
-		
-		Scheduler s = new Scheduler();
-		System.out.println(s.getDesignFilePath());
-		s.buildDesign();
-		s.scheduleJob();
-
-	}*/
+/*	@Autowired
+	private ResourceLoader resourceLoader;
+	*/
+	
 	/**
 	 * Building the BACKLOG/DESIGN compounds list:
 	 * Scan all planned compounds and populate DB irrespectively on
@@ -124,9 +141,20 @@ public class Scheduler {
 		 * ToDo: For developing and testing purposes the files are fetched from local folders. However,
 		 * eventually it is a requirement to use network shared folders. For this use method:
 		 * getFileFromSharedFolder) and replace following line with:
-		 * File designFile = getFileFromSharedFolder(design_File_Path + "design" + ".smi");
+		 * File designFile = getFileFromSharedFolder(designFilePath + "design" + ".smi");
 		 */
-		designFile = new File(design_File_Path + "dataset" + ".smi");
+		
+/*		//Temporarily locate files from within project for demo
+		ClassLoader classLoader = getClass().getClassLoader();
+		File designFile = new File(classLoader.getResource("/Cycle/Design/dataset.smi").getFile());*/
+		
+		//TODO: Troubleshooting
+		System.out.println("Design_File_Path is " + designFilePath);
+/*		System.out.println("synthesisFilePath is " + synthesisFilePath);
+		System.out.println("purificationFilePath is " + purificationFilePath);
+		System.out.println("testingFilePath is " + testingFilePath);*/
+		
+		designFile = new File(designFilePath + "dataset" + ".smi");
 		
 		//Collect all lines from the text file into a String array
 		String[] compoundsArr = textToArray(designFile);
@@ -188,10 +216,8 @@ public class Scheduler {
 		{
 			System.out.println("Result: No compounds were recorded in Design stage");
 			
-			//return false;
 		}
 		
-		//return true;
 	}
 	
 	/**
@@ -225,7 +251,7 @@ public class Scheduler {
 			if (c.getStage().ordinal() < StageType.SYNTHESIS.ordinal())
 			{
 				//The filename with its path
-				String synthesisFileNamePath = synthesis_File_Path + c.getSampleNumber() + ".txt";
+				String synthesisFileNamePath = synthesisFilePath + c.getSampleNumber() + ".txt";
 				
 				//Compound found in Synthesis stage
 				/*
@@ -244,8 +270,8 @@ public class Scheduler {
 			 if (c.getStage().ordinal() < StageType.PURIFICATION.ordinal())
 			{
 				//The filename to look for
-				String purificationFileNamePath = purification_File_Path + c.getSampleNumber() + ".txt";
-				
+				String purificationFileNamePath = purificationFilePath + c.getSampleNumber() + ".txt";
+
 				//Compound found in Purification stage
 				/*
 				 * TODO: for deployment shared folders are to be used instead of local folders,
@@ -263,7 +289,7 @@ public class Scheduler {
 			 if (c.getStage().ordinal() < StageType.TESTING.ordinal())
 			{
 				//The filename to look for
-				String testingFileNamePath = testing_File_Path + c.getSampleNumber() + ".txt";
+				String testingFileNamePath = testingFilePath + c.getSampleNumber() + ".txt";
 
 				//Compound found in testing stage
 				/*
@@ -310,7 +336,7 @@ public class Scheduler {
 					 * Store results' linegraph
 					 */					
 					//The file path for the result lineGraph .png image file
-					String lineGraphFileNamePath = testing_File_Path + c.getSampleNumber() + ".png";
+					String lineGraphFileNamePath = testingFilePath + c.getSampleNumber() + ".png";
 					if ((FileExistsInLocalFolder(lineGraphFileNamePath)) != false)
 					{
 						//Collect the file from the shared folder

@@ -19,9 +19,15 @@ footer {
     margin-bottom: 3%;
 }
 
+.pointer-on-hover{
+	cursor: pointer;	
+}
+
+/* TODO: Rename to "has-pointer" */
 .img-button{
 	cursor: pointer;	
 }
+   
 .inline-result {
 	padding-top:7px;
 	}
@@ -57,10 +63,12 @@ footer {
     width: 33.33%;
     float: left;
 }
+
 .left-panel {
     padding: 7%;
+    padding-top: inherit;
+    padding-bottom: 6%;
 }
-
 /* For desktop: */
 @media (min-width: 700px){
 .right-panel {
