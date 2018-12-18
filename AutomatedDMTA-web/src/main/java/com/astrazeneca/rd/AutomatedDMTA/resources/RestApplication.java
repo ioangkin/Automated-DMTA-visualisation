@@ -9,9 +9,10 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 
-
 /**
- * Servlet 3.0 containers hook into this Application class to get a list of classes to scan for services
+ * Servlet 3.0 containers hook into this Application class to get a list of
+ * classes to scan for services
+ * 
  * @see https://jersey.java.net/nonav/documentation/latest/user-guide.html#deployment
  * @author mp4777q
  *
@@ -22,9 +23,9 @@ public class RestApplication extends ResourceConfig {
 		HashSet<Class<?>> c = new HashSet<Class<?>>();
 		c.add(PersonsRestService.class);
 		c.add(CompoundRestService.class);
-        Set<Class<?>> classes = Collections.unmodifiableSet(c);
+		Set<Class<?>> classes = Collections.unmodifiableSet(c);
 		registerClasses(classes);
-		
+
 		property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
 	}
 }
