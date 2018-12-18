@@ -17,5 +17,5 @@ public enum StageType {
 	SYNTHESIS,
 	PURIFICATION,
 	TESTING;
-	
+
 }

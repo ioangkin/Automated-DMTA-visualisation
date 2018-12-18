@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 /**
  * @author Andy Gibson
  * 
- * Simple model class that is used to test JPA
+ *         Simple model class that is used to test JPA
  *
  */
 @Entity
@@ -33,13 +33,14 @@ public class Person {
 	@NotNull
 	private String lastName;
 
-	public Person() {}
-	
+	public Person() {
+	}
+
 	public Person(String firstName, String lastName) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -67,8 +68,8 @@ public class Person {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Person [");
-		sb.append("ID : ").append(id).append(", First Name : ").append(firstName).append(", Last Name : ").append(lastName).
-			append("]");
+		sb.append("ID : ").append(id).append(", First Name : ").append(firstName).append(", Last Name : ")
+				.append(lastName).append("]");
 		return sb.toString();
 	}
 }
