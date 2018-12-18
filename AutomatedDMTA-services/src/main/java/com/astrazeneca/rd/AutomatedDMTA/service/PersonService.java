@@ -14,24 +14,25 @@ import com.astrazeneca.rd.AutomatedDMTA.repository.PersonRepository;
 
 /**
  * Business service for the Person repository
+ * 
  * @author mp4777q
  *
  */
 @Component
 public class PersonService {
 	private static Logger logger = LoggerFactory.getLogger(PersonService.class);
-	
-	@Autowired 
+
+	@Autowired
 	private PersonRepository personRepository;
-	
+
 	public Person savePerson(Person person) {
 		return personRepository.save(person);
 	}
-	
+
 	public void deletePerson(Long personId) {
 		personRepository.delete(personId);
 	}
-	
+
 	public Person getPersonById(Long personId) {
 		return personRepository.findOne(personId);
 	}
@@ -43,7 +44,7 @@ public class PersonService {
 	public Page<Person> getAllPersons(Pageable pageable) {
 		return personRepository.findAll(pageable);
 	}
-	
+
 	public List<Person> getPersonsByNames(String firstName, String lastName) {
 		return personRepository.findByFirstNameAndLastName(firstName, lastName);
 	}

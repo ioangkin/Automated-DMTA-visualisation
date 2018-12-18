@@ -17,24 +17,25 @@ import com.astrazeneca.rd.AutomatedDMTA.repository.CompoundRepository;
 
 /**
  * Business service for the Compound repository
+ * 
  * @author klfl423
  *
  */
 @Service
 public class CompoundService {
 	private static Logger logger = LoggerFactory.getLogger(CompoundService.class);
-	
-	@Autowired 
+
+	@Autowired
 	private CompoundRepository compoundRepository;
-	
+
 	public Compound saveCompound(Compound compound) {
 		return compoundRepository.save(compound);
 	}
-	
+
 	public void deleteCompound(Long id) {
 		compoundRepository.delete(id);
 	}
-	
+
 	public Compound getCompoundById(Long id) {
 		return compoundRepository.findOne(id);
 	}
@@ -42,19 +43,19 @@ public class CompoundService {
 	public List<Compound> getAllCompounds() {
 		return compoundRepository.findAll();
 	}
-	
+
 	public List<Compound> getAllDesign(StageType design) {
 		return compoundRepository.getAllDesign(design);
 	}
-	
+
 	public List<Compound> getAllSynthesis(StageType synthesis) {
 		return compoundRepository.getAllSynthesis(synthesis);
 	}
-	
+
 	public List<Compound> getAllPurification(StageType purification) {
 		return compoundRepository.getAllPuification(purification);
 	}
-	
+
 	public List<Compound> getAllTesting(StageType testing) {
 		return compoundRepository.getAllTesting(testing);
 	}
@@ -62,27 +63,26 @@ public class CompoundService {
 	public Page<Compound> getAllCompounds(Pageable pageable) {
 		return compoundRepository.findAll(pageable);
 	}
-	
+
 	public List<Compound> getCompoundsBySampleNumber(String sampleNumber) {
 		return compoundRepository.findBySampleNumber(sampleNumber);
 	}
-	
-	
-	public BufferedImage showLineGraph(Long id){
+
+	public BufferedImage showLineGraph(Long id) {
 		Compound compound = this.getCompoundById(id);
 		byte[] array = compound.getLineGraph();
-		return new BufferedImage(640,480,BufferedImage.TYPE_INT_RGB);
-	}
-	
-	public BufferedImage showStructureGraph(Long id){
-		Compound compound = this.getCompoundById(id);
-		byte[] array = compound.getStructureGraph();
-		return new BufferedImage(256,256,BufferedImage.TYPE_INT_RGB);
+		return new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
 	}
 
-/* Not needed for now as smiles is not used
-  	public List<Compound> getCompoundByAnyAttrib(String sampleNumber, String smiles) {
-		return compoundRepository.findBySampleNumberOrSmiles(sampleNumber, Smiles);
+	public BufferedImage showStructureGraph(Long id) {
+		Compound compound = this.getCompoundById(id);
+		byte[] array = compound.getStructureGraph();
+		return new BufferedImage(256, 256, BufferedImage.TYPE_INT_RGB);
 	}
-*/
+
+	/*
+	 * Not needed for now as smiles is not used public List<Compound>
+	 * getCompoundByAnyAttrib(String sampleNumber, String smiles) { return
+	 * compoundRepository.findBySampleNumberOrSmiles(sampleNumber, Smiles); }
+	 */
 }

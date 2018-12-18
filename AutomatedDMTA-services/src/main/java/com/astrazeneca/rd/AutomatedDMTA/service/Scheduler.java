@@ -42,7 +42,6 @@ import jcifs.smb.NtlmPasswordAuthentication; //For accessing remote folders with
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
-
 @Component("Scheduler")
 
 //Storing the file location properties. File in: AutomatedDMTA.servicesrc/main/resources/variable.properties
@@ -50,324 +49,336 @@ import jcifs.smb.SmbFile;
 
 public class Scheduler {
 
-/*	public static void main(String[] args) throws MalformedURLException, UnsupportedEncodingException, IOException
-	{
-		Scheduler s = new Scheduler();
-		s.buildDesign();
-		s.scheduleJob();
-	}*/
-	
-	/*Temporarily hardcodying the file paths to variables, however ideally the paths are sourced from the
-	  @PropertySource("classpath:variable.properties")
-	  Folder source: \\pipeline04.rd.astrazeneca.net\SharedData\autodmta\FrontEndTesting
-	*/
-	
+	/*
+	 * public static void main(String[] args) throws MalformedURLException,
+	 * UnsupportedEncodingException, IOException { Scheduler s = new Scheduler();
+	 * s.buildDesign(); s.scheduleJob(); }
+	 */
+
+	/*
+	 * Temporarily hardcodying the file paths to variables, however ideally the
+	 * paths are sourced from the
+	 * 
+	 * @PropertySource("classpath:variable.properties") Folder source:
+	 * \\pipeline04.rd.astrazeneca.net\SharedData\autodmta\FrontEndTesting
+	 */
+
 	static private String designFilePath = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Design/";
-	static private String synthesisFilePath = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Synthesis/";		
+	static private String synthesisFilePath = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Synthesis/";
 	static private String purificationFilePath = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Purification/";
 	static private String testingFilePath = "//pipeline04.rd.astrazeneca.net/SharedData/autodmta/FrontEndTesting/Testing/";
 
-	
-	//TODO: Following declarations to be used instead of the above hardcodied variables
-	// non hard-coded constants for the file paths, may be edited by customer in @PropertySource
-/*	@Value("${designFilePath}")
-	static private String	designFilePath;
-	@Value("${synthesisFilePath}")
-	static private String	synthesisFilePath;
-	@Value("${purificationFilePath}")
-	static private String	purificationFilePath;
-	@Value("${testingFilePath}")
-	static private String	testingFilePath;*/
-	
-	//Temporarily locate files from within project for demo
-/*	ClassLoader classLoader = getClass().getClassLoader();
-	File designFile = new File(classLoader.getResource("/Cycle/Design/dataset.smi").getFile());
-	File syntheisFile = new File(classLoader.getResource("/Cycle/Synthesis/AZ14128521_ERM321057299.txt").getFile());
-	File purificationFile = new File(classLoader.getResource("/Cycle/Purification/AZ14125558_ERM321011162.txt").getFile());
-	File testingFile = new File(classLoader.getResource("/Cycle/Testing/AZ14125558_ERM321025625.txt").getFile());
-	File testingPngFile = new File(classLoader.getResource("/Cycle/Testing/AZ14125558_ERM321025625.png").getFile());
-	
-	String designFilePath = designFile.getParent() + "\\";
-	String synthesisFilePath = purificationFile.getParent() + "\\";
-	String purificationFilePath = syntheisFile.getParent()  + "\\";
-	String testingFilePath = testingPngFile.getParent() + "\\";
-	*/
-	
-	//For testing purposes:
-	static public String getDesignFilePath()		{ return designFilePath; }
-	static public String getSynthesisFilePath()		{ return synthesisFilePath; }
-	static public String getPurificationFilePath()	{ return purificationFilePath; }
-	static public String getTestingFilePath()		{ return testingFilePath; }
-	
+	// TODO: Following declarations to be used instead of the above hardcodied
+	// variables
+	// non hard-coded constants for the file paths, may be edited by customer in
+	// @PropertySource
+	/*
+	 * @Value("${designFilePath}") static private String designFilePath;
+	 * 
+	 * @Value("${synthesisFilePath}") static private String synthesisFilePath;
+	 * 
+	 * @Value("${purificationFilePath}") static private String purificationFilePath;
+	 * 
+	 * @Value("${testingFilePath}") static private String testingFilePath;
+	 */
+
+	// Temporarily locate files from within project for demo
+	/*
+	 * ClassLoader classLoader = getClass().getClassLoader(); File designFile = new
+	 * File(classLoader.getResource("/Cycle/Design/dataset.smi").getFile()); File
+	 * syntheisFile = new
+	 * File(classLoader.getResource("/Cycle/Synthesis/AZ14128521_ERM321057299.txt").
+	 * getFile()); File purificationFile = new File(classLoader.getResource(
+	 * "/Cycle/Purification/AZ14125558_ERM321011162.txt").getFile()); File
+	 * testingFile = new
+	 * File(classLoader.getResource("/Cycle/Testing/AZ14125558_ERM321025625.txt").
+	 * getFile()); File testingPngFile = new
+	 * File(classLoader.getResource("/Cycle/Testing/AZ14125558_ERM321025625.png").
+	 * getFile());
+	 * 
+	 * String designFilePath = designFile.getParent() + "\\"; String
+	 * synthesisFilePath = purificationFile.getParent() + "\\"; String
+	 * purificationFilePath = syntheisFile.getParent() + "\\"; String
+	 * testingFilePath = testingPngFile.getParent() + "\\";
+	 */
+
+	// For testing purposes:
+	static public String getDesignFilePath() {
+		return designFilePath;
+	}
+
+	static public String getSynthesisFilePath() {
+		return synthesisFilePath;
+	}
+
+	static public String getPurificationFilePath() {
+		return purificationFilePath;
+	}
+
+	static public String getTestingFilePath() {
+		return testingFilePath;
+	}
+
 	File designFile;
-	boolean isScheduled=true;
-		
+	boolean isScheduled = true;
+
 	@Autowired
-	CompoundService	service;
-	
-/*	@Autowired
-	private ResourceLoader resourceLoader;
-	*/
-	
+	CompoundService service;
+
+	/*
+	 * @Autowired private ResourceLoader resourceLoader;
+	 */
+
 	/**
-	 * Building the BACKLOG/DESIGN compounds list:
-	 * Scan all planned compounds and populate DB irrespectively on
-	 * whether any of these compnds have moved in the cycle already.
-	 * For each compound the SMILES and an identifier strings are stored (mandatory fields)
+	 * Building the BACKLOG/DESIGN compounds list: Scan all planned compounds and
+	 * populate DB irrespectively on whether any of these compnds have moved in the
+	 * cycle already. For each compound the SMILES and an identifier strings are
+	 * stored (mandatory fields)
 	 *
 	 * This method runs only once so it is outside of the scheduler
 	 * 
 	 * @author klfl423
 	 * 
-	 * @return  True: At least one compound is found and added to the DB or, If
-	 *         	for any reason a compnd was already existed their stage is updated //This shouldn't be happening, but being extra cautious
-	 *         
-	 * @return	False: Path or file was not found or is empty
+	 * @return True: At least one compound is found and added to the DB or, If for
+	 *         any reason a compnd was already existed their stage is updated //This
+	 *         shouldn't be happening, but being extra cautious
 	 * 
-	 * @throws	IOException
-	 * @throws	UnsupportedEncodingException
-	 * @throws	MalformedURLException
+	 * @return False: Path or file was not found or is empty
+	 * 
+	 * @throws IOException
+	 * @throws UnsupportedEncodingException
+	 * @throws MalformedURLException
 	 */
-	//@Scheduled(cron = "0 0/21 10 * * ?")
+	// @Scheduled(cron = "0 0/21 10 * * ?")
 	@PostConstruct
-	void buildDesign() throws MalformedURLException, UnsupportedEncodingException, IOException
-	{
+	void buildDesign() throws MalformedURLException, UnsupportedEncodingException, IOException {
 		System.out.println("inside buildDesign --------->");
-		
-		boolean compoundRecorded = false; //Returned if no compound found
-		
-		//Collect the text file containing the compounds
-		/*
-		 * ToDo: For developing and testing purposes the files are fetched from local folders. However,
-		 * eventually it is a requirement to use network shared folders. For this use method:
-		 * getFileFromSharedFolder) and replace following line with:
-		 * File designFile = getFileFromSharedFolder(designFilePath + "design" + ".smi");
-		 */
-		
-/*		//Temporarily locate files from within project for demo
-		ClassLoader classLoader = getClass().getClassLoader();
-		File designFile = new File(classLoader.getResource("/Cycle/Design/dataset.smi").getFile());*/
-		
-		//TODO: Troubleshooting
-		System.out.println("Design_File_Path is " + designFilePath);
-/*		System.out.println("synthesisFilePath is " + synthesisFilePath);
-		System.out.println("purificationFilePath is " + purificationFilePath);
-		System.out.println("testingFilePath is " + testingFilePath);*/
-		
-		designFile = new File(designFilePath + "dataset" + ".smi");
-		
-		//Collect all lines from the text file into a String array
-		String[] compoundsArr = textToArray(designFile);
-		
-		//Check for array integrity
-		if (compoundsArr == null || compoundsArr.length == 0)
-		{ 
-			System.out.println("The compounds list from the desing stage returned empty or null");
-			
-		} else {//Extract compound's attributes from the array
-			
-			//identifier number
-			String	extracted_id;
-			
-			//SMILES
-			String	extracted_smiles;
-			
-			//StructureGraph (SMILES is needed for this)
-			byte[]	structureGraph;
 
-			// Iterate through the compounds list, collecting attributes for each individual compound
-			for (String compoundLine : compoundsArr)
-			{
+		boolean compoundRecorded = false; // Returned if no compound found
+
+		// Collect the text file containing the compounds
+		/*
+		 * ToDo: For developing and testing purposes the files are fetched from local
+		 * folders. However, eventually it is a requirement to use network shared
+		 * folders. For this use method: getFileFromSharedFolder) and replace following
+		 * line with: File designFile = getFileFromSharedFolder(designFilePath +
+		 * "design" + ".smi");
+		 */
+
+		/*
+		 * //Temporarily locate files from within project for demo ClassLoader
+		 * classLoader = getClass().getClassLoader(); File designFile = new
+		 * File(classLoader.getResource("/Cycle/Design/dataset.smi").getFile());
+		 */
+
+		// TODO: Troubleshooting
+		System.out.println("Design_File_Path is " + designFilePath);
+		/*
+		 * System.out.println("synthesisFilePath is " + synthesisFilePath);
+		 * System.out.println("purificationFilePath is " + purificationFilePath);
+		 * System.out.println("testingFilePath is " + testingFilePath);
+		 */
+
+		designFile = new File(designFilePath + "dataset" + ".smi");
+
+		// Collect all lines from the text file into a String array
+		String[] compoundsArr = textToArray(designFile);
+
+		// Check for array integrity
+		if (compoundsArr == null || compoundsArr.length == 0) {
+			System.out.println("The compounds list from the desing stage returned empty or null");
+
+		} else {// Extract compound's attributes from the array
+
+			// identifier number
+			String extracted_id;
+
+			// SMILES
+			String extracted_smiles;
+
+			// StructureGraph (SMILES is needed for this)
+			byte[] structureGraph;
+
+			// Iterate through the compounds list, collecting attributes for each individual
+			// compound
+			for (String compoundLine : compoundsArr) {
 				// Extract identifier (AZ or SN number) from the list
 				extracted_id = extractIdentifier(compoundLine);
-				 //Check identification is found
-				if (extracted_id.equals(""))
-				{
+				// Check identification is found
+				if (extracted_id.equals("")) {
 					System.out.println("oops! no identification found for a compound");
 				}
-				
+
 				// Extract SMILES (first word in the line) from the list
 				extracted_smiles = extractSmiles(compoundLine);
-				if (extracted_smiles.equals("")) //Check that smiles is found
+				if (extracted_smiles.equals("")) // Check that smiles is found
 				{
 					System.out.println("oops! no smiles found for compound : " + extracted_id);
 				}
-				
-				// Using the extracted SMILES, retrieve StructureGraph from Chemistry connect web site and turn it into a byte array for DB
+
+				// Using the extracted SMILES, retrieve StructureGraph from Chemistry connect
+				// web site and turn it into a byte array for DB
 				structureGraph = BufferedImageToByteArray(UrlToBufferedImage(SmilesToUrl(extracted_smiles)));
-				
-				if (structureGraph == null || structureGraph.length == 0) //Check structureGraph is found
+
+				if (structureGraph == null || structureGraph.length == 0) // Check structureGraph is found
 				{
-					System.out.println("oops! Failed to retrieve structure Graph for compound: "  + extracted_id + " from the online service");
+					System.out.println("oops! Failed to retrieve structure Graph for compound: " + extracted_id
+							+ " from the online service");
 				}
-				
+
 				// Update existing compounds
-				if (newCompound(StageType.DESIGN, extracted_smiles, extracted_id, structureGraph) != null)
-				{
+				if (newCompound(StageType.DESIGN, extracted_smiles, extracted_id, structureGraph) != null) {
 					compoundRecorded = true;
-					
+
 				} else {
-	
-					System.out.println("oops! New compound was not stored in database (The newCompound() method returned false)");
+
+					System.out.println(
+							"oops! New compound was not stored in database (The newCompound() method returned false)");
 				}
 			}
 		}
-		if (!compoundRecorded)
-		{
+		if (!compoundRecorded) {
 			System.out.println("Result: No compounds were recorded in Design stage");
-			
+
 		}
-		
+
 	}
-	
+
 	/**
-	 * The method is repeated in intervals and is scanning rest of stage folders (synthesis, purification and testing)
-	 * for changes in compounds
+	 * The method is repeated in intervals and is scanning rest of stage folders
+	 * (synthesis, purification and testing) for changes in compounds
 	 * 
-	 * On repeating intervals: The repetition period is defined in the cron expression, as:
-	 * Seconds, Minutes, Hours, Day-of-Month, Month, Day-of-Week, Year (optional field).
-	 * The ‘/’ character can be used to specify increments to values. For example, "0/15" in the Minutes field means:
-	 * "every 15th minute of the hour, starting at minute zero", if the Minutes field is "3/20", it would mean:
-	 * "every 20th minute of the hour, starting at minute three" - or in other words it is the same as
-	 * specifying "3,23,43" in the Minutes field.
-	 * source: http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html
-	 * additional: https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
+	 * On repeating intervals: The repetition period is defined in the cron
+	 * expression, as: Seconds, Minutes, Hours, Day-of-Month, Month, Day-of-Week,
+	 * Year (optional field). The ‘/’ character can be used to specify increments to
+	 * values. For example, "0/15" in the Minutes field means: "every 15th minute of
+	 * the hour, starting at minute zero", if the Minutes field is "3/20", it would
+	 * mean: "every 20th minute of the hour, starting at minute three" - or in other
+	 * words it is the same as specifying "3,23,43" in the Minutes field. source:
+	 * http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html
+	 * additional:
+	 * https://docs.oracle.com/cd/E12058_01/doc/doc.1014/e12030/cron_expressions.htm
 	 * 
 	 * @author klfl423
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 * 
 	 **/
-	//@Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
+	// @Scheduled(cron = "0 0/5 0 * * ?") //runs every 5'
 	@Scheduled(cron = "0/10 * * * * ?")
-	public void scheduleJob() throws IOException
-	{	
+	public void scheduleJob() throws IOException {
 		System.out.println("Inside the Scheduler------->");
-		//Collection of all "known" compounds
-		for (final Compound c : service.getAllCompounds())
-		{
-			
-			//For compounds that haven't been in Synthesis stage yet
-			if (c.getStage().ordinal() < StageType.SYNTHESIS.ordinal())
-			{
-				//The filename with its path
+		// Collection of all "known" compounds
+		for (final Compound c : service.getAllCompounds()) {
+
+			// For compounds that haven't been in Synthesis stage yet
+			if (c.getStage().ordinal() < StageType.SYNTHESIS.ordinal()) {
+				// The filename with its path
 				String synthesisFileNamePath = synthesisFilePath + c.getSampleNumber() + ".txt";
-				
-				//Compound found in Synthesis stage
+
+				// Compound found in Synthesis stage
 				/*
-				 * TODO: for deployment replace local folders with shared folder,
-				 * Replace "if (FileExistsInLocalFolder(filename))" with:
-				 * if (FileExistsInSharedFolder(filename))
+				 * TODO: for deployment replace local folders with shared folder, Replace
+				 * "if (FileExistsInLocalFolder(filename))" with: if
+				 * (FileExistsInSharedFolder(filename))
 				 */
-				if (FileExistsInLocalFolder(synthesisFileNamePath))
-				{
-					c.setStage(StageType.SYNTHESIS); //Update stage of compound
+				if (FileExistsInLocalFolder(synthesisFileNamePath)) {
+					c.setStage(StageType.SYNTHESIS); // Update stage of compound
 					service.saveCompound(c);
-					continue; //Try next compound
+					continue; // Try next compound
 				}
 			}
-			//For compounds that haven't been in Purification stage yet
-			 if (c.getStage().ordinal() < StageType.PURIFICATION.ordinal())
-			{
-				//The filename to look for
+			// For compounds that haven't been in Purification stage yet
+			if (c.getStage().ordinal() < StageType.PURIFICATION.ordinal()) {
+				// The filename to look for
 				String purificationFileNamePath = purificationFilePath + c.getSampleNumber() + ".txt";
 
-				//Compound found in Purification stage
+				// Compound found in Purification stage
 				/*
 				 * TODO: for deployment shared folders are to be used instead of local folders,
-				 * Then: replace "if (FileExistsInLocalFolder(filename))" with:
-				 * if (FileExistsInSharedFolder(filename))
+				 * Then: replace "if (FileExistsInLocalFolder(filename))" with: if
+				 * (FileExistsInSharedFolder(filename))
 				 */
-				if (FileExistsInLocalFolder(purificationFileNamePath))
-				{
-					c.setStage(StageType.PURIFICATION); //Update stage of compound
+				if (FileExistsInLocalFolder(purificationFileNamePath)) {
+					c.setStage(StageType.PURIFICATION); // Update stage of compound
 					service.saveCompound(c);
-					continue; //Try next compound
+					continue; // Try next compound
 				}
 			}
-			//For compounds that haven't been in Testing stage yet
-			 if (c.getStage().ordinal() < StageType.TESTING.ordinal())
-			{
-				//The filename to look for
+			// For compounds that haven't been in Testing stage yet
+			if (c.getStage().ordinal() < StageType.TESTING.ordinal()) {
+				// The filename to look for
 				String testingFileNamePath = testingFilePath + c.getSampleNumber() + ".txt";
 
-				//Compound found in testing stage
+				// Compound found in testing stage
 				/*
 				 * TODO: for deployment shared folders are to be used instead of local folders,
-				 * Then replace:
-				 * "if ((FileExistsInLocalFolder(filename)) != false)" with:
+				 * Then replace: "if ((FileExistsInLocalFolder(filename)) != false)" with:
 				 * "if ((FileExistsInSharedFolder(filename)) != false)"
-				 */				
-				//A file with the compound's name is found in TEST folder
-				if ((FileExistsInLocalFolder(testingFileNamePath)) != false)	
-				{
-					//Update compound's stage
+				 */
+				// A file with the compound's name is found in TEST folder
+				if ((FileExistsInLocalFolder(testingFileNamePath)) != false) {
+					// Update compound's stage
 					c.setStage(StageType.TESTING);
-					
-					//Compound completed the cycle
+
+					// Compound completed the cycle
 					c.setCompleted(true);
-					
-					//collect and set results value
+
+					// collect and set results value
 					{
-						//Collect the file from the shared folder
-						/*TODO: At deployment files are to be accessed from shared folders (instead of
+						// Collect the file from the shared folder
+						/*
+						 * TODO: At deployment files are to be accessed from shared folders (instead of
 						 * local folders as currently during dev and testing). Then, instead of:
 						 * "File resultsFile = new File(resultsFilename)", use:
-						 * "File resultsFile = getFileFromSharedFolder(resultsFilename)" 
+						 * "File resultsFile = getFileFromSharedFolder(resultsFilename)"
 						 */
 						File resultsFile = new File(testingFileNamePath);
-						
-						//Results is a number saved in the compound file (testingFileNamePath)
-						//Parse through the text file and collect the results (first line of actual text)
+
+						// Results is a number saved in the compound file (testingFileNamePath)
+						// Parse through the text file and collect the results (first line of actual
+						// text)
 						String results = fileToString(resultsFile);
-						
-						//Store the data in the DB
-						if (results == null || results.length() == 0)
-						{
-							System.out.println("oops! Test results for " + c.getSampleNumber() + " not found in the file");
-						}
-						else
-						{
+
+						// Store the data in the DB
+						if (results == null || results.length() == 0) {
+							System.out.println(
+									"oops! Test results for " + c.getSampleNumber() + " not found in the file");
+						} else {
 							c.setResults(results);
 						}
 					}
-					
+
 					/*
 					 * Store results' linegraph
-					 */					
-					//The file path for the result lineGraph .png image file
+					 */
+					// The file path for the result lineGraph .png image file
 					String lineGraphFileNamePath = testingFilePath + c.getSampleNumber() + ".png";
-					if ((FileExistsInLocalFolder(lineGraphFileNamePath)) != false)
-					{
-						//Collect the file from the shared folder
-						/*TODO: At deployment files are to be accessed from shared folders (instead of
+					if ((FileExistsInLocalFolder(lineGraphFileNamePath)) != false) {
+						// Collect the file from the shared folder
+						/*
+						 * TODO: At deployment files are to be accessed from shared folders (instead of
 						 * local folders as currently during dev and testing). Then, instead of:
 						 * "File lineGraphFile = new File(lineGraphFileName)", use:
-						 * "File lineGraphFile = getFileFromSharedFolder(lineGraphFileName)" 
+						 * "File lineGraphFile = getFileFromSharedFolder(lineGraphFileName)"
 						 */
 						File lineGraphFile = new File(lineGraphFileNamePath);
-						if (lineGraphFile == null || lineGraphFile.length() == 0)
-						{
-							System.out.println("oops! The results line graph for " +  c.getSampleNumber() + " was not found in folder");
-						}
-						else
-						{
-							//Parse the image to a byte array, ready for DB storage
+						if (lineGraphFile == null || lineGraphFile.length() == 0) {
+							System.out.println("oops! The results line graph for " + c.getSampleNumber()
+									+ " was not found in folder");
+						} else {
+							// Parse the image to a byte array, ready for DB storage
 							byte[] lineGraph = fileToByteArray(lineGraphFile);
-							
-							//Store the image in the DB (as a byte array)
-							if (!lineGraph.equals(null) || lineGraph.length != 0)
-							{
+
+							// Store the image in the DB (as a byte array)
+							if (!lineGraph.equals(null) || lineGraph.length != 0) {
 								c.setLineGraph(lineGraph);
-							}
-							else
-							{
-								System.out.println("oops! The results line graph: " + lineGraphFile.getName() + " was located and retreaved succesfully but something went wrong trying to store the image in the temp memory database");
+							} else {
+								System.out.println("oops! The results line graph: " + lineGraphFile.getName()
+										+ " was located and retreaved succesfully but something went wrong trying to store the image in the temp memory database");
 							}
 						}
-					}
-					else
-					{
+					} else {
 						System.out.println("Resutls line graph for " + c.getSampleNumber() + " not found");
 					}
 				}
@@ -375,12 +386,13 @@ public class Scheduler {
 			}
 		}
 	}
-	
-	//Note: All methods from here on are tools used by the buildDesign() and scheduler() methods in this class to collect information about the compounds
-	
+
+	// Note: All methods from here on are tools used by the buildDesign() and
+	// scheduler() methods in this class to collect information about the compounds
+
 	/**
-	 * Convert a text file into string array, each line of the text file becomes
-	 * a row in the array
+	 * Convert a text file into string array, each line of the text file becomes a
+	 * row in the array
 	 * 
 	 * @author klfl423
 	 * 
@@ -391,42 +403,35 @@ public class Scheduler {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public String[] textToArray(File file) throws FileNotFoundException, IOException
-	{
+	public String[] textToArray(File file) throws FileNotFoundException, IOException {
 
-		if (!file.exists())
-		{
+		if (!file.exists()) {
 			System.out.println("oops! File " + file.getName() + " is empty or doesn't exist");
 			return null;
 		}
 
 		// Hold the text lines into a list
 		List<String> lines = new ArrayList<String>();
-			
+
 		BufferedReader br = null;
-		try
-		{
+		try {
 			br = new BufferedReader(new FileReader(file));
-		} catch (FileNotFoundException e1)
-		{
+		} catch (FileNotFoundException e1) {
 			// File not found, connection may failed to establish
 			System.out.println(e1.getMessage());
 			System.out.println("oops! File " + file.getName() + " not found, connection may failed to establish");
 			return null;
-			
-		} catch (Exception e)
-		{
+
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 
 		// Populate
 		String inputLine;
-		while ((inputLine = br.readLine()) != null)
-		{
+		while ((inputLine = br.readLine()) != null) {
 
 			// Ignore empty lines.
-			if (inputLine.equals(""))
-			{
+			if (inputLine.equals("")) {
 				continue;
 			}
 
@@ -436,19 +441,18 @@ public class Scheduler {
 		br.close();
 
 		// No new compounds found
-		if (lines == null || lines.isEmpty())
-		{
+		if (lines == null || lines.isEmpty()) {
 			System.out.println("oops! No compounds found in Design stage");
 			return null;
 		}
-		
+
 		// Convert to array and return
 		return lines.toArray(new String[lines.size()]);
 	}
-	
-	
+
 	/**
-	 * Access and retrieve a file from a Windows shared folder using authentication with Samba JCIFS
+	 * Access and retrieve a file from a Windows shared folder using authentication
+	 * with Samba JCIFS
 	 * 
 	 * @author klfl423
 	 * 
@@ -460,62 +464,62 @@ public class Scheduler {
 	 * @throws SmbException
 	 * @throws IOException
 	 */
-	//ToDo: At the moment this method is not used, but later will be
-	private File getFileFromSharedFolder(String filepath) throws MalformedURLException, SmbException, IOException  {
-		
-		//Authenticate at remote shared folder
+	// ToDo: At the moment this method is not used, but later will be
+	private File getFileFromSharedFolder(String filepath) throws MalformedURLException, SmbException, IOException {
+
+		// Authenticate at remote shared folder
 		final String USER_NAME = "userName";
-	    final String PASSWORD = "password";
-	    NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, USER_NAME, PASSWORD);
-		String sFileUrl = "smb://" + USER_NAME + ":" + PASSWORD + "/" + filepath; //File path in Samba URL format
-        SmbFile smbFile = new SmbFile(sFileUrl, auth); //The Samba file object
-        InputStream in = null;
-        if (smbFile.exists()) { //Get the file from remote location
-            in = smbFile.getInputStream();
-        }
-        
-        //Convert Samba file into a java file object and return
-        File file = null;
-        FileOutputStream out = new FileOutputStream(file);
-        IOUtils.copy(in, out);
-        
+		final String PASSWORD = "password";
+		NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, USER_NAME, PASSWORD);
+		String sFileUrl = "smb://" + USER_NAME + ":" + PASSWORD + "/" + filepath; // File path in Samba URL format
+		SmbFile smbFile = new SmbFile(sFileUrl, auth); // The Samba file object
+		InputStream in = null;
+		if (smbFile.exists()) { // Get the file from remote location
+			in = smbFile.getInputStream();
+		}
+
+		// Convert Samba file into a java file object and return
+		File file = null;
+		FileOutputStream out = new FileOutputStream(file);
+		IOUtils.copy(in, out);
+
 		return file;
 	}
-	
-	
+
 	/**
-	 * Look for a file within a shared folder/ Authentication is attempted
-	 * Same as the getFileFromSharedFolder(String filepath) method, but it doesnt return the file
+	 * Look for a file within a shared folder/ Authentication is attempted Same as
+	 * the getFileFromSharedFolder(String filepath) method, but it doesnt return the
+	 * file
 	 * 
 	 * @author klfl423
 	 * 
 	 * @param filepath: Exact location including filename
 	 * 
-	 * @return
-	 * 			true:  File found
-	 * 			false: File not found or error occurred (ie connection failed)
+	 * @return true: File found false: File not found or error occurred (ie
+	 *         connection failed)
 	 * 
 	 * @throws MalformedURLException
 	 * @throws SmbException
 	 * @throws IOException
 	 */
-	private boolean FileExistsInSharedFolder(String filepath) throws IOException  {
-		
-		//Authenticate at remote shared folder
+	private boolean FileExistsInSharedFolder(String filepath) throws IOException {
+
+		// Authenticate at remote shared folder
 		final String USER_NAME = "userName";
-	    final String PASSWORD = "password";
-	    NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, USER_NAME, PASSWORD);
-		String sFileUrl = "smb://" + USER_NAME + ":" + PASSWORD + "/" + filepath; //File path in Samba URL format
-        SmbFile smbFile = new SmbFile(sFileUrl, auth);
-        
-        return smbFile.exists()? true:false;
+		final String PASSWORD = "password";
+		NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(null, USER_NAME, PASSWORD);
+		String sFileUrl = "smb://" + USER_NAME + ":" + PASSWORD + "/" + filepath; // File path in Samba URL format
+		SmbFile smbFile = new SmbFile(sFileUrl, auth);
+
+		return smbFile.exists() ? true : false;
 	}
 
 	/**
-	 * TODO: This is a temporary method replacing the FileExistsInSharedFolder(String filepath) during
-	 * development and testing. From deployment on, shared folders are to be used (instead of local),
-	 * then this current method will become absolute and the FileExistsInSharedFolder(String filepath)
-	 * method will be used instead.
+	 * TODO: This is a temporary method replacing the
+	 * FileExistsInSharedFolder(String filepath) during development and testing.
+	 * From deployment on, shared folders are to be used (instead of local), then
+	 * this current method will become absolute and the
+	 * FileExistsInSharedFolder(String filepath) method will be used instead.
 	 * 
 	 * Look for a file within the local folder
 	 * 
@@ -523,53 +527,49 @@ public class Scheduler {
 	 * 
 	 * @param filepath: Exact location including filename
 	 * 
-	 * @return
-	 * 			true:  File found
-	 * 			false: File not found or error occurred (ie connection failed)
+	 * @return true: File found false: File not found or error occurred (ie
+	 *         connection failed)
 	 * 
 	 * @throws MalformedURLException
 	 * @throws SmbException
 	 * @throws IOException
 	 */
-	private boolean FileExistsInLocalFolder(String filepath) throws IOException  {
-      
-        return new File(filepath).exists()? true:false;
+	private boolean FileExistsInLocalFolder(String filepath) throws IOException {
+
+		return new File(filepath).exists() ? true : false;
 	}
-	
+
 	/**
-	 * Go through each line of the compounds array as found in the text file
-	 * in the respective stage folder and try to extract the AZ identification
-	 * number. if AZ isn't found go for SN instead
+	 * Go through each line of the compounds array as found in the text file in the
+	 * respective stage folder and try to extract the AZ identification number. if
+	 * AZ isn't found go for SN instead
 	 * 
 	 * @author klfl423
 	 * 
-	 * TODO: Differentiate between AZ and SN numbers. When requirements are more
-	 * concrete Consider using stage to chose between AZ and SN numbers
+	 *         TODO: Differentiate between AZ and SN numbers. When requirements are
+	 *         more concrete Consider using stage to chose between AZ and SN numbers
 	 * 
-	 * @param compoundLine
-	 *            The line of text containing the compound information extracted
-	 *            from the text file found in the respective stage folder
+	 * @param compoundLine The line of text containing the compound information
+	 *                     extracted from the text file found in the respective
+	 *                     stage folder
 	 * 
 	 * @return extracted_id string
 	 */
-	String extractIdentifier(String compoundLine)
-	{
+	String extractIdentifier(String compoundLine) {
 
 		String extracted_id = null;
 
-		try
-		{
-			// block (AZ) identifier number is a word starting with " AZ", just remove leading space
+		try {
+			// block (AZ) identifier number is a word starting with " AZ", just remove
+			// leading space
 			extracted_id = compoundLine.substring(compoundLine.indexOf(" AZ") + 1);
 
-			
 			if (extracted_id.equals("")) // AZ number wasn't found, go for sn number instead
 			{
 				// SN number is a word starting with " SN", just remove leading space
 				extracted_id = compoundLine.substring(compoundLine.indexOf(" sn") + 1);
 			}
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 
@@ -577,28 +577,25 @@ public class Scheduler {
 	}
 
 	/**
-	 * Go through a single line of compound information from the text file found
-	 * in the respective stage folder and extract the compound's smile
+	 * Go through a single line of compound information from the text file found in
+	 * the respective stage folder and extract the compound's smile
 	 * 
 	 * @author klfl423
 	 * 
-	 * @param compoundLine
-	 *            The line of text containing the compound information extracted
-	 *            from the text file found in the respective stage folder
+	 * @param compoundLine The line of text containing the compound information
+	 *                     extracted from the text file found in the respective
+	 *                     stage folder
 	 * 
 	 * @return smiles string
 	 */
-	String extractSmiles(String compoundLine)
-	{
+	String extractSmiles(String compoundLine) {
 		String smiles = null;
 
-		try
-		{
+		try {
 			// Smiles is the first word of the line, followed by a space
 			smiles = compoundLine.substring(0, compoundLine.indexOf(" "));
 
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 
@@ -606,14 +603,14 @@ public class Scheduler {
 	}
 
 	/**
-	 * Creates a URL pointing to a compound structure graph in pipeline Chemistry connect (compounds.rd.astrazeneca.net)
-	 * using the compound's SMILES
+	 * Creates a URL pointing to a compound structure graph in pipeline Chemistry
+	 * connect (compounds.rd.astrazeneca.net) using the compound's SMILES
 	 * 
-	 * The method is part of code for retrieving the strucutreGraph image file from the pipeline web site
-	 * and store it to the DB.
-	 * The input is the SMILES signature of the compound which is then embedded in the URL encoded,
-	 * using the UTF-8 encoding scheme.
-	 * The output URL is used by the method UrlToBufferedImage(URL path) for collecting the image from the site  
+	 * The method is part of code for retrieving the strucutreGraph image file from
+	 * the pipeline web site and store it to the DB. The input is the SMILES
+	 * signature of the compound which is then embedded in the URL encoded, using
+	 * the UTF-8 encoding scheme. The output URL is used by the method
+	 * UrlToBufferedImage(URL path) for collecting the image from the site
 	 * 
 	 * @author klfl423
 	 * 
@@ -625,23 +622,24 @@ public class Scheduler {
 	 * @throws MalformedURLException
 	 * @throws UnsupportedEncodingException
 	 */
-	private URL SmilesToUrl(String smiles) throws IOException, MalformedURLException, UnsupportedEncodingException
-	{
+	private URL SmilesToUrl(String smiles) throws IOException, MalformedURLException, UnsupportedEncodingException {
 
 		// A URL for building the compound's structure image graph
-		return new URL("http://compounds.rd.astrazeneca.net/resources/structure/toimage/" + URLEncoder.encode(smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot&width=500&height=500");
-		
+		return new URL("http://compounds.rd.astrazeneca.net/resources/structure/toimage/"
+				+ URLEncoder.encode(smiles, "UTF-8") + "?inputFormat=SMILES&appid=pipelinepilot&width=500&height=500");
+
 		// TODO: consider saving the URL as a compound's property as well
 	}
-	
+
 	/**
 	 * Retrieve image from a given URL and return it as a BufferedImage object
 	 * 
-	 * The method is part of code for retrieving the strucutreGraph image file from the pipeline web site
-	 * and store it to the DB.
-	 * The source is a URL of the file on the pipleine website coming from the method SmilesToUrl(String smiles).
-	 * The output is a BufferedImage object sent to a method BufferedImageToByteArray(BufferedImage image) that
-	 * returns a byte array of the image ready for storing in the DB 
+	 * The method is part of code for retrieving the strucutreGraph image file from
+	 * the pipeline web site and store it to the DB. The source is a URL of the file
+	 * on the pipleine website coming from the method SmilesToUrl(String smiles).
+	 * The output is a BufferedImage object sent to a method
+	 * BufferedImageToByteArray(BufferedImage image) that returns a byte array of
+	 * the image ready for storing in the DB
 	 * 
 	 * 
 	 * @author klfl423
@@ -651,20 +649,20 @@ public class Scheduler {
 	 * @return image file as a BufferedImage
 	 * 
 	 */
-	private BufferedImage UrlToBufferedImage(URL path) throws IOException, MalformedURLException, UnsupportedEncodingException
-	{
-		
+	private BufferedImage UrlToBufferedImage(URL path)
+			throws IOException, MalformedURLException, UnsupportedEncodingException {
+
 		return ImageIO.read(path); // Read returns a BufferedImage
-		
+
 	}
-	
+
 	/**
 	 * Convert a bufferedImage file into a byte[] ready for the DB
 	 * 
-	 * The method is part of code set to retrieve the strucutreGraph image file from the pipeline web site
-	 * and store it to the DB.
-	 * The input is an image file typically coming form method: UrlToBufferedImage(URL), and the
-	 * output is a byte array ready to be stored in the DB.
+	 * The method is part of code set to retrieve the strucutreGraph image file from
+	 * the pipeline web site and store it to the DB. The input is an image file
+	 * typically coming form method: UrlToBufferedImage(URL), and the output is a
+	 * byte array ready to be stored in the DB.
 	 * 
 	 * @author klfl423
 	 * 
@@ -673,36 +671,34 @@ public class Scheduler {
 	 * @return byte[]: The byte array, ready to be stored in a DB
 	 * @return null: No array
 	 */
-	private byte[] BufferedImageToByteArray(BufferedImage image)
-	{
-		
-		byte[] imageInByte = null; //To be returned
-		
+	private byte[] BufferedImageToByteArray(BufferedImage image) {
+
+		byte[] imageInByte = null; // To be returned
+
 		long length = image.toString().length();
 		// You cannot create an array using a long type. It needs to be an int
 
-		// Before converting to an int type, check that file is not larger than Integer.MAX_VALUE.
-		if (length > Integer.MAX_VALUE)
-		{
-			System.out.println("oops! Image file is too large for the database (length > Integer.MAX_VALUE), still will try...");
+		// Before converting to an int type, check that file is not larger than
+		// Integer.MAX_VALUE.
+		if (length > Integer.MAX_VALUE) {
+			System.out.println(
+					"oops! Image file is too large for the database (length > Integer.MAX_VALUE), still will try...");
 		}
 
-		try
-		{
+		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(image, "png", baos);
 			baos.flush();
 			imageInByte = baos.toByteArray();
 			baos.close();
 
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
 
 		return imageInByte;
 	}
-	
+
 	/**
 	 * Create, populate, and save a new compound
 	 * 
@@ -717,17 +713,16 @@ public class Scheduler {
 	 * 
 	 * @throws IOException
 	 */
-	private Compound newCompound(StageType stage, String smiles, String sn, byte[] structureGraph) throws IOException
-	{
-		Compound c = new Compound(); 			// Create the new compound
-		c.setStage(stage); 						// Store its stage
-		c.setSampleNumber(sn); 					// Store the sample number
-		c.setSmiles(smiles); 					// Store the smiles
-		c.setStructureGraph(structureGraph);	// StructureGraph as a byte array
+	private Compound newCompound(StageType stage, String smiles, String sn, byte[] structureGraph) throws IOException {
+		Compound c = new Compound(); // Create the new compound
+		c.setStage(stage); // Store its stage
+		c.setSampleNumber(sn); // Store the sample number
+		c.setSmiles(smiles); // Store the smiles
+		c.setStructureGraph(structureGraph); // StructureGraph as a byte array
 
 		return service.saveCompound(c);
 	}
-	
+
 	/**
 	 * Store the first line of text from a file into a String variable
 	 * 
@@ -740,57 +735,51 @@ public class Scheduler {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private String fileToString(File file) throws FileNotFoundException, IOException
-	{
+	private String fileToString(File file) throws FileNotFoundException, IOException {
 
-		if (!file.exists())
-		{
+		if (!file.exists()) {
 			System.out.println("oops! File " + file.getName() + " is empty or doesn't exist");
 			return null;
 		}
 
 		BufferedReader br = null;
-		try
-		{
+		try {
 			br = new BufferedReader(new FileReader(file));
-		} catch (FileNotFoundException e1)
-		{
+		} catch (FileNotFoundException e1) {
 			System.out.println(e1.getMessage());
 			System.out.println("oops! File " + file.getName() + " not found, connection may failed to establish");
 			return null;
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 
-		//Collect the first line of text in the file
+		// Collect the first line of text in the file
 		String inputLine = br.readLine();
-		while (inputLine != null)
-			{
-				// Ignore empty lines.
-				if (inputLine.equals(""))
-				{
-					continue;
-				}
-				
-				br.close();
-				return inputLine;
+		while (inputLine != null) {
+			// Ignore empty lines.
+			if (inputLine.equals("")) {
+				continue;
 			}
+
+			br.close();
+			return inputLine;
+		}
 
 		br.close();
 
 		// If we reached so far then no text has been found in the file
 		System.out.println("file " + file.getName() + " is empty");
-			
+
 		return null;
 	}
-	
+
 	/**
 	 * Create a byte array from an image file.
 	 * 
-	 * The method is part of code set to store an image to the DB.
-	 * The input, an image file, is already been fetched by a method like getFileFromSharedFolder(filePath). 
-	 * The output, a Byte[], is typically stored in the DB 
+	 * The method is part of code set to store an image to the DB. The input, an
+	 * image file, is already been fetched by a method like
+	 * getFileFromSharedFolder(filePath). The output, a Byte[], is typically stored
+	 * in the DB
 	 * 
 	 * @author klfl423
 	 * 
@@ -799,29 +788,27 @@ public class Scheduler {
 	 * @return null in case that file is too large to be streamed
 	 * @throws IOException
 	 */
-	private static byte[] fileToByteArray(File file) throws IOException
-	{
+	private static byte[] fileToByteArray(File file) throws IOException {
 		Logger.getLogger(Main.class.getName()).log(Level.INFO, "[Open File] " + file.getAbsolutePath());
 		long length = file.length();
-		// length() returns a long type and this should be converted to int as arrays are int-indexed
+		// length() returns a long type and this should be converted to int as arrays
+		// are int-indexed
 		// But first check that file is not larger than Integer.MAX_VALUE
-		if (length > Integer.MAX_VALUE)
-		{
+		if (length > Integer.MAX_VALUE) {
 			// File is too large
 			System.out.println("oops! File " + file.getName() + " is to large to be streamed into a byte array");
 			return null;
 		}
-		
+
 		InputStream is = new FileInputStream(file);
-		
+
 		// Create the byte array to hold the data
 		byte[] imageBytes = new byte[(int) length];
 
 		// Read in the bytes
 		int offset = 0;
 		int numRead = 0;
-		while (offset < imageBytes.length && (numRead = is.read(imageBytes, offset, imageBytes.length - offset)) >= 0)
-		{
+		while (offset < imageBytes.length && (numRead = is.read(imageBytes, offset, imageBytes.length - offset)) >= 0) {
 			offset += numRead;
 		}
 
@@ -829,71 +816,66 @@ public class Scheduler {
 		is.close();
 
 		// Ensure all the bytes have been read in
-		if (offset < imageBytes.length)
-		{
+		if (offset < imageBytes.length) {
 			throw new IOException("Could not completely read file " + file.getName());
 		}
 
 		return imageBytes;
 	}
 
-
-	//TODO: This method is not used yet, as the data (image) is not retrieved form the DB yet
+	// TODO: This method is not used yet, as the data (image) is not retrieved form
+	// the DB yet
 	/**
 	 * Create a bufferedImage from a Byte array (typically stored in the DB).
 	 * 
-	 * The method is part of a group of methods set to return an image from DB to web or disk.
-	 * The input is an array of bytes representing an image file stored in the db and its output
-	 * is a BufferedImage object which is fed into a method (such as: BufferedImageToFile(BufferedImage, fileName),
-	 * turning it into an image file.
-	 *  
+	 * The method is part of a group of methods set to return an image from DB to
+	 * web or disk. The input is an array of bytes representing an image file stored
+	 * in the db and its output is a BufferedImage object which is fed into a method
+	 * (such as: BufferedImageToFile(BufferedImage, fileName), turning it into an
+	 * image file.
+	 * 
 	 * @author klfl423
-	 *  
-	 * @param bi:
-	 *            The bufferedImage
-	 * @param fileName:
-	 *            The required file name for the disk
+	 * 
+	 * @param bi: The bufferedImage
+	 * @param fileName: The required file name for the disk
 	 * 
 	 * @return file: the image
 	 * @return null: see console for error
 	 */
 	private BufferedImage ByteArrayToBufferedImage(byte[] imageInBytes) {
-	    ByteArrayInputStream bais = new ByteArrayInputStream(imageInBytes);
-	    try {
-	        return ImageIO.read(bais);
-	    } catch (IOException e) {
-	        throw new RuntimeException(e);
-	    }
+		ByteArrayInputStream bais = new ByteArrayInputStream(imageInBytes);
+		try {
+			return ImageIO.read(bais);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	//TODO: This method is not used yet, as the data (image) is not retrieved form the DB yet
+	// TODO: This method is not used yet, as the data (image) is not retrieved form
+	// the DB yet
 	/**
 	 * writes a file from a bufferedImage .
 	 * 
-	 * The method is part of a group of methods set to return an image from DB to web or disk.
-	 * The input (a BufferedImage) typically comes from a method (such as ByteArrayToBufferedImage(byte[]))
-	 * that writes a Byte[] stream into a buffereImage object.
+	 * The method is part of a group of methods set to return an image from DB to
+	 * web or disk. The input (a BufferedImage) typically comes from a method (such
+	 * as ByteArrayToBufferedImage(byte[])) that writes a Byte[] stream into a
+	 * buffereImage object.
 	 * 
 	 * @author klfl423
 	 * 
-	 * @param bi:
-	 *            The bufferedImage
-	 * @param fileName:
-	 *            The required file name for the disk
+	 * @param bi: The bufferedImage
+	 * @param fileName: The required file name for the disk
 	 * 
 	 * @return file: the image
 	 * @return null: see console for error
 	 */
-	File BufferedImageToFile(BufferedImage bi, String fileName)
-	{
-		
-		try
-		{
+	File BufferedImageToFile(BufferedImage bi, String fileName) {
+
+		try {
 			File file = new File(fileName);
 			ImageIO.write(bi, "png", file);
 			return file;
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
 		return null;
