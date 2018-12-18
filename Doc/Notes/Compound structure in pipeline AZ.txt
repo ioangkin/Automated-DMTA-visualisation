@@ -1,0 +1,1 @@
+http://compounds.rd.astrazeneca.net/resources/structure/toimage/CC%23CC%5bn%5d%28c%28%5bn%5dc1N%28C%28=O%29N%28C2=O%29Cc%28%5bn%5dc%28cccc3%29c3c3C%29%5bn%5d3%29C%29N%28Cc%28c%28C3%29%5bnH%5dc4%29%5bn%5d4%29C3%29c12?inputFormat=SMILES&appid=pipelinepilot&width=500&height=500 
