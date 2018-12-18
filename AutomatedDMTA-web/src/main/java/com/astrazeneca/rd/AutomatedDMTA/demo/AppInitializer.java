@@ -17,24 +17,23 @@ import com.astrazeneca.rd.AutomatedDMTA.repository.CompoundRepository;
 public class AppInitializer {
 	private static Logger logger = LoggerFactory.getLogger(AppInitializer.class);
 
-	
-	@Autowired 
+	@Autowired
 	private CompoundRepository compoundRepository;
-	
+
 	public void init() {
-		//Create test compounds...
-		compoundRepository.deleteAll();		//Comment this out to keep old data
-		
+		// Create test compounds...
+		compoundRepository.deleteAll(); // Comment this out to keep old data
+
 		Compound c1 = new Compound();
 		c1.setSampleNumber("001");
 //		c1.setSMILES("SMILEA001");
 		compoundRepository.save(c1);
-		
+
 		Compound c2 = new Compound();
 		c2.setSampleNumber("002");
 //		p2.setLastName("SMILEA002");
 		compoundRepository.save(c2);
-		
+
 		logger.debug("Added 2 TEST compounds...");
 	}
 }
