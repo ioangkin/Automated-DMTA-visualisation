@@ -14,9 +14,8 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 	public List<Person> findByFirstNameAndLastName(String firstName, String lastName);
 
 	@Query("select p from Person p where p.firstName = :firstName or p.lastName = :lastName")
-	public List<Person> findByFirstNameOrLastName(
-			@Param("firstName") String firstName,
+	public List<Person> findByFirstNameOrLastName(@Param("firstName") String firstName,
 			@Param("lastName") String lastName);
-	
+
 	public Page<Person> findAll(Pageable pageable);
 }

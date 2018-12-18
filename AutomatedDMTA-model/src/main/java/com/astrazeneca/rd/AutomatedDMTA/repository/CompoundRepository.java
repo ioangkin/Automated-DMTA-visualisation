@@ -18,14 +18,16 @@ import com.astrazeneca.rd.AutomatedDMTA.model.StageType;
 
 @Repository
 public interface CompoundRepository extends JpaRepository<Compound, Long> {
-	
+
 	@Query("select c from Compound c where c.sampleNumber = :sampleNumber")
 	public List<Compound> findBySampleNumber(@Param("sampleNumber") String sampleNumber);
-/*	
-	// Not searching by multiple attributes atm
-	@Query("select c from Compound c where c.sampleNumber = :sampleNumber or c.smiles = :smiles")
-	public List<Compound> findBySampleNumberAndSmiles(String sampleNumber, String smiles);
-*/
+	/*
+	 * // Not searching by multiple attributes atm
+	 * 
+	 * @Query("select c from Compound c where c.sampleNumber = :sampleNumber or c.smiles = :smiles"
+	 * ) public List<Compound> findBySampleNumberAndSmiles(String sampleNumber,
+	 * String smiles);
+	 */
 
 	public Page<Compound> findAll(Pageable pageable);
 
@@ -34,10 +36,10 @@ public interface CompoundRepository extends JpaRepository<Compound, Long> {
 
 	@Query("select c from Compound c where c.stage = :synthesis")
 	public List<Compound> getAllSynthesis(@Param("synthesis") StageType synthesis);
-	
+
 	@Query("select c from Compound c where c.stage = :purification")
 	public List<Compound> getAllPuification(@Param("purification") StageType purification);
-	
+
 	@Query("select c from Compound c where c.stage = :testing")
 	public List<Compound> getAllTesting(@Param("testing") StageType testing);
 }
